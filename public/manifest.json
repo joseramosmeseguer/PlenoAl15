@@ -1,0 +1,24 @@
+{
+  "name": "La Porra del Mundial",
+  "short_name": "El Mundial",
+  "description": "Quiniela privada del Mundial entre amigos: pronósticos, ranking y bonus.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a4d2e",
+  "theme_color": "#0a4d2e",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

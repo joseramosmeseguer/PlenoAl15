@@ -1,0 +1,112 @@
+import { useMemo, useState } from "react";
+import { useBonusQuestions, useBonusPredictions, useTeams, useMatches } from "@/lib/queries";
+import { useAuth } from "@/lib/auth";
+import { formatCountdown } from "@/lib/scoring";
+import { useQueryClient } from "@tanstack/react-query";
+import { ChevronDown, Swords } from "lucide-react";
+import { BonusCard } from "@/components/BonusCard";
+
+const ACCENT = "#fb7185";
+const LOCATION = "mis_especiales_eliminatorias";
+
+export function EliminatoriasBonusTab() {
+  const { user } = useAuth();
+  const qc = useQueryClient();
+  const { data: bonus } = useBonusQuestions();
+  const { data: myBonus } = useBonusPredictions(user?.id);
+  const { data: teams } = useTeams();
+  const { data: matches } = useMatches();
+  const [open, setOpen] = useState(false);
+
+  const items = useMemo(
+    () => (bonus ?? []).filter((q: any) => q.location === LOCATION && q.is_visible !== false),
+    [bonus]
+  );
+
+  const answerMap = useMemo(() => {
+    const map: Record<string, any> = {};
+    (myBonus ?? []).forEach((p: any) => (map[p.bonus_id] = p.answer));
+    return map;
+  }, [myBonus]);
+
+  const pointsMap = useMemo(() => {
+    const map: Record<string, number> = {};
+    (myBonus ?? []).forEach((p: any) => (map[p.bonus_id] = p.points_awarded ?? 0));
+    return map;
+  }, [myBonus]);
+
+  if (!user) return null;
+
+  if (!items.length) {
+    return <p className="text-sm text-muted-foreground text-center py-8">Aún no hay preguntas BONUS.</p>;
+  }
+
+  const completed = items.filter((b: any) => isAnswered(answerMap[b.id])).length;
+  const pct = Math.round((completed / items.length) * 100);
+  const firstDeadline = [...items].map((b: any) => b.deadline_at).filter(Boolean).sort()[0];
+  const cd = firstDeadline ? formatCountdown(firstDeadline) : null;
+
+  return (
+    <section className="overflow-hidden rounded-xl border shadow-soft bg-rose-900 border-rose-700/60">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-3 px-4 py-3.5 text-rose-50"
+      >
+        <Swords className="h-5 w-5 text-gold shrink-0" />
+        <span className="font-display text-xl uppercase tracking-wide">BONUS</span>
+        <span className="ml-auto rounded-full border border-white/20 bg-white/10 px-2.5 py-0.5 text-xs font-bold tabular-nums">
+          {completed}/{items.length}
+        </span>
+        <ChevronDown className={`h-4 w-4 shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      <div className="h-1.5 bg-white/10">
+        <div className="h-full bg-rose-400 transition-all duration-500" style={{ width: `${pct}%` }} />
+      </div>
+
+      {cd && (
+        <div className="flex items-center gap-2 px-4 py-1.5 text-xs text-rose-50">
+          <span className="opacity-50">Cierra en</span>
+          <span className={`font-semibold px-1.5 py-0.5 rounded border text-[10px] ${
+            cd.variant === "red" ? "text-red-400 border-red-800/50 bg-red-950/40"
+            : cd.variant === "amber" ? "text-amber-300 border-amber-700/50 bg-amber-950/40"
+            : "text-emerald-400 border-emerald-800/50 bg-emerald-950/40"
+          }`}>
+            {cd.label}
+          </span>
+        </div>
+      )}
+
+      {!open && (
+        <div className="flex items-center justify-between px-4 py-2 text-xs text-rose-50 opacity-60">
+          <span>{items.length} pronósticos</span>
+          <span className="font-bold">{pct}%</span>
+        </div>
+      )}
+
+      {open && (
+        <div className="grid gap-2 p-2.5 md:grid-cols-2 bg-black/10">
+          {items.map((b: any) => (
+            <BonusCard
+              key={b.id}
+              bonus={b}
+              mine={answerMap[b.id]}
+              pointsAwarded={pointsMap[b.id] ?? 0}
+              teams={teams ?? []}
+              matches={matches ?? []}
+              accent={ACCENT}
+              onSaved={() => qc.invalidateQueries({ queryKey: ["bonus_predictions", user.id] })}
+            />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function isAnswered(answer: any) {
+  if (!answer) return false;
+  if (Array.isArray(answer.values)) return answer.values.some((v: string) => String(v ?? "").trim());
+  return !!String(answer.value ?? answer.text ?? "").trim();
+}
