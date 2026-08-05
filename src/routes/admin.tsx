@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { useMatches, useTeams, useAllPredictions, useAllBonusPredictions, useProfiles, useAllSurveyResponses, useAllSurveyIdeas } from "@/lib/queries";
+import { useMatches, useTeams, useClubMatches, useAllPredictions, useAllBonusPredictions, useProfiles, useAllSurveyResponses, useAllSurveyIdeas } from "@/lib/queries";
 import { outcome } from "@/lib/scoring";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,7 @@ function Admin() {
   const qc = useQueryClient();
   const { data: matches } = useMatches();
   const { data: teams } = useTeams();
+  const { data: clubMatches } = useClubMatches();
   const fetchAdminBonus = useServerFn(getAdminBonusQuestions);
   const fetchAdminProfiles = useServerFn(getAdminProfiles);
   const { data: bonus } = useQuery({
@@ -42,7 +43,7 @@ function Admin() {
     queryFn: () => fetchAdminProfiles({}),
     enabled: !!user && isAdmin,
   });
-  const [tab, setTab] = useState<"matches" | "bonus" | "users" | "fixtures" | "knockout" | "ligas" | "preds" | "stats" | "encuesta" | "anuncios">("matches");
+  const [tab, setTab] = useState<"matches" | "bonus" | "users" | "fixtures" | "ligas" | "preds" | "stats" | "encuesta" | "anuncios">("matches");
   const sync = useServerFn(syncResults);
   const fetchFixtures = useServerFn(fetchWorldCupFixtures);
   const [syncing, setSyncing] = useState(false);
@@ -117,7 +118,7 @@ function Admin() {
       </div>
 
       <div className="flex gap-2 flex-wrap">
-        {[["matches","Partidos"],["bonus","Bonus"],["users","Participantes"],["fixtures","Fixtures API"],["knockout","Eliminatorias"],["ligas","Ligas"],["preds","Pronósticos"],["stats","Stats reales"],["encuesta","Encuesta"],["anuncios","Anuncios"]].map(([k,l]) => (
+        {[["matches","Partidos"],["bonus","Bonus"],["users","Participantes"],["fixtures","Fixtures API"],["ligas","Ligas"],["preds","Pronósticos"],["stats","Stats reales"],["encuesta","Encuesta"],["anuncios","Anuncios"]].map(([k,l]) => (
           <button key={k} onClick={() => setTab(k as any)}
             className={`px-3 py-1.5 rounded-full text-sm border ${tab===k ? "bg-primary text-primary-foreground border-primary" : "border-border"}`}>
             {l}
@@ -126,10 +127,23 @@ function Admin() {
       </div>
 
       {tab === "matches" && (
-        <div className="space-y-2">
-          {(matches ?? []).map((m: any) => (
-            <AdminMatchRow key={m.id} match={m} onChange={() => qc.invalidateQueries({ queryKey: ["matches"] })} />
+        <div className="space-y-4">
+          {Object.entries(
+            (clubMatches ?? []).reduce((acc: Record<number, any[]>, m: any) => {
+              (acc[m.matchday] ||= []).push(m);
+              return acc;
+            }, {})
+          ).map(([matchday, list]) => (
+            <div key={matchday} className="space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Jornada {matchday}</h3>
+              {list.map((m: any) => (
+                <AdminClubMatchRow key={m.id} match={m} onChange={() => qc.invalidateQueries({ queryKey: ["club_matches"] })} />
+              ))}
+            </div>
           ))}
+          {(clubMatches ?? []).length === 0 && (
+            <p className="text-sm text-muted-foreground">No hay partidos cargados todavía.</p>
+          )}
         </div>
       )}
       {tab === "bonus" && <AdminBonus bonus={bonus ?? []} teams={teams ?? []} onChange={() => qc.invalidateQueries({ queryKey: ["admin_bonus_questions"] })} />}
@@ -170,17 +184,6 @@ function Admin() {
             </ul>
           </div>
         </div>
-      )}
-      {tab === "knockout" && (
-        <AdminKnockoutSection
-          matches={(matches ?? []).filter((m: any) =>
-            ["round_of_32","round_of_16","quarter_final","semi_final","third_place","final"].includes(m.stage)
-          )}
-          teams={teams ?? []}
-          onSync={doSync}
-          syncing={syncing}
-          onChange={() => qc.invalidateQueries({ queryKey: ["matches"] })}
-        />
       )}
       {tab === "fixtures" && (
         <div className="space-y-3">
@@ -253,6 +256,91 @@ function Admin() {
       {tab === "stats" && <AdminRealStats />}
       {tab === "encuesta" && <AdminSurvey profiles={profiles ?? []} />}
       {tab === "anuncios" && <AdminAnnouncements />}
+    </div>
+  );
+}
+
+// ── Admin: Partidos de clubes (LaLiga / Champions) ────────────
+
+function AdminClubMatchRow({ match, onChange }: { match: any; onChange: () => void }) {
+  const [home, setHome] = useState<string>(match.home_score?.toString() ?? "");
+  const [away, setAway] = useState<string>(match.away_score?.toString() ?? "");
+  const [tier, setTier] = useState<"normal" | "premium" | "megapremium">(
+    match.is_megapremium ? "megapremium" : match.is_premium ? "premium" : "normal"
+  );
+  const [locked, setLocked] = useState(match.predictions_locked);
+  const [saving, setSaving] = useState(false);
+
+  const homeName = match.home?.short_name ?? match.home?.name ?? "?";
+  const awayName = match.away?.short_name ?? match.away?.name ?? "?";
+  const kickoff = new Date(match.utc_date).toLocaleString("es-ES", {
+    weekday: "short", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit",
+  });
+
+  async function save() {
+    setSaving(true);
+    const update: any = {
+      is_premium: tier === "premium",
+      is_megapremium: tier === "megapremium",
+      predictions_locked: locked,
+    };
+    if (home !== "" && away !== "") {
+      update.home_score = Number(home);
+      update.away_score = Number(away);
+      update.status = "FINISHED";
+    } else {
+      update.home_score = null;
+      update.away_score = null;
+      update.status = "SCHEDULED";
+    }
+    const { error } = await (supabase as any).from("club_matches").update(update).eq("id", match.id);
+    setSaving(false);
+    if (error) toast.error(error.message);
+    else { toast.success("Guardado"); onChange(); }
+  }
+
+  return (
+    <div className={`rounded-xl border bg-card p-3 shadow-soft ${
+      tier === "megapremium" ? "border-red-500/50" : tier === "premium" ? "border-gold/40" : "border-border"
+    }`}>
+      <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+        <span>{kickoff}</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            {(["normal", "premium", "megapremium"] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setTier(t)}
+                className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border transition-colors ${
+                  tier === t
+                    ? t === "megapremium" ? "bg-red-600 text-white border-red-600"
+                    : t === "premium" ? "bg-gold text-gold-foreground border-gold"
+                    : "bg-muted text-foreground border-border"
+                    : "border-border text-muted-foreground hover:bg-muted"
+                }`}
+              >
+                {t === "megapremium" ? "Mega" : t === "premium" ? "Premium" : "Normal"}
+              </button>
+            ))}
+          </div>
+          <label className="flex items-center gap-1 text-foreground">
+            <Lock className="h-3 w-3" /> Bloquear
+            <Switch checked={locked} onCheckedChange={setLocked} />
+          </label>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-[1fr_auto_1fr_auto] items-center gap-2">
+        <div className="text-right truncate">{homeName}</div>
+        <div className="flex items-center gap-1">
+          <Input type="number" min={0} value={home} onChange={(e) => setHome(e.target.value)} className="w-14 text-center font-bold" />
+          <span>–</span>
+          <Input type="number" min={0} value={away} onChange={(e) => setAway(e.target.value)} className="w-14 text-center font-bold" />
+        </div>
+        <div className="truncate">{awayName}</div>
+        <Button size="sm" disabled={saving} onClick={save}>Guardar</Button>
+      </div>
     </div>
   );
 }
