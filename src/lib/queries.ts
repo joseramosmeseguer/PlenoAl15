@@ -92,13 +92,29 @@ export function useTeams() {
   });
 }
 
+export function useMyProfile(userId?: string) {
+  return useQuery({
+    queryKey: ["my_profile", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("profiles")
+        .select("id, display_name, avatar_emoji, plays_individually")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 export function useProfiles() {
   return useQuery({
     queryKey: ["profiles"],
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from("profiles")
-        .select("id, display_name, avatar_emoji, created_at, updated_at, is_hidden")
+        .select("id, display_name, avatar_emoji, created_at, updated_at, is_hidden, plays_individually")
         .eq("is_hidden", false)
         .order("display_name");
       if (error) throw error;

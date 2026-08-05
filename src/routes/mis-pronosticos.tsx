@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useClubMatches, useMyClubPredictions } from "@/lib/queries";
 import { useAuth } from "@/lib/auth";
@@ -55,8 +55,6 @@ function MyPredictions() {
   );
   const firstDate = list[0] ? new Date(list[0].utc_date) : null;
 
-  if (!user) return null;
-
   return (
     <div className="space-y-5">
       {/* Header */}
@@ -66,6 +64,12 @@ function MyPredictions() {
         </div>
         <h1 className="display text-3xl mt-0.5">Todos los pronósticos</h1>
       </div>
+
+      {!user && (
+        <div className="rounded-xl border border-dashed border-gold/40 bg-card px-4 py-2.5 text-xs text-muted-foreground text-center">
+          Estás viendo los partidos como invitado. Crea una cuenta para poder pronosticar.
+        </div>
+      )}
 
       {/* Selector de jornada */}
       <div className="flex items-center gap-2">
@@ -125,6 +129,7 @@ function MyPredictions() {
 
 function ClubMatchCard({ match, pred, bg }: { match: any; pred?: { home_score: number; away_score: number }; bg: string }) {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const qc = useQueryClient();
   const homeName = match.home?.name ?? "?";
   const awayName = match.away?.name ?? "?";
@@ -203,7 +208,11 @@ function ClubMatchCard({ match, pred, bg }: { match: any; pred?: { home_score: n
             ) : (
               <button
                 type="button"
-                onClick={() => !isFinished && setEditing(true)}
+                onClick={() => {
+                  if (isFinished) return;
+                  if (!user) { navigate({ to: "/login" }); return; }
+                  setEditing(true);
+                }}
                 disabled={isFinished}
                 className="flex flex-col items-center gap-1 rounded-2xl border-2 border-gold bg-black/60 px-4 py-2 min-w-[84px] disabled:opacity-90"
               >
@@ -213,7 +222,7 @@ function ClubMatchCard({ match, pred, bg }: { match: any; pred?: { home_score: n
                 </span>
                 {!isFinished && (
                   <span className="flex items-center gap-1 text-[9px] text-white/50">
-                    <RotateCw className="h-2.5 w-2.5" /> Pulsa para editar
+                    <RotateCw className="h-2.5 w-2.5" /> {user ? "Pulsa para editar" : "Inicia sesión para pronosticar"}
                   </span>
                 )}
               </button>

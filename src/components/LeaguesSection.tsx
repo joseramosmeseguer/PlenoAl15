@@ -465,11 +465,13 @@ export function LeagueOnboarding({ onJoined }: { onJoined?: () => void }) {
 
   async function joinIndividually() {
     setJoiningSolo(true);
-    const { error } = await (supabase as any).rpc("join_default_league");
+    const { error } = await (supabase as any)
+      .from("profiles")
+      .update({ plays_individually: true })
+      .eq("id", user!.id);
     setJoiningSolo(false);
     if (error) { toast.error(error.message); return; }
-    qc.invalidateQueries({ queryKey: ["my_leagues", user!.id] });
-    qc.invalidateQueries({ queryKey: ["all_league_members"] });
+    qc.invalidateQueries({ queryKey: ["my_profile", user!.id] });
     onJoined?.();
   }
 

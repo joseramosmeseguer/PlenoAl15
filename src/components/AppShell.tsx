@@ -1,8 +1,8 @@
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { Home, Trophy, Calendar, ListChecks, BookOpen, Shield, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { useMyLeagues } from "@/lib/queries";
+import { useMyLeagues, useMyProfile } from "@/lib/queries";
 import { LeagueOnboarding } from "@/components/LeaguesSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,13 +20,15 @@ const NAV = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, isAdmin, signOut, loading } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [nameJustSet, setNameJustSet] = useState(false);
   const { data: myLeagues, isLoading: leaguesLoading } = useMyLeagues(user?.id);
+  const { data: myProfile, isLoading: profileLoading } = useMyProfile(user?.id);
   const nameAlreadyChosen = !!user && (!!localStorage.getItem(`name_changed_${user.id}`) || nameJustSet);
   const needsName = !loading && !!user && !nameAlreadyChosen;
-  const needsLeague = !loading && !leaguesLoading && !!user && !needsName && (myLeagues ?? []).length === 0;
+  const needsLeague =
+    !loading && !leaguesLoading && !profileLoading && !!user && !needsName &&
+    !myProfile?.plays_individually && (myLeagues ?? []).length === 0;
 
   if (loading) {
     return (
@@ -36,11 +38,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
-    if (location.pathname !== "/login") {
-      // redirect on next tick
-      queueMicrotask(() => navigate({ to: "/login" }));
-    }
+  // Login y recuperar contraseña son pantallas a pantalla completa, sin cabecera.
+  if (!user && (location.pathname === "/login" || location.pathname === "/reset-password")) {
     return <>{children}</>;
   }
 
@@ -78,21 +77,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
-            {isAdmin && (
+            {user ? (
+              <>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
+                      location.pathname.startsWith("/admin")
+                        ? "bg-gold text-gold-foreground"
+                        : "text-gold/90 hover:bg-white/10"
+                    }`}
+                  >
+                    <Shield className="h-4 w-4" /> Admin
+                  </Link>
+                )}
+                <Button variant="ghost" size="sm" className="text-white/80 hover:bg-white/10 hover:text-white" onClick={signOut}>
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
               <Link
-                to="/admin"
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
-                  location.pathname.startsWith("/admin")
-                    ? "bg-gold text-gold-foreground"
-                    : "text-gold/90 hover:bg-white/10"
-                }`}
+                to="/login"
+                className="px-3 py-2 rounded-md text-sm font-bold bg-gold text-gold-foreground hover:bg-gold/90 transition-colors"
               >
-                <Shield className="h-4 w-4" /> Admin
+                Crear cuenta / Entrar
               </Link>
             )}
-            <Button variant="ghost" size="sm" className="text-white/80 hover:bg-white/10 hover:text-white" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
-            </Button>
           </nav>
           <button className="md:hidden p-2" onClick={() => setOpen(!open)} aria-label="Menú">
             {open ? <X /> : <Menu />}
@@ -111,20 +121,32 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   {n.label}
                 </Link>
               ))}
-              {isAdmin && (
-                <Link to="/admin" onClick={() => setOpen(false)} className="px-3 py-2 rounded-md text-gold flex items-center gap-2">
-                  <Shield className="h-4 w-4" /> Admin
+              {user ? (
+                <>
+                  {isAdmin && (
+                    <Link to="/admin" onClick={() => setOpen(false)} className="px-3 py-2 rounded-md text-gold flex items-center gap-2">
+                      <Shield className="h-4 w-4" /> Admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => {
+                      setOpen(false);
+                      signOut();
+                    }}
+                    className="text-left px-3 py-2 rounded-md text-white/70 hover:bg-white/10"
+                  >
+                    Cerrar sesión
+                  </button>
+                </>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className="px-3 py-2 rounded-md text-gold font-bold"
+                >
+                  Crear cuenta / Entrar
                 </Link>
               )}
-              <button
-                onClick={() => {
-                  setOpen(false);
-                  signOut();
-                }}
-                className="text-left px-3 py-2 rounded-md text-white/70 hover:bg-white/10"
-              >
-                Cerrar sesión
-              </button>
             </div>
           </div>
         )}

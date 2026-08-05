@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useProfiles } from "@/lib/queries";
 import { CreateLeagueModal, JoinLeagueModal } from "@/components/LeaguesSection";
-import { Plus, KeyRound, BookOpen, Share2, Newspaper, ChevronRight } from "lucide-react";
+import { Plus, KeyRound, BookOpen, Share2, Newspaper, ChevronRight, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/inicio")({
@@ -30,12 +30,17 @@ function Inicio() {
     }
   }
 
-  const actions = [
-    { label: "Crear liga", icon: Plus, onClick: () => setCreateOpen(true), accent: "text-gold" },
-    { label: "Unirse a liga", icon: KeyRound, onClick: () => setJoinOpen(true), accent: "text-foreground" },
-    { label: "Ver reglas", icon: BookOpen, to: "/reglas", accent: "text-foreground" },
-    { label: "Invitar a amigos", icon: Share2, onClick: invite, accent: "text-foreground" },
-  ] as const;
+  const actions = user
+    ? [
+        { label: "Crear liga", icon: Plus, onClick: () => setCreateOpen(true), accent: "text-gold" },
+        { label: "Unirse a liga", icon: KeyRound, onClick: () => setJoinOpen(true), accent: "text-foreground" },
+        { label: "Ver reglas", icon: BookOpen, to: "/reglas", accent: "text-foreground" },
+        { label: "Invitar a amigos", icon: Share2, onClick: invite, accent: "text-foreground" },
+      ]
+    : [
+        { label: "Crear cuenta / Entrar", icon: LogIn, to: "/login", accent: "text-gold" },
+        { label: "Ver reglas", icon: BookOpen, to: "/reglas", accent: "text-foreground" },
+      ];
 
   return (
     <div className="space-y-6">
@@ -44,7 +49,7 @@ function Inicio() {
         <img src="/images/logo/logo-cuadrado.webp" alt="Pleno al 15" className="h-14 w-14 rounded-2xl shadow-gold shrink-0" />
         <div className="min-w-0">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Bienvenido</p>
-          <h1 className="display text-2xl truncate">{displayName}</h1>
+          <h1 className="display text-2xl truncate">{user ? displayName : "a Pleno al 15"}</h1>
         </div>
       </div>
 

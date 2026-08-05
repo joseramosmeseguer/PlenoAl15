@@ -292,7 +292,60 @@ function Home() {
     return pos;
   }, [allSnaps, selectedLeagueId, membersByLeague, usersWithLeagues]);
 
-  if (!user) return null;
+  if (!user) {
+    const demoList = list.slice(0, 10);
+    return (
+      <div className="space-y-5">
+        <div className="rounded-2xl border border-dashed border-gold/40 bg-card p-5 shadow-soft text-center space-y-2">
+          <p className="text-sm text-muted-foreground">Estás viendo Pleno al 15 como invitado.</p>
+          <Link
+            to="/login"
+            className="inline-flex items-center justify-center rounded-xl bg-gold text-gold-foreground font-bold px-5 py-2.5 text-sm hover:bg-gold/90 transition-colors"
+          >
+            Crear cuenta para pronosticar
+          </Link>
+        </div>
+
+        <section className="relative overflow-hidden rounded-3xl shadow-soft bg-gradient-pitch">
+          <div className="absolute inset-0 bg-gradient-to-t from-pitch-deep via-pitch-deep/80 to-pitch-deep/30" />
+          <div className="relative p-5 md:p-8 text-primary-foreground">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-gold/20 border border-gold/40 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-gold mb-2">
+              Muestra
+            </div>
+            <h2 className="display text-3xl mb-4 flex items-center gap-2">
+              <Trophy className="h-6 w-6 text-gold" /> Clasificación de ejemplo
+            </h2>
+            {isLoading ? (
+              <div className="py-8 text-white/70">Cargando…</div>
+            ) : (
+              <div className="space-y-1.5">
+                {demoList.map((r, i) => (
+                  <div
+                    key={r.user_id}
+                    className={`flex items-center gap-3 px-3 py-2 rounded-xl ${
+                      i === 0 ? "bg-gold/20 border border-gold/30" : "bg-white/5 border border-white/10"
+                    }`}
+                  >
+                    <span className="w-7 text-center font-bold text-base shrink-0">
+                      {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : <span className="text-white/60 text-sm">{i + 1}</span>}
+                    </span>
+                    <span className="flex-1 font-semibold truncate text-sm">{r.display_name}</span>
+                    <span className={`font-bold tabular-nums text-lg shrink-0 ${i === 0 ? "text-gold" : "text-white/90"}`}>
+                      {r.total_points}
+                      <span className="text-[10px] font-normal text-white/50 ml-0.5">pts</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <p className="text-[11px] text-white/50 mt-4">
+              Esto es solo un ejemplo — regístrate y crea o únete a una liga para tener tu propia clasificación.
+            </p>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-5">
@@ -355,6 +408,28 @@ function Home() {
         <span>Recarga la página de vez en cuando para ver las últimas actualizaciones.</span>
       </div>
 
+      {filterLeagueList.length === 0 ? (
+        <section className="rounded-2xl border border-border bg-card shadow-soft p-5 text-center space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Estás jugando de forma individual: tus puntos son solo tuyos, no compartes clasificación con nadie.
+          </p>
+          <div className="flex items-center justify-center gap-2">
+            <button
+              onClick={() => setCreateOpen(true)}
+              className="rounded-xl border border-gold/40 bg-gold/10 px-3 py-2 text-xs font-semibold text-gold hover:bg-gold/20 transition-colors"
+            >
+              Crear liga
+            </button>
+            <button
+              onClick={() => setJoinOpen(true)}
+              className="rounded-xl border border-border bg-card px-3 py-2 text-xs font-semibold hover:bg-muted transition-colors"
+            >
+              Unirme a una liga
+            </button>
+          </div>
+        </section>
+      ) : (
+      <>
       {/* Mis ligas */}
       <section className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
         <div className="px-4 py-3 border-b border-border">
@@ -498,6 +573,8 @@ function Home() {
           )}
         </div>
       </section>
+      </>
+      )}
 
       {/* Evolución diaria */}
       {isAdmin ? (
