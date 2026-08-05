@@ -60,9 +60,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-40 border-b border-border bg-gradient-night text-primary-foreground">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-full bg-gradient-gold flex items-center justify-center text-xl shadow-gold">
-              🏆
-            </div>
+            <img src="/images/logo/logo-cuadrado.webp" alt="" className="h-9 w-9 rounded-full shadow-gold" />
             <div className="display text-2xl tracking-wide">Pleno al 15</div>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
