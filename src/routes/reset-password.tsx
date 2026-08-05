@@ -4,11 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import heroImg from "@/assets/hero-trophy.jpg";
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPasswordPage,
-  head: () => ({ meta: [{ title: "Nueva contraseña · El Mundial" }] }),
+  head: () => ({ meta: [{ title: "Nueva contraseña · Pleno al 15" }] }),
 });
 
 function ResetPasswordPage() {
@@ -37,12 +36,9 @@ function ResetPasswordPage() {
 
   return (
     <div className="min-h-screen grid md:grid-cols-2 bg-gradient-night text-primary-foreground">
-      <div className="relative hidden md:block">
-        <img src={heroImg} alt="Trofeo del Mundial" className="absolute inset-0 h-full w-full object-cover opacity-90" width={1920} height={1080} />
-        <div className="absolute inset-0 bg-gradient-to-tr from-pitch-deep/90 via-pitch-deep/30 to-transparent" />
+      <div className="relative hidden md:block bg-gradient-pitch">
         <div className="relative z-10 h-full flex flex-col justify-end p-10">
-          <div className="display text-6xl text-gold leading-none">El Mundial</div>
-          <div className="display text-6xl leading-none">2026</div>
+          <div className="display text-6xl text-gold leading-none">Pleno al 15</div>
         </div>
       </div>
 

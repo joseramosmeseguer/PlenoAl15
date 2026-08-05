@@ -2,21 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useClubMatches } from "@/lib/queries";
 import { useAuth } from "@/lib/auth";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Calendar, BookOpen } from "lucide-react";
-import { EspecialesContent } from "@/components/EspecialesContent";
 
 export const Route = createFileRoute("/mis-pronosticos")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    tab: (search.tab === "especiales" ? "especiales" : "partidos") as "partidos" | "especiales",
-  }),
   component: MyPredictions,
   head: () => ({ meta: [{ title: "Pronósticos · Pleno al 15" }] }),
 });
 
 function MyPredictions() {
   const { user } = useAuth();
-  const { tab: initialTab } = Route.useSearch();
   if (!user) return null;
   const { data: matches } = useClubMatches();
   const allMatches = matches ?? [];
@@ -51,65 +45,50 @@ function MyPredictions() {
         <p className="text-white/70 text-sm mt-1">Partidos de LaLiga.</p>
       </div>
 
-      <Tabs defaultValue={initialTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 h-auto p-1 gap-1">
-          <TabsTrigger value="partidos" className="flex items-center gap-2 py-2.5 text-sm font-semibold data-[state=active]:shadow-md">
-            ⚽ Partidos
-          </TabsTrigger>
-          <TabsTrigger value="especiales" className="flex items-center gap-2 py-2.5 text-sm font-semibold data-[state=active]:shadow-md">
-            ⭐ Especiales
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="partidos" className="space-y-4 mt-4">
-          <div className="flex items-center gap-2">
-            {(["upcoming", "finished", "all"] as const).map((key) => {
-              const label = key === "upcoming" ? "Próximos" : key === "finished" ? "Jugados" : "Todos";
-              return (
-                <button
-                  key={key}
-                  onClick={() => setMatchFilter(key)}
-                  className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
-                    matchFilter === key
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {label}
-                </button>
-              );
-            })}
-            <Link
-              to="/reglas"
-              className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground border border-border rounded-full px-3 py-1.5 transition-colors"
-            >
-              <BookOpen className="h-3 w-3" /> Reglas
-            </Link>
-          </div>
-          {Object.keys(grouped).length === 0 && (
-            <p className="text-sm text-muted-foreground py-4 text-center">No hay partidos en esta sección.</p>
-          )}
-          <div className="space-y-6">
-            {Object.entries(grouped).map(([day, list]) => (
-              <section key={day} className="space-y-3">
-                <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                  <Calendar className="h-3.5 w-3.5" />
-                  {day}
-                </h2>
-                <div className="grid gap-3">
-                  {list.map((m: any) => (
-                    <ClubMatchCard key={m.id} match={m} />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="especiales" className="mt-4">
-          <EspecialesContent showHero={false} />
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          {(["upcoming", "finished", "all"] as const).map((key) => {
+            const label = key === "upcoming" ? "Próximos" : key === "finished" ? "Jugados" : "Todos";
+            return (
+              <button
+                key={key}
+                onClick={() => setMatchFilter(key)}
+                className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
+                  matchFilter === key
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
+          <Link
+            to="/reglas"
+            className="ml-auto flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground border border-border rounded-full px-3 py-1.5 transition-colors"
+          >
+            <BookOpen className="h-3 w-3" /> Reglas
+          </Link>
+        </div>
+        {Object.keys(grouped).length === 0 && (
+          <p className="text-sm text-muted-foreground py-4 text-center">No hay partidos en esta sección.</p>
+        )}
+        <div className="space-y-6">
+          {Object.entries(grouped).map(([day, list]) => (
+            <section key={day} className="space-y-3">
+              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                <Calendar className="h-3.5 w-3.5" />
+                {day}
+              </h2>
+              <div className="grid gap-3">
+                {list.map((m: any) => (
+                  <ClubMatchCard key={m.id} match={m} />
+                ))}
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
