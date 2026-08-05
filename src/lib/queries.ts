@@ -52,6 +52,20 @@ export function useMatches() {
   });
 }
 
+export function useClubMatches() {
+  return useQuery({
+    queryKey: ["club_matches"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("club_matches")
+        .select("*, home:club_teams!club_matches_home_team_id_fkey(*), away:club_teams!club_matches_away_team_id_fkey(*)")
+        .order("utc_date");
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 export function useTeams() {
   return useQuery({
     queryKey: ["teams"],
