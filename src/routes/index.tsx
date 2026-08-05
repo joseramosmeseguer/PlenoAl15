@@ -390,11 +390,11 @@ function Home() {
                 onClick={() => selectLeague(league.id)}
                 className="flex items-center gap-3 flex-1 min-w-0 text-left"
               >
-                <span className="text-xl shrink-0">👥</span>
+                <span className="text-xl shrink-0">{league.is_default ? "👤" : "👥"}</span>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className={`font-semibold text-sm truncate ${isSelected ? "text-primary" : "text-foreground"}`}>
-                      {league.name}
+                      {league.is_default ? "Individual" : league.name}
                     </span>
                   </div>
                   <div className="text-xs text-muted-foreground">{memberCount} participantes</div>
@@ -407,7 +407,7 @@ function Home() {
               </button>
               {isLeagueAdmin ? (
                 <button
-                  onClick={() => setManageLeague({ id: league.id, name: league.name })}
+                  onClick={() => setManageLeague({ id: league.id, name: league.is_default ? "Individual" : league.name })}
                   className="shrink-0 text-[11px] font-medium text-muted-foreground border border-border rounded-lg px-2 py-1 hover:bg-muted transition-colors"
                 >
                   Gestionar
@@ -469,7 +469,7 @@ function Home() {
           <div className="flex items-center justify-between mb-4">
             <div>
               <div className="text-xs uppercase tracking-widest text-gold/90">
-                {selectedLeague ? "Tu liga" : "Ranking mundial"}
+                {selectedLeague && !selectedLeague.is_default ? "Tu liga" : "Clasificación"}
               </div>
               <motion.h2
                 key={selectedLeagueId ?? "global"}
@@ -480,7 +480,7 @@ function Home() {
               >
                 <span className="text-gold flex items-center gap-2">
                   <Trophy className="h-7 w-7" />
-                  {selectedLeague ? selectedLeague.name : "Global"}
+                  {selectedLeague && !selectedLeague.is_default ? selectedLeague.name : "Clasificación"}
                 </span>
               </motion.h2>
             </div>
