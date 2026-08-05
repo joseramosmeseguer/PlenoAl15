@@ -9,62 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as ReglasRouteImport } from './routes/reglas'
-import { Route as PronosticosRouteImport } from './routes/pronosticos'
-import { Route as MisPronosticosRouteImport } from './routes/mis-pronosticos'
-import { Route as MinijuegoRouteImport } from './routes/minijuego'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as EstadisticasRouteImport } from './routes/estadisticas'
-import { Route as EliminatoriasRouteImport } from './routes/eliminatorias'
-import { Route as CalendarioRouteImport } from './routes/calendario'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as CalendarioRouteImport } from './routes/calendario'
+import { Route as EliminatoriasRouteImport } from './routes/eliminatorias'
+import { Route as EstadisticasRouteImport } from './routes/estadisticas'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as MinijuegoRouteImport } from './routes/minijuego'
+import { Route as MisPronosticosRouteImport } from './routes/mis-pronosticos'
+import { Route as PronosticosRouteImport } from './routes/pronosticos'
+import { Route as ReglasRouteImport } from './routes/reglas'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as ApiPublicHooksDailySnapshotRouteImport } from './routes/api/public/hooks/daily-snapshot'
 
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReglasRoute = ReglasRouteImport.update({
-  id: '/reglas',
-  path: '/reglas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PronosticosRoute = PronosticosRouteImport.update({
-  id: '/pronosticos',
-  path: '/pronosticos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MisPronosticosRoute = MisPronosticosRouteImport.update({
-  id: '/mis-pronosticos',
-  path: '/mis-pronosticos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MinijuegoRoute = MinijuegoRouteImport.update({
-  id: '/minijuego',
-  path: '/minijuego',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EstadisticasRoute = EstadisticasRouteImport.update({
-  id: '/estadisticas',
-  path: '/estadisticas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EliminatoriasRoute = EliminatoriasRouteImport.update({
-  id: '/eliminatorias',
-  path: '/eliminatorias',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CalendarioRoute = CalendarioRouteImport.update({
-  id: '/calendario',
-  path: '/calendario',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -72,9 +32,49 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CalendarioRoute = CalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EliminatoriasRoute = EliminatoriasRouteImport.update({
+  id: '/eliminatorias',
+  path: '/eliminatorias',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EstadisticasRoute = EstadisticasRouteImport.update({
+  id: '/estadisticas',
+  path: '/estadisticas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MinijuegoRoute = MinijuegoRouteImport.update({
+  id: '/minijuego',
+  path: '/minijuego',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MisPronosticosRoute = MisPronosticosRouteImport.update({
+  id: '/mis-pronosticos',
+  path: '/mis-pronosticos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PronosticosRoute = PronosticosRouteImport.update({
+  id: '/pronosticos',
+  path: '/pronosticos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReglasRoute = ReglasRouteImport.update({
+  id: '/reglas',
+  path: '/reglas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicHooksDailySnapshotRoute =
@@ -189,67 +189,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reglas': {
-      id: '/reglas'
-      path: '/reglas'
-      fullPath: '/reglas'
-      preLoaderRoute: typeof ReglasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pronosticos': {
-      id: '/pronosticos'
-      path: '/pronosticos'
-      fullPath: '/pronosticos'
-      preLoaderRoute: typeof PronosticosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mis-pronosticos': {
-      id: '/mis-pronosticos'
-      path: '/mis-pronosticos'
-      fullPath: '/mis-pronosticos'
-      preLoaderRoute: typeof MisPronosticosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/minijuego': {
-      id: '/minijuego'
-      path: '/minijuego'
-      fullPath: '/minijuego'
-      preLoaderRoute: typeof MinijuegoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/estadisticas': {
-      id: '/estadisticas'
-      path: '/estadisticas'
-      fullPath: '/estadisticas'
-      preLoaderRoute: typeof EstadisticasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/eliminatorias': {
-      id: '/eliminatorias'
-      path: '/eliminatorias'
-      fullPath: '/eliminatorias'
-      preLoaderRoute: typeof EliminatoriasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calendario': {
-      id: '/calendario'
-      path: '/calendario'
-      fullPath: '/calendario'
-      preLoaderRoute: typeof CalendarioRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -259,11 +203,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/calendario': {
+      id: '/calendario'
+      path: '/calendario'
+      fullPath: '/calendario'
+      preLoaderRoute: typeof CalendarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eliminatorias': {
+      id: '/eliminatorias'
+      path: '/eliminatorias'
+      fullPath: '/eliminatorias'
+      preLoaderRoute: typeof EliminatoriasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/estadisticas': {
+      id: '/estadisticas'
+      path: '/estadisticas'
+      fullPath: '/estadisticas'
+      preLoaderRoute: typeof EstadisticasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/minijuego': {
+      id: '/minijuego'
+      path: '/minijuego'
+      fullPath: '/minijuego'
+      preLoaderRoute: typeof MinijuegoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mis-pronosticos': {
+      id: '/mis-pronosticos'
+      path: '/mis-pronosticos'
+      fullPath: '/mis-pronosticos'
+      preLoaderRoute: typeof MisPronosticosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pronosticos': {
+      id: '/pronosticos'
+      path: '/pronosticos'
+      fullPath: '/pronosticos'
+      preLoaderRoute: typeof PronosticosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reglas': {
+      id: '/reglas'
+      path: '/reglas'
+      fullPath: '/reglas'
+      preLoaderRoute: typeof ReglasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/hooks/daily-snapshot': {

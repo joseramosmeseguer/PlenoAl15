@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Trophy, Calendar, Users, ListChecks, BookOpen, BarChart3, Shield, LogOut, Menu, X, Swords } from "lucide-react";
+import { Trophy, Calendar, ListChecks, BookOpen, Shield, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMyLeagues } from "@/lib/queries";
@@ -12,9 +12,6 @@ import { toast } from "sonner";
 const NAV = [
   { to: "/", label: "Clasificación", icon: Trophy },
   { to: "/mis-pronosticos", label: "Pronósticos", icon: ListChecks },
-  { to: "/eliminatorias", label: "Eliminatorias", icon: Swords },
-  { to: "/estadisticas", label: "Estadísticas", icon: BarChart3 },
-  { to: "/pronosticos", label: "Todos", icon: Users },
   { to: "/calendario", label: "Calendario", icon: Calendar },
   { to: "/reglas", label: "Reglas", icon: BookOpen },
 ] as const;
@@ -57,7 +54,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <div className="h-9 w-9 rounded-full bg-gradient-gold flex items-center justify-center text-xl shadow-gold">
               🏆
             </div>
-            <div className="display text-2xl tracking-wide">El Mundial</div>
+            <div className="display text-2xl tracking-wide">Pleno al 15</div>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
             {NAV.map((n) => {
@@ -130,8 +127,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Bottom nav móvil */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur">
-        <div className="grid grid-cols-5">
-          {NAV.slice(0, 5).map((n) => {
+        <div className="grid grid-cols-4">
+          {NAV.map((n) => {
             const Icon = n.icon;
             const active = location.pathname === n.to;
             return (
