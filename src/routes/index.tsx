@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Crown, Sparkles, KeyRound, Plus, BookOpen, Pencil, ChevronRight, ChevronDown, Share2, Check } from "lucide-react";
+import { Trophy, Crown, Sparkles, KeyRound, Plus, BookOpen, Pencil, ChevronDown, Share2, Check } from "lucide-react";
 import { useLeaderboard, useDailyWinner, useProfiles, useMyLeagues, useLeagues, useMyLeagueInviteCodes, useAllLeagueMembers, useAllSnapshots, useBonusQuestions, useAnnouncements } from "@/lib/queries";
 import { AnnouncementCard } from "@/components/AnnouncementCard";
 import { isAnnouncementLive } from "@/lib/announcements";
@@ -358,20 +358,6 @@ function Home() {
 
       {/* Anuncios creados desde admin */}
       <CustomAnnouncements />
-
-      {/* Card global — discreta */}
-      <button
-        onClick={() => selectLeague(null)}
-        className={`w-full flex items-center gap-3 rounded-xl px-4 py-2.5 text-left transition-all border ${
-          !selectedLeagueId
-            ? "bg-muted border-border text-foreground"
-            : "bg-transparent border-border/50 text-muted-foreground hover:bg-muted/50"
-        }`}
-      >
-        <span className="text-base">🌍</span>
-        <span className="text-xs font-medium flex-1">Clasificación Global · {list.length} participantes</span>
-        <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-      </button>
 
       {/* Aviso recarga */}
       <div className="flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/8 px-2.5 py-1.5 text-xs text-amber-700 dark:text-amber-400">

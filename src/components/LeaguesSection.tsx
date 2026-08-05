@@ -457,8 +457,21 @@ export function ManageLeagueModal({
 // ── Onboarding obligatorio para usuarios nuevos ──────────────
 
 export function LeagueOnboarding({ onJoined }: { onJoined?: () => void }) {
+  const { user } = useAuth();
+  const qc = useQueryClient();
   const [showCreate, setShowCreate] = useState(false);
   const [showJoin, setShowJoin] = useState(false);
+  const [joiningSolo, setJoiningSolo] = useState(false);
+
+  async function joinIndividually() {
+    setJoiningSolo(true);
+    const { error } = await (supabase as any).rpc("join_default_league");
+    setJoiningSolo(false);
+    if (error) { toast.error(error.message); return; }
+    qc.invalidateQueries({ queryKey: ["my_leagues", user!.id] });
+    qc.invalidateQueries({ queryKey: ["all_league_members"] });
+    onJoined?.();
+  }
 
   return (
     <>
@@ -468,7 +481,7 @@ export function LeagueOnboarding({ onJoined }: { onJoined?: () => void }) {
         </div>
         <h1 className="font-display text-4xl uppercase text-gold leading-none mb-2">Bienvenido/a</h1>
         <p className="text-white/70 text-sm max-w-xs mb-8">
-          Para participar en la quiniela necesitas estar en una liga. Únete a la de un amigo o crea la tuya propia.
+          Para participar necesitas estar en una liga. Únete a la de un amigo, crea la tuya propia, o juega de forma individual.
         </p>
 
         <div className="w-full max-w-xs space-y-3">
@@ -498,6 +511,22 @@ export function LeagueOnboarding({ onJoined }: { onJoined?: () => void }) {
               <div>
                 <p className="font-bold text-gold text-sm">Crear una liga</p>
                 <p className="text-xs text-white/60">Invita a tus amigos con un código único</p>
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={joinIndividually}
+            disabled={joiningSolo}
+            className="w-full rounded-2xl border border-white/10 bg-transparent px-5 py-4 text-left hover:bg-white/5 transition-colors disabled:opacity-50"
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white/70">
+                <Users className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-bold text-white/85 text-sm">{joiningSolo ? "Entrando…" : "Jugar individualmente"}</p>
+                <p className="text-xs text-white/50">Sin liga privada, para empezar a pronosticar ya</p>
               </div>
             </div>
           </button>

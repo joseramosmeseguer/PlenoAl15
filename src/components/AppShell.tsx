@@ -21,9 +21,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [showNameModal, setShowNameModal] = useState(false);
+  const [nameJustSet, setNameJustSet] = useState(false);
   const { data: myLeagues, isLoading: leaguesLoading } = useMyLeagues(user?.id);
-  const needsLeague = !loading && !leaguesLoading && !!user && (myLeagues ?? []).length === 0;
+  const nameAlreadyChosen = !!user && (!!localStorage.getItem(`name_changed_${user.id}`) || nameJustSet);
+  const needsName = !loading && !!user && !nameAlreadyChosen;
+  const needsLeague = !loading && !leaguesLoading && !!user && !needsName && (myLeagues ?? []).length === 0;
 
   if (loading) {
     return (
@@ -43,10 +45,16 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {needsLeague && <LeagueOnboarding onJoined={() => setShowNameModal(true)} />}
-      {showNameModal && !needsLeague && user && (
-        <OnboardingModal userId={user.id} onDone={() => setShowNameModal(false)} />
+      {needsName && user && (
+        <OnboardingModal
+          userId={user.id}
+          onDone={() => {
+            localStorage.setItem(`name_changed_${user.id}`, "1");
+            setNameJustSet(true);
+          }}
+        />
       )}
+      {!needsName && needsLeague && <LeagueOnboarding />}
       {/* Top bar */}
       <header className="sticky top-0 z-40 border-b border-border bg-gradient-night text-primary-foreground">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
