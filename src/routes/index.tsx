@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Crown, Sparkles, KeyRound, Plus, BookOpen, Pencil, ChevronDown, Share2, Check } from "lucide-react";
+import { Trophy, Crown, Sparkles, Pencil, ChevronDown, Check } from "lucide-react";
 import { useLeaderboard, useDailyWinner, useProfiles, useMyLeagues, useLeagues, useMyLeagueInviteCodes, useAllLeagueMembers, useAllSnapshots, useBonusQuestions, useAnnouncements } from "@/lib/queries";
 import { AnnouncementCard } from "@/components/AnnouncementCard";
 import { isAnnouncementLive } from "@/lib/announcements";
@@ -292,16 +292,6 @@ function Home() {
     return pos;
   }, [allSnaps, selectedLeagueId, membersByLeague, usersWithLeagues]);
 
-  function handleInvite() {
-    const url = window.location.origin;
-    const message = `🏆 Únete a Pleno al 15 conmigo. Pronostica los partidos y compite por el trofeo: ${url}`;
-    if (navigator.share) {
-      navigator.share({ title: "Pleno al 15", text: message, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(message).then(() => toast.success("Enlace copiado")).catch(() => {});
-    }
-  }
-
   if (!user) return null;
 
   return (
@@ -429,37 +419,6 @@ function Home() {
             )}
           </button>
         )}
-      </section>
-
-      {/* Acciones rápidas */}
-      <section>
-        <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">Acciones rápidas</div>
-        <div className="grid grid-cols-3 gap-2">
-          <button
-            onClick={() => setCreateOpen(true)}
-            className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-emerald-600/40 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-3 text-xs font-medium text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-950/50 transition-colors shadow-soft"
-          >
-            <Plus className="h-4 w-4" /> Crear liga
-          </button>
-          <button
-            onClick={() => setJoinOpen(true)}
-            className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-2 py-3 text-xs font-medium hover:bg-muted transition-colors shadow-soft"
-          >
-            <KeyRound className="h-4 w-4 text-muted-foreground" /> Unirse a liga
-          </button>
-          <Link
-            to="/reglas"
-            className="flex flex-col items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-2 py-3 text-xs font-medium hover:bg-muted transition-colors shadow-soft"
-          >
-            <BookOpen className="h-4 w-4 text-muted-foreground" /> Ver reglas
-          </Link>
-        </div>
-        <button
-          onClick={handleInvite}
-          className="mt-2 w-full flex items-center justify-center gap-1.5 rounded-xl border border-dashed border-border py-2 text-xs text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
-        >
-          <Share2 className="h-3.5 w-3.5" /> Invita a tus amigos
-        </button>
       </section>
 
       {/* Clasificación */}

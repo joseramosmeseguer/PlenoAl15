@@ -1,7 +1,10 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useProfiles } from "@/lib/queries";
-import { Newspaper } from "lucide-react";
+import { CreateLeagueModal, JoinLeagueModal } from "@/components/LeaguesSection";
+import { Plus, KeyRound, BookOpen, Share2, Newspaper, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/inicio")({
   component: Inicio,
@@ -14,19 +17,70 @@ function Inicio() {
   const myProfile = (profiles ?? []).find((p: any) => p.id === user?.id);
   const displayName = myProfile?.display_name ?? myProfile?.avatar_emoji ?? "campeón";
 
+  const [createOpen, setCreateOpen] = useState(false);
+  const [joinOpen, setJoinOpen] = useState(false);
+
+  function invite() {
+    const url = window.location.origin;
+    const message = `🏆 Únete a Pleno al 15 conmigo. Pronostica los partidos y compite por el trofeo: ${url}`;
+    if (navigator.share) {
+      navigator.share({ title: "Pleno al 15", text: message, url }).catch(() => {});
+    } else {
+      navigator.clipboard.writeText(message).then(() => toast.success("Enlace copiado")).catch(() => {});
+    }
+  }
+
+  const actions = [
+    { label: "Crear liga", icon: Plus, onClick: () => setCreateOpen(true), accent: "text-gold" },
+    { label: "Unirse a liga", icon: KeyRound, onClick: () => setJoinOpen(true), accent: "text-foreground" },
+    { label: "Ver reglas", icon: BookOpen, to: "/reglas", accent: "text-foreground" },
+    { label: "Invitar a amigos", icon: Share2, onClick: invite, accent: "text-foreground" },
+  ] as const;
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <img src="/images/logo/logo-cuadrado.webp" alt="Pleno al 15" className="h-12 w-12 rounded-xl shadow-soft" />
-        <h1 className="display text-3xl">Bienvenido, {displayName}</h1>
+      {/* Cabecera */}
+      <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-soft">
+        <img src="/images/logo/logo-cuadrado.webp" alt="Pleno al 15" className="h-14 w-14 rounded-2xl shadow-gold shrink-0" />
+        <div className="min-w-0">
+          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Bienvenido</p>
+          <h1 className="display text-2xl truncate">{displayName}</h1>
+        </div>
       </div>
 
-      <section className="rounded-2xl border border-border bg-card shadow-soft p-5">
-        <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground mb-3">
-          <Newspaper className="h-4 w-4" /> Noticias
-        </h2>
-        <p className="text-sm text-muted-foreground py-6 text-center">Todavía no hay noticias.</p>
+      {/* Accesos rápidos */}
+      <div className="grid grid-cols-2 gap-3">
+        {actions.map(({ label, icon: Icon, to, onClick, accent }) => {
+          const content = (
+            <>
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
+                <Icon className={`h-5 w-5 ${accent}`} />
+              </div>
+              <span className="font-semibold text-sm">{label}</span>
+            </>
+          );
+          const className = "flex flex-col items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft hover:bg-muted/60 transition-colors text-left";
+          return to ? (
+            <Link key={label} to={to} className={className}>{content}</Link>
+          ) : (
+            <button key={label} type="button" onClick={onClick} className={className}>{content}</button>
+          );
+        })}
+      </div>
+
+      {/* Noticias */}
+      <section className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+          <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground">
+            <Newspaper className="h-4 w-4" /> Noticias
+          </h2>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </div>
+        <p className="text-sm text-muted-foreground py-8 text-center">Todavía no hay noticias.</p>
       </section>
+
+      <CreateLeagueModal open={createOpen} onClose={() => setCreateOpen(false)} />
+      <JoinLeagueModal open={joinOpen} onClose={() => setJoinOpen(false)} />
     </div>
   );
 }
