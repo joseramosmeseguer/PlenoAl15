@@ -1,10 +1,3 @@
-import bosniaAndHerzegovina from "@/assets/bosnia-and-herzegovina.png";
-import czechRepublic from "@/assets/Republica Checa.png";
-import drCongo from "@/assets/RD Congo.png";
-import iraq from "@/assets/iraq.png";
-import sweden from "@/assets/sweden.png";
-import turkey from "@/assets/turkey.png";
-
 const CDN = "https://cdn.prod.website-files.com/68f550992570ca0322737dc2/";
 
 export const CREST_MAP: Record<string, string> = {
@@ -13,7 +6,7 @@ export const CREST_MAP: Record<string, string> = {
   AUS: CDN + "6a0b3a10e35263d68e6f439e_69fa8abfc42edca0f730781a_australia-national-team-footylogos.png",
   AUT: CDN + "68f9fc172630205d3271b9f1_austria-national-team-footballlogos-org.svg",
   BEL: CDN + "6a0b3a0fe2c051dd81874aac_68f9fc44d95277458c187c4f_belgium-national-team-footballlogos-org.png",
-  BIH: bosniaAndHerzegovina,
+  // BIH: sin crest local (usa emoji de bandera)
   BLV: CDN + "68fd19c09e5f5a79029eab87_bolivia-national-team-footballlogos-org.svg",
   BRA: CDN + "6a0b3a07dd70012891100817_68f9fc74eac3dc471d42c1f1_brazil-national-team-footballlogos-org.png",
   CAN: CDN + "6a0b3a09ff1d0f7cf9fc6892_68f9fcae7c3a768d2112f7cc_canada-national-team-footballlogos-org.png",
@@ -25,7 +18,7 @@ export const CREST_MAP: Record<string, string> = {
   CRC: CDN + "68f9fdb4ee4854a01e47aef4_costa-rica-national-team-footballlogos-org.svg",
   CRO: CDN + "68f9fe732030ba1891c2c1e7_croatia-national-team-footballlogos-org.svg",
   CUW: CDN + "6a0b3a0c450ecf35a44ec35a_690b58788ae9e26e532abfdf_curacao-national-team-footballlogos-org.png",
-  CZE: czechRepublic,
+  // CZE: sin crest local (usa emoji de bandera)
   ECU: CDN + "6a0b3a03e8cfc8f978c35242_68f9ffb9e5f5a02e2ddd6c89_ecuador-national-team-footballlogos-org.png",
   EGY: CDN + "6a0b39fd094c95a818967d17_68f9ffff9f0a363d783fca07_egypt-national-team-footballlogos-org.png",
   ENG: CDN + "6a0b39f4f81c2d9713bb1958_68fa004f9bad274585f92fd4_england-national-team-footballlogos-org.png",
@@ -37,7 +30,7 @@ export const CREST_MAP: Record<string, string> = {
   HAI: CDN + "6a0f4c6c910c48d9bace182a_692869cd3f30b984d69b7f75_haiti-national-team-footylogos.png",
   HON: CDN + "68fd1c7726a65040a95186eb_honduras-footballlogos-org.svg",
   IRN: CDN + "6a0b39f9be2380ec23ca8496_68fa01dc9c4cd3255b45967d_iran-national-team-footballlogos-org.png",
-  IRQ: iraq,
+  // IRQ: sin crest local (usa emoji de bandera)
   JAM: CDN + "68fd1d23910ca03ae4df37c5_jamaica-footballlogos-org.svg",
   JOR: CDN + "6a0b39fac9c45208a31ce544_68fd1d515ce3de4f3d2e23b0_jordan-footballlogos-org.png",
   JPN: CDN + "6a0b3a179bc2e28bf73ecd09_68fa02b609c96c8ed3c2cdf6_japan-national-team-footballlogos-org.png",
@@ -57,9 +50,9 @@ export const CREST_MAP: Record<string, string> = {
   SCO: CDN + "6a0b3a0e29b605309fb7f47b_68fa07134a7663c774887b1a_scotland-national-team-footballlogos-org.png",
   SEN: CDN + "6a0b3a052fcac044e973b7e1_68fa07554408d744a38f143f_senegal-national-team-footballlogos-org.png",
   SUI: CDN + "6a0b3a0d052b7e092df739cf_68fa0904f28db91037150be9_swiss-national-team-footballlogos-org.png",
-  SWE: sweden,
+  // SWE: sin crest local (usa emoji de bandera)
   TUN: CDN + "6a0b39fc9b5ae9ed29ad6646_68fa093b578f3b5329f80833_tunisia-national-team-footballlogos-org.png",
-  TUR: turkey,
+  // TUR: sin crest local (usa emoji de bandera)
   URU: CDN + "6a0b3a06d17821a2db9019ea_68fa0a1577c6612bb1154a07_uruguay-national-team-footballlogos-org.png",
   USA: CDN + "6a0b39f54269adc0c7a000c3_68fa0a65e8dbfe6ba33cb5e6_usa-national-team-footballlogos-org.png",
   UZB: CDN + "6a0b39fc12418491a747e862_68fd208e9bfd4ed3a9b30b6f_uzbekistan-national-team-footballlogos-org.png",

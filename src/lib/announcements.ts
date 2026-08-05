@@ -2,8 +2,6 @@
 // de la imagen (preset por clave o URL subida a Storage), y colores de la badge.
 import estadioClaro from "@/assets/EstadioNormalClaro.png";
 import estadioOscuro from "@/assets/EstadioNormalOscuro.png";
-import estadioEspana from "@/assets/EstadioSpain.png";
-import estadioEspana1 from "@/assets/EstadioSpain1.png";
 import estadioEpico from "@/assets/EstadioEpico1.png";
 import estadioEpico2 from "@/assets/EstadioEpico2.png";
 import estadioFutbol from "@/assets/Estadiofutbolfondo.png";
@@ -11,9 +9,6 @@ import balonPorteria from "@/assets/balonenporteria.webp";
 import anuncio1 from "@/assets/Anuncio1.png";
 import anuncio2 from "@/assets/Anuncio2.png";
 import anuncio3 from "@/assets/Anuncio 3.png";
-import spain2010 from "@/assets/spain-2010.jpg";
-import celebracion2010 from "@/assets/CelebracionMundial2010.jpg";
-import heroTrophy from "@/assets/hero-trophy.jpg";
 import eliminatorias from "@/assets/Eliminatorias2.png";
 
 export const ANNOUNCEMENT_IMAGES: { key: string; label: string; src: string }[] = [
@@ -22,15 +17,10 @@ export const ANNOUNCEMENT_IMAGES: { key: string; label: string; src: string }[] 
   { key: "anuncio3", label: "Anuncio 3", src: anuncio3 },
   { key: "estadio_claro", label: "Estadio claro", src: estadioClaro },
   { key: "estadio_oscuro", label: "Estadio oscuro", src: estadioOscuro },
-  { key: "estadio_espana", label: "Estadio España", src: estadioEspana },
-  { key: "estadio_espana1", label: "Estadio España 2", src: estadioEspana1 },
   { key: "estadio_epico", label: "Estadio épico", src: estadioEpico },
   { key: "estadio_epico2", label: "Estadio épico 2", src: estadioEpico2 },
   { key: "estadio_futbol", label: "Estadio fútbol", src: estadioFutbol },
   { key: "balon_porteria", label: "Balón en portería", src: balonPorteria },
-  { key: "spain_2010", label: "España 2010", src: spain2010 },
-  { key: "celebracion_2010", label: "Celebración 2010", src: celebracion2010 },
-  { key: "hero_trophy", label: "Trofeo", src: heroTrophy },
   { key: "eliminatorias", label: "Eliminatorias", src: eliminatorias },
 ];
 

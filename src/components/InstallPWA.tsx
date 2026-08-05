@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Download, X, ChevronDown, ChevronUp } from "lucide-react";
-import heroImg from "@/assets/hero-trophy.jpg";
+import heroImg from "@/assets/EstadioNormalOscuro.png";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
