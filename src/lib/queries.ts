@@ -66,6 +66,21 @@ export function useClubMatches() {
   });
 }
 
+export function useMyClubPredictions(userId?: string) {
+  return useQuery({
+    queryKey: ["club_predictions", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("club_predictions")
+        .select("*")
+        .eq("user_id", userId);
+      if (error) throw error;
+      return data;
+    },
+  });
+}
+
 export function useTeams() {
   return useQuery({
     queryKey: ["teams"],
