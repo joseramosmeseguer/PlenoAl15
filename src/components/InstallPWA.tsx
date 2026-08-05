@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Download, X, ChevronDown, ChevronUp } from "lucide-react";
-import heroImg from "@/assets/EstadioNormalOscuro.png";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -58,7 +57,7 @@ export function InstallPWA() {
 
   return (
     <div className="relative overflow-hidden rounded-2xl border border-gold/40 shadow-soft">
-      <img src={heroImg} alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover object-top" />
+      <img src="/images/logo/logo-cuadrado.webp" alt="" aria-hidden className="absolute inset-0 h-full w-full object-cover object-top" />
       <div className="absolute inset-0 bg-gradient-to-r from-pitch-deep/95 via-pitch-deep/80 to-pitch-deep/40" />
 
       <div className="relative p-3 text-primary-foreground">

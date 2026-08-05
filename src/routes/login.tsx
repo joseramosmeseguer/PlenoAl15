@@ -124,15 +124,19 @@ function LoginPage() {
               </button>
 
               <div className="text-center mb-6">
-                <div className="mx-auto h-14 w-14 rounded-full bg-gradient-gold flex items-center justify-center text-2xl shadow-gold">
-                  {mode === "forgot" ? "🔑" : "🏆"}
-                </div>
+                {mode === "forgot" ? (
+                  <div className="mx-auto h-14 w-14 rounded-full bg-gradient-gold flex items-center justify-center text-2xl shadow-gold">
+                    🔑
+                  </div>
+                ) : (
+                  <img src="/images/logo/logo-hexagono.webp" alt="Pleno al 15" className="mx-auto h-16 w-16" />
+                )}
                 <h1 className="display text-4xl mt-4">
                   {mode === "signin" ? "Entra a jugar" : mode === "signup" ? "Crea tu cuenta" : "Recuperar acceso"}
                 </h1>
-                <p className="text-white/70 mt-1 text-sm">
-                  {mode === "signin" ? "Inicia sesión y la web te recordará." : mode === "signup" ? "Solo se hace una vez." : "Te enviaremos un enlace para crear una contraseña nueva."}
-                </p>
+                {mode === "forgot" && (
+                  <p className="text-white/70 mt-1 text-sm">Te enviaremos un enlace para crear una contraseña nueva.</p>
+                )}
               </div>
 
               {mode === "forgot" ? (
@@ -148,11 +152,6 @@ function LoginPage() {
                 </form>
               ) : (
                 <>
-                  <p className="mb-3 text-center text-xs text-white/40 leading-relaxed">
-                    ¿Primera vez? Después del login te pediremos tu nombre y el código de tu liga.<br />
-                    Si ves un error al crear la cuenta, vuelve a intentarlo.
-                  </p>
-
                   <form onSubmit={submit} className="space-y-3">
                     <div>
                       <label className="text-sm text-white/80">Email</label>
