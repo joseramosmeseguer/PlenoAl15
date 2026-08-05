@@ -18,8 +18,8 @@ begin
   end if;
 
   if exists (
-    select 1 from public.league_memberships
-    where league_id = v_league.id and user_id = auth.uid()
+    select 1 from public.league_memberships lm
+    where lm.league_id = v_league.id and lm.user_id = auth.uid()
   ) then
     raise exception 'Ya eres miembro de esta liga';
   end if;

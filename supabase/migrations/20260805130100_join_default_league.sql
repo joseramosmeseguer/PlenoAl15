@@ -17,8 +17,8 @@ begin
   end if;
 
   if exists (
-    select 1 from public.league_memberships
-    where league_id = v_league.id and user_id = auth.uid()
+    select 1 from public.league_memberships lm
+    where lm.league_id = v_league.id and lm.user_id = auth.uid()
   ) then
     return query select v_league.id, v_league.name;
     return;
