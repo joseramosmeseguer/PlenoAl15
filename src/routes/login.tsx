@@ -78,7 +78,7 @@ function LoginPage() {
       <img src={estadioBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />
 
-      <div className={`relative z-10 min-h-screen flex justify-center p-6 ${mode === "welcome" ? "items-start pt-32 md:pt-36" : "items-center"}`}>
+      <div className={`relative z-10 min-h-screen flex justify-center p-6 ${mode === "welcome" ? "items-start pt-48 md:pt-52" : "items-center"}`}>
         <div className="w-full max-w-sm">
           {mode === "welcome" ? (
             <div className="text-center space-y-8">
