@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Trophy, Calendar, ListChecks, BookOpen, Shield, LogOut, Menu, X } from "lucide-react";
+import { Home, Trophy, Calendar, ListChecks, BookOpen, Shield, LogOut, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMyLeagues } from "@/lib/queries";
@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const NAV = [
+  { to: "/inicio", label: "Inicio", icon: Home },
   { to: "/", label: "Clasificación", icon: Trophy },
   { to: "/mis-pronosticos", label: "Pronósticos", icon: ListChecks },
   { to: "/calendario", label: "Calendario", icon: Calendar },
@@ -135,7 +136,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Bottom nav móvil */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur">
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-5">
           {NAV.map((n) => {
             const Icon = n.icon;
             const active = location.pathname === n.to;

@@ -14,6 +14,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CalendarioRouteImport } from './routes/calendario'
 import { Route as EliminatoriasRouteImport } from './routes/eliminatorias'
 import { Route as EstadisticasRouteImport } from './routes/estadisticas'
+import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MinijuegoRouteImport } from './routes/minijuego'
 import { Route as MisPronosticosRouteImport } from './routes/mis-pronosticos'
@@ -45,6 +46,11 @@ const EliminatoriasRoute = EliminatoriasRouteImport.update({
 const EstadisticasRoute = EstadisticasRouteImport.update({
   id: '/estadisticas',
   path: '/estadisticas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InicioRoute = InicioRouteImport.update({
+  id: '/inicio',
+  path: '/inicio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/calendario': typeof CalendarioRoute
   '/eliminatorias': typeof EliminatoriasRoute
   '/estadisticas': typeof EstadisticasRoute
+  '/inicio': typeof InicioRoute
   '/login': typeof LoginRoute
   '/minijuego': typeof MinijuegoRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/calendario': typeof CalendarioRoute
   '/eliminatorias': typeof EliminatoriasRoute
   '/estadisticas': typeof EstadisticasRoute
+  '/inicio': typeof InicioRoute
   '/login': typeof LoginRoute
   '/minijuego': typeof MinijuegoRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/calendario': typeof CalendarioRoute
   '/eliminatorias': typeof EliminatoriasRoute
   '/estadisticas': typeof EstadisticasRoute
+  '/inicio': typeof InicioRoute
   '/login': typeof LoginRoute
   '/minijuego': typeof MinijuegoRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/eliminatorias'
     | '/estadisticas'
+    | '/inicio'
     | '/login'
     | '/minijuego'
     | '/mis-pronosticos'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/eliminatorias'
     | '/estadisticas'
+    | '/inicio'
     | '/login'
     | '/minijuego'
     | '/mis-pronosticos'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/eliminatorias'
     | '/estadisticas'
+    | '/inicio'
     | '/login'
     | '/minijuego'
     | '/mis-pronosticos'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   CalendarioRoute: typeof CalendarioRoute
   EliminatoriasRoute: typeof EliminatoriasRoute
   EstadisticasRoute: typeof EstadisticasRoute
+  InicioRoute: typeof InicioRoute
   LoginRoute: typeof LoginRoute
   MinijuegoRoute: typeof MinijuegoRoute
   MisPronosticosRoute: typeof MisPronosticosRoute
@@ -222,6 +235,13 @@ declare module '@tanstack/react-router' {
       path: '/estadisticas'
       fullPath: '/estadisticas'
       preLoaderRoute: typeof EstadisticasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/inicio': {
+      id: '/inicio'
+      path: '/inicio'
+      fullPath: '/inicio'
+      preLoaderRoute: typeof InicioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -282,6 +302,7 @@ const rootRouteChildren: RootRouteChildren = {
   CalendarioRoute: CalendarioRoute,
   EliminatoriasRoute: EliminatoriasRoute,
   EstadisticasRoute: EstadisticasRoute,
+  InicioRoute: InicioRoute,
   LoginRoute: LoginRoute,
   MinijuegoRoute: MinijuegoRoute,
   MisPronosticosRoute: MisPronosticosRoute,
