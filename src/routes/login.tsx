@@ -78,12 +78,12 @@ function LoginPage() {
       <img src={estadioBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />
 
-      <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+      <div className={`relative z-10 min-h-screen flex justify-center p-6 ${mode === "welcome" ? "items-start pt-16 md:pt-20" : "items-center"}`}>
         <div className="w-full max-w-sm">
           {mode === "welcome" ? (
             <div className="text-center space-y-8">
               <div className="flex flex-col items-center gap-4">
-                <img src="/images/logo/logo-hexagono.webp" alt="Pleno al 15" className="h-32 w-32 drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]" />
+                <img src="/images/logo/logo-hexagono.webp" alt="Pleno al 15" className="h-52 w-52 drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]" />
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/60">Bienvenido a</p>
                   <h1 className="display text-4xl text-gold leading-tight mt-1">PLENO AL 15</h1>
