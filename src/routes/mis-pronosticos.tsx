@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useClubMatches, useMyClubPredictions } from "@/lib/queries";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChevronLeft, ChevronRight, ChevronDown, RotateCw } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, RotateCw, CheckCircle2, XCircle } from "lucide-react";
 import estadioOscuro from "@/assets/EstadioNormalOscuro.png";
 import estadioClaro from "@/assets/EstadioNormalClaro.png";
 import estadioEpico1 from "@/assets/EstadioEpico1.png";
@@ -131,38 +132,69 @@ function ClubMatchCard({ match, pred, bg }: { match: any; pred?: { home_score: n
   const { user } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const isFinished = match.status === "FINISHED";
+
+  const [flipped, setFlipped] = useState(false);
+
+  function openEdit() {
+    if (isFinished) return;
+    if (!user) { navigate({ to: "/login" }); return; }
+    setFlipped(true);
+  }
+
+  return (
+    <div style={{ perspective: 1200 }}>
+      <AnimatePresence mode="wait" initial={false}>
+        {!flipped ? (
+          <motion.div
+            key="front"
+            initial={{ opacity: 0, rotateY: -12 }}
+            animate={{ opacity: 1, rotateY: 0 }}
+            exit={{ opacity: 0, rotateY: 12 }}
+            transition={{ duration: 0.25 }}
+          >
+            <CardFront match={match} pred={pred} isFinished={isFinished} bg={bg} onEdit={openEdit} hasUser={!!user} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="back"
+            initial={{ opacity: 0, rotateY: 12 }}
+            animate={{ opacity: 1, rotateY: 0 }}
+            exit={{ opacity: 0, rotateY: -12 }}
+            transition={{ duration: 0.25 }}
+          >
+            <CardBack
+              match={match}
+              pred={pred}
+              bg={bg}
+              onSaved={() => setFlipped(false)}
+              onCancel={() => setFlipped(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function CardFront({ match, pred, isFinished, bg, onEdit, hasUser }: {
+  match: any; pred?: { home_score: number; away_score: number }; isFinished: boolean; bg: string; onEdit: () => void; hasUser: boolean;
+}) {
   const homeName = match.home?.name ?? "?";
   const awayName = match.away?.name ?? "?";
   const homeCrest = crestUrl(match.home?.id);
   const awayCrest = crestUrl(match.away?.id);
-  const isFinished = match.status === "FINISHED";
   const kickoff = new Date(match.utc_date);
   const timeStr = kickoff.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
   const dateStr = kickoff.toLocaleDateString("es-ES");
 
-  const [editing, setEditing] = useState(false);
-  const [home, setHome] = useState(pred?.home_score?.toString() ?? "0");
-  const [away, setAway] = useState(pred?.away_score?.toString() ?? "0");
-  const [saving, setSaving] = useState(false);
-
-  const displayHome = isFinished ? match.home_score : (pred?.home_score ?? 0);
-  const displayAway = isFinished ? match.away_score : (pred?.away_score ?? 0);
-
-  async function save() {
-    if (!user) return;
-    setSaving(true);
-    const { error } = await (supabase as any).from("club_predictions").upsert({
-      user_id: user.id,
-      match_id: match.id,
-      home_score: Number(home),
-      away_score: Number(away),
-      updated_at: new Date().toISOString(),
-    });
-    setSaving(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Pronóstico guardado");
-    setEditing(false);
-    qc.invalidateQueries({ queryKey: ["club_predictions", user.id] });
+  let predResult: "exact" | "outcome" | "miss" | null = null;
+  if (isFinished && pred) {
+    const realOut = match.home_score > match.away_score ? "H" : match.home_score === match.away_score ? "D" : "A";
+    const predOut = pred.home_score > pred.away_score ? "H" : pred.home_score === pred.away_score ? "D" : "A";
+    if (pred.home_score === match.home_score && pred.away_score === match.away_score) predResult = "exact";
+    else if (realOut === predOut) predResult = "outcome";
+    else predResult = "miss";
   }
 
   return (
@@ -171,6 +203,18 @@ function ClubMatchCard({ match, pred, bg }: { match: any; pred?: { home_score: n
     }`}>
       <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/85" />
+
+      {isFinished && pred && (
+        <div className={`absolute top-2 right-2 z-10 flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+          predResult === "exact" ? "bg-emerald-500 text-white" :
+          predResult === "outcome" ? "bg-gold text-gold-foreground" :
+          "bg-destructive text-white"
+        }`}>
+          {predResult === "exact" && <><CheckCircle2 className="h-3 w-3" /> Exacto</>}
+          {predResult === "outcome" && <><CheckCircle2 className="h-3 w-3" /> Acierto</>}
+          {predResult === "miss" && <><XCircle className="h-3 w-3" /> Fallo</>}
+        </div>
+      )}
 
       <div className="relative px-4 pt-3 pb-4 text-white">
         <div className="flex items-center justify-between mb-3">
@@ -190,43 +234,38 @@ function ClubMatchCard({ match, pred, bg }: { match: any; pred?: { home_score: n
           </div>
 
           <div className="flex flex-col items-center gap-1.5">
-            {editing ? (
-              <div className="flex flex-col items-center gap-2 rounded-2xl border-2 border-gold bg-black/70 px-3 py-2">
-                <div className="flex items-center gap-2">
-                  <ScoreStepper value={home} onChange={setHome} />
-                  <span className="font-black text-white/40">–</span>
-                  <ScoreStepper value={away} onChange={setAway} />
-                </div>
-                <button
-                  onClick={save}
-                  disabled={saving}
-                  className="w-full rounded-lg bg-gold text-gold-foreground text-[11px] font-black uppercase tracking-wide py-1.5 disabled:opacity-50"
-                >
-                  {saving ? "Guardando…" : "Guardar"}
-                </button>
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  if (isFinished) return;
-                  if (!user) { navigate({ to: "/login" }); return; }
-                  setEditing(true);
-                }}
-                disabled={isFinished}
-                className="flex flex-col items-center gap-1 rounded-2xl border-2 border-gold bg-black/60 px-4 py-2 min-w-[84px] disabled:opacity-90"
-              >
-                <span className="text-2xl font-black tabular-nums leading-none">{displayHome} - {displayAway}</span>
-                <span className="text-[8px] font-bold uppercase tracking-widest text-gold">
-                  {isFinished ? "Resultado" : "Pronóstico"}
-                </span>
-                {!isFinished && (
-                  <span className="flex items-center gap-1 text-[9px] text-white/50">
-                    <RotateCw className="h-2.5 w-2.5" /> {user ? "Pulsa para editar" : "Inicia sesión para pronosticar"}
+            <button
+              type="button"
+              onClick={onEdit}
+              disabled={isFinished}
+              className="flex flex-col items-center gap-1 rounded-2xl border-2 border-gold bg-black/60 px-4 py-2 min-w-[84px] disabled:opacity-100"
+            >
+              {isFinished ? (
+                <>
+                  <span className="text-2xl font-black tabular-nums leading-none">{match.home_score} - {match.away_score}</span>
+                  <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-400">Resultado</span>
+                  {pred ? (
+                    <span className={`mt-1 pt-1 border-t border-white/15 text-sm font-bold tabular-nums ${
+                      predResult === "exact" ? "text-emerald-400" : predResult === "outcome" ? "text-gold" : "text-red-400"
+                    }`}>
+                      Tu pronóstico: {pred.home_score}-{pred.away_score}
+                    </span>
+                  ) : (
+                    <span className="mt-1 pt-1 border-t border-white/15 text-[10px] text-white/40">Sin pronóstico</span>
+                  )}
+                </>
+              ) : (
+                <>
+                  <span className="text-2xl font-black tabular-nums leading-none">
+                    {pred ? `${pred.home_score} - ${pred.away_score}` : "VS"}
                   </span>
-                )}
-              </button>
-            )}
+                  <span className="text-[8px] font-bold uppercase tracking-widest text-gold">Pronóstico</span>
+                  <span className="flex items-center gap-1 text-[9px] text-white/50">
+                    <RotateCw className="h-2.5 w-2.5" /> {hasUser ? "Pulsa para editar" : "Inicia sesión para pronosticar"}
+                  </span>
+                </>
+              )}
+            </button>
           </div>
 
           <div className="flex flex-col items-center gap-2 text-center">
@@ -241,6 +280,69 @@ function ClubMatchCard({ match, pred, bg }: { match: any; pred?: { home_score: n
         <div className="mt-3 text-left">
           <span className="text-sm font-bold">{timeStr}</span>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function CardBack({ match, pred, bg, onSaved, onCancel }: {
+  match: any; pred?: { home_score: number; away_score: number }; bg: string; onSaved: () => void; onCancel: () => void;
+}) {
+  const { user } = useAuth();
+  const qc = useQueryClient();
+  const homeName = match.home?.name ?? "?";
+  const awayName = match.away?.name ?? "?";
+  const [home, setHome] = useState(pred?.home_score?.toString() ?? "0");
+  const [away, setAway] = useState(pred?.away_score?.toString() ?? "0");
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (!user) return;
+    setSaving(true);
+    const { error } = await (supabase as any).from("club_predictions").upsert({
+      user_id: user.id,
+      match_id: match.id,
+      home_score: Number(home),
+      away_score: Number(away),
+      updated_at: new Date().toISOString(),
+    });
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Pronóstico guardado");
+    qc.invalidateQueries({ queryKey: ["club_predictions", user.id] });
+    onSaved();
+  }
+
+  return (
+    <div className="relative overflow-hidden rounded-2xl shadow-soft border-2 border-gold">
+      <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-black/85" />
+
+      <div className="relative px-4 py-4 text-white">
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-xs font-bold uppercase tracking-widest text-gold">Jornada {match.matchday}</span>
+          <button type="button" onClick={onCancel} className="text-xs text-white/50 hover:text-white">Cancelar</button>
+        </div>
+
+        <div className="flex items-center justify-center gap-6">
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs font-bold text-white/70 max-w-[80px] text-center leading-tight">{homeName}</span>
+            <ScoreStepper value={home} onChange={setHome} />
+          </div>
+          <span className="font-black text-white/30 text-2xl">–</span>
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-xs font-bold text-white/70 max-w-[80px] text-center leading-tight">{awayName}</span>
+            <ScoreStepper value={away} onChange={setAway} />
+          </div>
+        </div>
+
+        <button
+          onClick={save}
+          disabled={saving}
+          className="mt-5 w-full rounded-xl bg-gold text-gold-foreground text-sm font-black uppercase tracking-wide py-2.5 disabled:opacity-50"
+        >
+          {saving ? "Guardando…" : "Guardar y volver"}
+        </button>
       </div>
     </div>
   );

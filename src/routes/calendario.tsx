@@ -2,6 +2,13 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { useClubMatches } from "@/lib/queries";
 import { Calendar, Star } from "lucide-react";
+import estadioOscuro from "@/assets/EstadioNormalOscuro.png";
+import estadioClaro from "@/assets/EstadioNormalClaro.png";
+import estadioEpico1 from "@/assets/EstadioEpico1.png";
+import estadioEpico2 from "@/assets/EstadioEpico2.png";
+import estadioFondo from "@/assets/Estadiofutbolfondo.png";
+
+const STADIUM_BACKGROUNDS = [estadioOscuro, estadioEpico1, estadioFondo, estadioEpico2, estadioClaro];
 
 export const Route = createFileRoute("/calendario")({
   component: CalendarPage,
@@ -21,59 +28,79 @@ function CalendarPage() {
     return g;
   }, [matches]);
 
+  let cardIndex = 0;
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl bg-gradient-pitch text-primary-foreground p-5 shadow-soft">
-        <div className="display text-3xl flex items-center gap-2"><Calendar className="h-6 w-6" /> Calendario y resultados</div>
-        <p className="text-white/80 text-sm">Todos los partidos de LaLiga cargados.</p>
+        <div className="display text-3xl flex items-center gap-2"><Calendar className="h-6 w-6" /> Calendario</div>
+        <p className="text-white/80 text-sm">Todos los partidos de LaLiga, jornada a jornada.</p>
       </div>
 
       {Object.entries(byMatchday)
         .sort(([a], [b]) => Number(a) - Number(b))
         .map(([matchday, list]) => (
-          <section key={matchday} className="space-y-2">
-            <h2 className="display text-2xl">Jornada {matchday}</h2>
-            <div className="grid gap-2">
+          <section key={matchday} className="space-y-3">
+            <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+              Jornada {matchday}
+            </h2>
+            <div className="grid gap-3 sm:grid-cols-2">
               {list
                 .sort((a, b) => new Date(a.utc_date).getTime() - new Date(b.utc_date).getTime())
                 .map((m) => {
+                  const bg = STADIUM_BACKGROUNDS[cardIndex++ % STADIUM_BACKGROUNDS.length];
                   const isFinished = m.status === "FINISHED";
                   const kickoff = new Date(m.utc_date);
+                  const homeCrest = crestUrl(m.home?.id);
+                  const awayCrest = crestUrl(m.away?.id);
                   return (
                     <div
                       key={m.id}
-                      className={`rounded-xl border bg-card p-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 shadow-soft ${
-                        m.is_megapremium ? "border-red-500/50" : m.is_premium ? "border-gold/40" : "border-border"
+                      className={`relative overflow-hidden rounded-2xl shadow-soft border-t-2 border-b-2 ${
+                        isFinished ? "border-emerald-500" : m.is_megapremium ? "border-red-500" : m.is_premium ? "border-gold" : "border-flame"
                       }`}
                     >
-                      <div className="flex items-center justify-end gap-2 min-w-0 text-right">
-                        <span className="font-semibold truncate">{m.home?.short_name ?? m.home?.name}</span>
-                        {crestUrl(m.home?.id) && <img src={crestUrl(m.home?.id)!} alt="" className="h-6 w-6 object-contain shrink-0" />}
-                      </div>
-                      <div className="text-center shrink-0">
-                        <div className="display text-2xl">
-                          {isFinished ? `${m.home_score} – ${m.away_score}` : "vs"}
+                      <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/85" />
+
+                      <div className="relative px-4 pt-3 pb-3 text-white">
+                        <div className="flex items-center justify-between mb-3 text-xs">
+                          <span className="font-semibold text-white/70">
+                            {kickoff.toLocaleDateString("es-ES", { weekday: "short", day: "2-digit", month: "short" })}
+                          </span>
+                          <span className="font-bold">
+                            {kickoff.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
+                          </span>
                         </div>
-                        <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
-                          {isFinished
-                            ? "FIN"
-                            : kickoff.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit" }) +
-                              " · " +
-                              kickoff.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
+
+                        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+                          <div className="flex flex-col items-center gap-1.5 text-center">
+                            <div className="h-11 w-11 rounded-full bg-white/95 flex items-center justify-center p-1.5 shadow-lg">
+                              {homeCrest && <img src={homeCrest} alt="" className="h-full w-full object-contain" />}
+                            </div>
+                            <span className="text-xs font-bold leading-tight">{m.home?.short_name ?? m.home?.name}</span>
+                          </div>
+
+                          <div className="flex flex-col items-center gap-1 min-w-[64px]">
+                            <div className={`rounded-xl border-2 px-3 py-1.5 ${isFinished ? "border-emerald-500 bg-black/60" : "border-white/20 bg-black/40"}`}>
+                              <span className="text-xl font-black tabular-nums">
+                                {isFinished ? `${m.home_score} - ${m.away_score}` : "vs"}
+                              </span>
+                            </div>
+                            {m.is_megapremium ? (
+                              <span className="flex items-center gap-1 text-[9px] text-red-400 font-bold uppercase"><Star className="h-2.5 w-2.5 fill-red-400" /> Mega</span>
+                            ) : m.is_premium ? (
+                              <span className="flex items-center gap-1 text-[9px] text-gold font-bold uppercase"><Star className="h-2.5 w-2.5 fill-gold" /> Premium</span>
+                            ) : null}
+                          </div>
+
+                          <div className="flex flex-col items-center gap-1.5 text-center">
+                            <div className="h-11 w-11 rounded-full bg-white/95 flex items-center justify-center p-1.5 shadow-lg">
+                              {awayCrest && <img src={awayCrest} alt="" className="h-full w-full object-contain" />}
+                            </div>
+                            <span className="text-xs font-bold leading-tight">{m.away?.short_name ?? m.away?.name}</span>
+                          </div>
                         </div>
-                        {m.is_megapremium ? (
-                          <div className="text-[10px] text-red-600 dark:text-red-400 font-semibold flex items-center justify-center gap-1 mt-0.5">
-                            <Star className="h-3 w-3 fill-red-600 dark:fill-red-400" /> MEGAPREMIUM
-                          </div>
-                        ) : m.is_premium && (
-                          <div className="text-[10px] text-gold font-semibold flex items-center justify-center gap-1 mt-0.5">
-                            <Star className="h-3 w-3 fill-gold" /> PREMIUM
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 min-w-0">
-                        {crestUrl(m.away?.id) && <img src={crestUrl(m.away?.id)!} alt="" className="h-6 w-6 object-contain shrink-0" />}
-                        <span className="font-semibold truncate">{m.away?.short_name ?? m.away?.name}</span>
                       </div>
                     </div>
                   );
