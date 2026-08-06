@@ -86,7 +86,7 @@ register(deportivoStadium, "Riazor", [
   "Deportivo La Coruña",
   "Deportivo",
 ]);
-register(elcheStadium, "Martínez Valero", ["Elche CF", "Elche"]);
+register(elcheStadium, "Martínez Valero", ["Elche CF", "Elche"], "center 28%");
 register(
   espanyolStadium,
   "RCDE Stadium",
@@ -115,7 +115,7 @@ register(
 );
 register(realMadridStadium, "Santiago Bernabéu", ["Real Madrid CF", "Real Madrid"]);
 register(realSociedadStadium, "Reale Arena", ["Real Sociedad de Fútbol", "Real Sociedad"]);
-register(sevillaStadium, "Ramón Sánchez-Pizjuán", ["Sevilla FC", "Sevilla"], "center center");
+register(sevillaStadium, "Ramón Sánchez-Pizjuán", ["Sevilla FC", "Sevilla"], "center 28%");
 register(valenciaStadium, "Mestalla", ["Valencia CF", "Valencia"], "center 68%");
 register(villarrealStadium, "La Cerámica", ["Villarreal CF", "Villarreal"]);
 
