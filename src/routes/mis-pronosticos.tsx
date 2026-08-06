@@ -420,6 +420,8 @@ function CardBack({
   const qc = useQueryClient();
   const homeName = match.home?.name ?? "?";
   const awayName = match.away?.name ?? "?";
+  const homeLabel = match.home?.short_name ?? homeName;
+  const awayLabel = match.away?.short_name ?? awayName;
   const [home, setHome] = useState(pred?.home_score?.toString() ?? "0");
   const [away, setAway] = useState(pred?.away_score?.toString() ?? "0");
   const [saving, setSaving] = useState(false);
@@ -453,73 +455,85 @@ function CardBack({
   return (
     <div className="overflow-hidden rounded-2xl border border-gold/70 bg-[#fffef9] text-slate-900 shadow-soft">
       {premium && (
-        <div className="flex items-center justify-center gap-2 border-b border-gold/35 bg-gold/15 px-4 py-2.5 text-xs font-black uppercase tracking-wide text-amber-600">
-          <Star className="h-4 w-4 fill-current" />
+        <div className="flex items-center justify-center gap-1.5 border-b border-gold/35 bg-gold/15 px-3 py-2 text-[10px] font-black uppercase tracking-wide text-amber-600 sm:gap-2 sm:px-4 sm:py-2.5 sm:text-xs">
+          <Star className="h-3.5 w-3.5 fill-current sm:h-4 sm:w-4" />
           {match.is_megapremium ? "Mega Premium · Triple puntuación" : "Premium · Doble puntuación"}
         </div>
       )}
 
-      <div className="px-4 py-4">
-        <div className="grid grid-cols-[32px_1fr_32px] items-center border-b border-slate-200 pb-4">
+      <div className="px-3 py-3 sm:px-4 sm:py-4">
+        <div className="grid grid-cols-[28px_minmax(0,1fr)_28px] items-center border-b border-slate-200 pb-3 sm:grid-cols-[32px_minmax(0,1fr)_32px] sm:pb-4">
           <button
             type="button"
             onClick={onCancel}
             aria-label="Volver al partido"
-            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            className="flex h-7 w-7 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:h-8 sm:w-8"
           >
-            <ChevronLeft className="h-5 w-5" />
+            <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
-          <div className="flex min-w-0 items-center justify-center gap-3 text-center">
-            {homeCrest && <img src={homeCrest} alt="" className="h-9 w-9 object-contain" />}
-            <span className="min-w-0 truncate text-sm font-black">{homeName}</span>
-            <span className="shrink-0 text-xs font-bold text-slate-400">VS</span>
-            <span className="min-w-0 truncate text-sm font-black">{awayName}</span>
-            {awayCrest && <img src={awayCrest} alt="" className="h-9 w-9 object-contain" />}
+          <div className="flex min-w-0 items-center justify-center gap-1.5 text-center sm:gap-3">
+            {homeCrest && (
+              <img
+                src={homeCrest}
+                alt=""
+                className="h-7 w-7 shrink-0 object-contain sm:h-9 sm:w-9"
+              />
+            )}
+            <span className="min-w-0 truncate text-[10px] font-black sm:text-sm">{homeLabel}</span>
+            <span className="shrink-0 text-[9px] font-bold text-slate-400 sm:text-xs">VS</span>
+            <span className="min-w-0 truncate text-[10px] font-black sm:text-sm">{awayLabel}</span>
+            {awayCrest && (
+              <img
+                src={awayCrest}
+                alt=""
+                className="h-7 w-7 shrink-0 object-contain sm:h-9 sm:w-9"
+              />
+            )}
           </div>
-          <span className="text-right text-[10px] font-bold uppercase text-slate-400">
+          <span className="text-right text-[8px] font-bold uppercase text-slate-400 sm:text-[10px]">
             J{match.matchday}
           </span>
         </div>
 
-        <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-4 py-5">
-          <div className="flex flex-col items-center gap-3">
-            <span className="max-w-[120px] text-center text-sm font-semibold text-slate-600">
-              {homeName}
+        <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-2 py-4 sm:gap-4 sm:py-5">
+          <div className="flex min-w-0 flex-col items-center gap-2 sm:gap-3">
+            <span className="max-w-full truncate text-center text-[11px] font-semibold text-slate-600 sm:max-w-[120px] sm:text-sm">
+              {homeLabel}
             </span>
             <ScoreStepper value={home} onChange={setHome} />
           </div>
-          <span className="pb-2 text-3xl font-light text-slate-400">−</span>
-          <div className="flex flex-col items-center gap-3">
-            <span className="max-w-[120px] text-center text-sm font-semibold text-slate-600">
-              {awayName}
+          <span className="pb-1.5 text-2xl font-light text-slate-400 sm:pb-2 sm:text-3xl">−</span>
+          <div className="flex min-w-0 flex-col items-center gap-2 sm:gap-3">
+            <span className="max-w-full truncate text-center text-[11px] font-semibold text-slate-600 sm:max-w-[120px] sm:text-sm">
+              {awayLabel}
             </span>
             <ScoreStepper value={away} onChange={setAway} />
           </div>
         </div>
 
-        <div className="grid grid-cols-3 border-y border-slate-200 py-3 text-center text-xs font-semibold text-slate-600">
+        <div className="grid grid-cols-3 gap-1 border-y border-slate-200 py-2.5 text-center text-[9px] font-semibold leading-tight text-slate-600 sm:py-3 sm:text-xs">
           <span>
-            {homePct}% {homeName}
+            {homePct}% {homeLabel}
           </span>
           <span>{drawPct}% Empate</span>
           <span>
-            {awayName} {awayPct}%
+            {awayLabel} {awayPct}%
           </span>
         </div>
 
-        <div className="flex items-center justify-center gap-6 py-3 text-xs font-semibold text-slate-600">
-          <span className="flex items-center gap-1.5">
-            <Trophy className="h-4 w-4 text-amber-600" /> 2 pts resultado
+        <div className="grid grid-cols-2 gap-2 py-2.5 text-center text-[10px] font-semibold text-slate-600 sm:flex sm:items-center sm:justify-center sm:gap-6 sm:py-3 sm:text-xs">
+          <span className="flex items-center justify-center gap-1 sm:gap-1.5">
+            <Trophy className="h-3.5 w-3.5 shrink-0 text-amber-600 sm:h-4 sm:w-4" /> 2 pts resultado
           </span>
-          <span className="flex items-center gap-1.5 text-amber-600">
-            <Star className="h-4 w-4 fill-current" /> 6 pts exacto
+          <span className="flex items-center justify-center gap-1 text-amber-600 sm:gap-1.5">
+            <Star className="h-3.5 w-3.5 shrink-0 fill-current sm:h-4 sm:w-4" /> 6 pts exacto
           </span>
         </div>
 
         <button
           onClick={save}
           disabled={saving}
-          className="w-full rounded-2xl bg-gold py-3.5 text-base font-black text-slate-950 shadow-sm transition-transform hover:scale-[1.01] disabled:opacity-50"
+          className="w-full rounded-2xl bg-gold py-3 text-sm font-black text-slate-950 shadow-sm transition-transform hover:scale-[1.01] disabled:opacity-50 sm:py-3.5 sm:text-base"
         >
           {saving ? "Guardando…" : "Guardar pronóstico"}
         </button>
@@ -543,19 +557,21 @@ function outcomePercentages(stats?: ClubPredictionStats): [number, number, numbe
 function ScoreStepper({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const n = Number(value) || 0;
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 sm:gap-3">
       <button
         type="button"
         onClick={() => onChange(String(Math.max(0, n - 1)))}
-        className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xl font-medium text-slate-700 transition-colors hover:bg-slate-100"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-lg font-medium text-slate-700 transition-colors hover:bg-slate-100 sm:h-11 sm:w-11 sm:text-xl"
       >
         −
       </button>
-      <span className="w-8 text-center text-4xl font-black tabular-nums text-slate-950">{n}</span>
+      <span className="w-7 text-center text-3xl font-black tabular-nums text-slate-950 sm:w-8 sm:text-4xl">
+        {n}
+      </span>
       <button
         type="button"
         onClick={() => onChange(String(n + 1))}
-        className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xl font-medium text-slate-700 transition-colors hover:bg-slate-100"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-lg font-medium text-slate-700 transition-colors hover:bg-slate-100 sm:h-11 sm:w-11 sm:text-xl"
       >
         +
       </button>
