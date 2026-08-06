@@ -20,14 +20,29 @@ function Inicio() {
   const [createOpen, setCreateOpen] = useState(false);
   const [joinOpen, setJoinOpen] = useState(false);
 
-  function invite() {
+  async function invite() {
     const url = window.location.origin;
-    const message = `🏆 Únete a Pleno al 15 conmigo. Pronostica los partidos y compite por el trofeo: ${url}`;
+    const message =
+      `¿Te gustó la app de El Mundial? ¡Pues ahora llega Pleno al 15! ` +
+      `Pronostica los partidos de LaLiga y compite con tus amigos. Esta vez habrá eventos de Copa del Rey, ` +
+      `Champions, noticias y mucho más.\n\n${url}`;
+
     if (navigator.share) {
-      navigator.share({ title: "Pleno al 15", text: message, url }).catch(() => {});
-    } else {
-      navigator.clipboard.writeText(message).then(() => toast.success("Enlace copiado")).catch(() => {});
+      try {
+        const res = await fetch("/images/logo/logo-horizontal.webp");
+        const blob = await res.blob();
+        const file = new File([blob], "pleno-al-15.webp", { type: blob.type });
+        if (navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ title: "Pleno al 15", text: message, files: [file] });
+          return;
+        }
+      } catch {
+        // si falla preparar la imagen, seguimos con el share de solo texto
+      }
+      navigator.share({ title: "Pleno al 15", text: message }).catch(() => {});
+      return;
     }
+    navigator.clipboard.writeText(message).then(() => toast.success("Enlace copiado")).catch(() => {});
   }
 
   const actions = user

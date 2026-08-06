@@ -5,7 +5,10 @@ import { toast } from "sonner";
 export function InviteCard() {
   const [copied, setCopied] = useState(false);
   const url = typeof window !== "undefined" ? window.location.origin : "";
-  const message = `🏆 Únete a El Mundial conmigo. Pronostica los partidos y compite por el trofeo: ${url}`;
+  const message =
+    `¿Te gustó la app de El Mundial? ¡Pues ahora llega Pleno al 15! ` +
+    `Pronostica los partidos de LaLiga y compite con tus amigos. Esta vez habrá eventos de Copa del Rey, ` +
+    `Champions, noticias y mucho más.\n\n${url}`;
   const waLink = `https://wa.me/?text=${encodeURIComponent(message)}`;
 
   async function copy() {
@@ -20,11 +23,17 @@ export function InviteCard() {
   }
 
   async function nativeShare() {
-    if (navigator.share) {
-      try { await navigator.share({ title: "El Mundial", text: message, url }); } catch { /* cancel */ }
-    } else {
-      copy();
-    }
+    if (!navigator.share) { copy(); return; }
+    try {
+      const res = await fetch("/images/logo/logo-horizontal.webp");
+      const blob = await res.blob();
+      const file = new File([blob], "pleno-al-15.webp", { type: blob.type });
+      if (navigator.canShare?.({ files: [file] })) {
+        await navigator.share({ title: "Pleno al 15", text: message, files: [file] });
+        return;
+      }
+    } catch { /* seguimos con share de solo texto */ }
+    try { await navigator.share({ title: "Pleno al 15", text: message }); } catch { /* cancel */ }
   }
 
   return (
