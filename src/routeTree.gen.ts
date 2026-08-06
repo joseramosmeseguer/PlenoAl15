@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CalendarioRouteImport } from './routes/calendario'
+import { Route as ChampionsRouteImport } from './routes/champions'
 import { Route as EliminatoriasRouteImport } from './routes/eliminatorias'
 import { Route as EstadisticasRouteImport } from './routes/estadisticas'
 import { Route as InicioRouteImport } from './routes/inicio'
@@ -36,6 +37,11 @@ const AdminRoute = AdminRouteImport.update({
 const CalendarioRoute = CalendarioRouteImport.update({
   id: '/calendario',
   path: '/calendario',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChampionsRoute = ChampionsRouteImport.update({
+  id: '/champions',
+  path: '/champions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EliminatoriasRoute = EliminatoriasRouteImport.update({
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/calendario': typeof CalendarioRoute
+  '/champions': typeof ChampionsRoute
   '/eliminatorias': typeof EliminatoriasRoute
   '/estadisticas': typeof EstadisticasRoute
   '/inicio': typeof InicioRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/calendario': typeof CalendarioRoute
+  '/champions': typeof ChampionsRoute
   '/eliminatorias': typeof EliminatoriasRoute
   '/estadisticas': typeof EstadisticasRoute
   '/inicio': typeof InicioRoute
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/calendario': typeof CalendarioRoute
+  '/champions': typeof ChampionsRoute
   '/eliminatorias': typeof EliminatoriasRoute
   '/estadisticas': typeof EstadisticasRoute
   '/inicio': typeof InicioRoute
@@ -142,6 +151,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/calendario'
+    | '/champions'
     | '/eliminatorias'
     | '/estadisticas'
     | '/inicio'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/calendario'
+    | '/champions'
     | '/eliminatorias'
     | '/estadisticas'
     | '/inicio'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/calendario'
+    | '/champions'
     | '/eliminatorias'
     | '/estadisticas'
     | '/inicio'
@@ -188,6 +200,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   CalendarioRoute: typeof CalendarioRoute
+  ChampionsRoute: typeof ChampionsRoute
   EliminatoriasRoute: typeof EliminatoriasRoute
   EstadisticasRoute: typeof EstadisticasRoute
   InicioRoute: typeof InicioRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/calendario'
       fullPath: '/calendario'
       preLoaderRoute: typeof CalendarioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/champions': {
+      id: '/champions'
+      path: '/champions'
+      fullPath: '/champions'
+      preLoaderRoute: typeof ChampionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/eliminatorias': {
@@ -300,6 +320,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   CalendarioRoute: CalendarioRoute,
+  ChampionsRoute: ChampionsRoute,
   EliminatoriasRoute: EliminatoriasRoute,
   EstadisticasRoute: EstadisticasRoute,
   InicioRoute: InicioRoute,
