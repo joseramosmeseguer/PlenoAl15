@@ -75,10 +75,10 @@ function LoginPage() {
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
-      <img src={loginBg} alt="" className="absolute inset-0 h-full w-full object-cover blur-[2px] scale-105" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
+      <img src={loginBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-black/85" />
 
-      <div className={`relative z-10 min-h-screen flex justify-center p-6 ${mode === "welcome" ? "items-start pt-36 md:pt-40" : "items-center"}`}>
+      <div className={`relative z-10 min-h-screen flex justify-center p-6 ${mode === "welcome" ? "items-start pt-16 md:pt-20" : "items-center"}`}>
         <div className="w-full max-w-sm">
           {mode === "welcome" ? (
             <div className="text-center space-y-8">
