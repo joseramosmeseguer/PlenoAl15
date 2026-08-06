@@ -1,6 +1,6 @@
 {
-  "name": "Pleno al 15",
-  "short_name": "Pleno al 15",
+  "name": "PlenoAl15",
+  "short_name": "PlenoAl15",
   "description": "Quiniela privada de LaLiga entre amigos: pronósticos, ranking y bonus.",
   "start_url": "/",
   "display": "standalone",

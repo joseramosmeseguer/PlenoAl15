@@ -17,7 +17,7 @@ const STADIUM_BACKGROUNDS = [estadioOscuro, estadioEpico1, estadioFondo, estadio
 
 export const Route = createFileRoute("/mis-pronosticos")({
   component: MyPredictions,
-  head: () => ({ meta: [{ title: "Pronósticos · Pleno al 15" }] }),
+  head: () => ({ meta: [{ title: "Pronósticos · PlenoAl15" }] }),
 });
 
 function crestUrl(teamId?: number) {

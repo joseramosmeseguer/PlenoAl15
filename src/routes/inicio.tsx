@@ -8,7 +8,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/inicio")({
   component: Inicio,
-  head: () => ({ meta: [{ title: "Inicio · Pleno al 15" }] }),
+  head: () => ({ meta: [{ title: "Inicio · PlenoAl15" }] }),
 });
 
 function Inicio() {
@@ -23,7 +23,7 @@ function Inicio() {
   async function invite() {
     const url = window.location.origin;
     const message =
-      `¿Te gustó la app de El Mundial? ¡Pues ahora llega Pleno al 15! ` +
+      `¿Te gustó la app de El Mundial? ¡Pues ahora llega PlenoAl15! ` +
       `Pronostica los partidos de LaLiga y compite con tus amigos. Esta vez habrá eventos de Copa del Rey, ` +
       `Champions, noticias y mucho más.\n\n${url}`;
 
@@ -33,13 +33,13 @@ function Inicio() {
         const blob = await res.blob();
         const file = new File([blob], "pleno-al-15.webp", { type: blob.type });
         if (navigator.canShare?.({ files: [file] })) {
-          await navigator.share({ title: "Pleno al 15", text: message, files: [file] });
+          await navigator.share({ title: "PlenoAl15", text: message, files: [file] });
           return;
         }
       } catch {
         // si falla preparar la imagen, seguimos con el share de solo texto
       }
-      navigator.share({ title: "Pleno al 15", text: message }).catch(() => {});
+      navigator.share({ title: "PlenoAl15", text: message }).catch(() => {});
       return;
     }
     navigator.clipboard.writeText(message).then(() => toast.success("Enlace copiado")).catch(() => {});
@@ -61,10 +61,10 @@ function Inicio() {
     <div className="space-y-6">
       {/* Cabecera */}
       <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-soft">
-        <img src="/images/logo/logo-cuadrado.webp" alt="Pleno al 15" className="h-14 w-14 rounded-2xl shadow-gold shrink-0" />
+        <img src="/images/logo/logo-cuadrado.webp" alt="PlenoAl15" className="h-14 w-14 rounded-2xl shadow-gold shrink-0" />
         <div className="min-w-0">
           <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Bienvenido</p>
-          <h1 className="display text-2xl truncate">{user ? displayName : "a Pleno al 15"}</h1>
+          <h1 className="display text-2xl truncate">{user ? displayName : "a PlenoAl15"}</h1>
         </div>
       </div>
 

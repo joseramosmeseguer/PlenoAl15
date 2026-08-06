@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/reset-password")({
   component: ResetPasswordPage,
-  head: () => ({ meta: [{ title: "Nueva contraseña · Pleno al 15" }] }),
+  head: () => ({ meta: [{ title: "Nueva contraseña · PlenoAl15" }] }),
 });
 
 function ResetPasswordPage() {
@@ -38,7 +38,7 @@ function ResetPasswordPage() {
     <div className="min-h-screen grid md:grid-cols-2 bg-gradient-night text-primary-foreground">
       <div className="relative hidden md:block bg-gradient-pitch">
         <div className="relative z-10 h-full flex flex-col justify-end p-10">
-          <div className="display text-6xl text-gold leading-none">Pleno al 15</div>
+          <div className="display text-6xl text-gold leading-none">PlenoAl15</div>
         </div>
       </div>
 

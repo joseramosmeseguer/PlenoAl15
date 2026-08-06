@@ -6,7 +6,7 @@ export function InviteCard() {
   const [copied, setCopied] = useState(false);
   const url = typeof window !== "undefined" ? window.location.origin : "";
   const message =
-    `¿Te gustó la app de El Mundial? ¡Pues ahora llega Pleno al 15! ` +
+    `¿Te gustó la app de El Mundial? ¡Pues ahora llega PlenoAl15! ` +
     `Pronostica los partidos de LaLiga y compite con tus amigos. Esta vez habrá eventos de Copa del Rey, ` +
     `Champions, noticias y mucho más.\n\n${url}`;
   const waLink = `https://wa.me/?text=${encodeURIComponent(message)}`;
@@ -29,11 +29,11 @@ export function InviteCard() {
       const blob = await res.blob();
       const file = new File([blob], "pleno-al-15.webp", { type: blob.type });
       if (navigator.canShare?.({ files: [file] })) {
-        await navigator.share({ title: "Pleno al 15", text: message, files: [file] });
+        await navigator.share({ title: "PlenoAl15", text: message, files: [file] });
         return;
       }
     } catch { /* seguimos con share de solo texto */ }
-    try { await navigator.share({ title: "Pleno al 15", text: message }); } catch { /* cancel */ }
+    try { await navigator.share({ title: "PlenoAl15", text: message }); } catch { /* cancel */ }
   }
 
   return (

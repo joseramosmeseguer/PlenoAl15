@@ -12,7 +12,7 @@ const STADIUM_BACKGROUNDS = [estadioOscuro, estadioEpico1, estadioFondo, estadio
 
 export const Route = createFileRoute("/calendario")({
   component: CalendarPage,
-  head: () => ({ meta: [{ title: "Calendario · Pleno al 15" }] }),
+  head: () => ({ meta: [{ title: "Calendario · PlenoAl15" }] }),
 });
 
 function crestUrl(teamId?: number) {

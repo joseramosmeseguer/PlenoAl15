@@ -60,7 +60,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src="/images/logo/logo-cuadrado.webp" alt="" className="h-9 w-9 rounded-full shadow-gold" />
-            <div className="display text-2xl tracking-wide">Pleno al 15</div>
+            <div className="display text-2xl tracking-wide">PlenoAl15</div>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
             {NAV.map((n) => {

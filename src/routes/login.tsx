@@ -78,15 +78,15 @@ function LoginPage() {
       <img src={loginBg} alt="" className="absolute inset-0 h-full w-full object-cover blur-[2px] scale-105" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
 
-      <div className={`relative z-10 min-h-screen flex justify-center p-6 ${mode === "welcome" ? "items-start pt-48 md:pt-52" : "items-center"}`}>
+      <div className={`relative z-10 min-h-screen flex justify-center p-6 ${mode === "welcome" ? "items-start pt-36 md:pt-40" : "items-center"}`}>
         <div className="w-full max-w-sm">
           {mode === "welcome" ? (
             <div className="text-center space-y-8">
               <div className="flex flex-col items-center gap-4">
-                <img src="/images/logo/logo-hexagono.webp" alt="Pleno al 15" className="h-52 w-52 drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]" />
+                <img src="/images/logo/logo-hexagono.webp" alt="PlenoAl15" className="h-[166px] w-[166px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]" />
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/60">Bienvenido a</p>
-                  <h1 className="display text-4xl text-gold leading-tight mt-1">PLENO AL 15</h1>
+                  <h1 className="display text-4xl text-gold leading-tight mt-1">PLENOAL15</h1>
                 </div>
               </div>
 
@@ -129,7 +129,7 @@ function LoginPage() {
                     🔑
                   </div>
                 ) : (
-                  <img src="/images/logo/logo-hexagono.webp" alt="Pleno al 15" className="mx-auto h-16 w-16" />
+                  <img src="/images/logo/logo-hexagono.webp" alt="PlenoAl15" className="mx-auto h-16 w-16" />
                 )}
                 <h1 className="display text-4xl mt-4">
                   {mode === "signin" ? "Entra a jugar" : mode === "signup" ? "Crea tu cuenta" : "Recuperar acceso"}
@@ -192,7 +192,7 @@ function LoginPage() {
         </div>
       </div>
 
-      <div className="absolute bottom-6 inset-x-0 text-center pointer-events-none">
+      <div className="absolute bottom-12 inset-x-0 text-center pointer-events-none">
         <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/60">
           Lo nuestro es el <span className="text-gold">15</span>
         </p>
@@ -202,7 +202,7 @@ function LoginPage() {
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <img src="/images/logo/logo-reducido.webp" alt="" className="h-6 w-6" /> ¿Qué es Pleno al 15?
+              <img src="/images/logo/logo-reducido.webp" alt="" className="h-6 w-6" /> ¿Qué es PlenoAl15?
             </DialogTitle>
             <DialogDescription asChild>
               <div className="space-y-2 text-sm text-foreground/90 text-left">

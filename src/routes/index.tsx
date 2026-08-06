@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
   component: Home,
   head: () => ({
     meta: [
-      { title: "Clasificación · Pleno al 15" },
+      { title: "Clasificación · PlenoAl15" },
       { name: "description", content: "Clasificación general de la quiniela entre amigos." },
     ],
   }),
@@ -297,7 +297,7 @@ function Home() {
     return (
       <div className="space-y-5">
         <div className="rounded-2xl border border-dashed border-gold/40 bg-card p-5 shadow-soft text-center space-y-2">
-          <p className="text-sm text-muted-foreground">Estás viendo Pleno al 15 como invitado.</p>
+          <p className="text-sm text-muted-foreground">Estás viendo PlenoAl15 como invitado.</p>
           <Link
             to="/login"
             className="inline-flex items-center justify-center rounded-xl bg-gold text-gold-foreground font-bold px-5 py-2.5 text-sm hover:bg-gold/90 transition-colors"
