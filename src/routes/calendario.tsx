@@ -52,15 +52,7 @@ function CalendarPage() {
                   return (
                     <div
                       key={m.id}
-                      className={`relative overflow-hidden rounded-2xl shadow-soft border-t-2 border-b-2 ${
-                        isFinished
-                          ? "border-emerald-500"
-                          : m.is_megapremium
-                            ? "border-red-500"
-                            : m.is_premium
-                              ? "border-gold"
-                              : "border-flame"
-                      }`}
+                      className="relative overflow-hidden rounded-2xl border border-white/80 shadow-soft"
                     >
                       <img
                         src={bg}
@@ -71,14 +63,14 @@ function CalendarPage() {
 
                       <div className="relative px-4 pt-3 pb-3 text-white [text-shadow:0_2px_5px_rgba(0,0,0,.95)]">
                         <div className="flex items-center justify-between mb-3 text-xs">
-                          <span className="font-semibold text-white/70">
+                          <span className="font-semibold text-slate-200">
                             {kickoff.toLocaleDateString("es-ES", {
                               weekday: "short",
                               day: "2-digit",
                               month: "short",
                             })}
                           </span>
-                          <span className="font-bold">
+                          <span className="font-bold text-slate-200">
                             {kickoff.toLocaleTimeString("es-ES", {
                               hour: "2-digit",
                               minute: "2-digit",
@@ -88,7 +80,7 @@ function CalendarPage() {
 
                         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                           <div className="flex flex-col items-center gap-1.5 text-center">
-                            <div className="h-11 w-11 rounded-full bg-white/95 flex items-center justify-center p-1.5 shadow-lg">
+                            <div className="flex h-11 w-11 items-center justify-center drop-shadow-lg">
                               {homeCrest && (
                                 <img
                                   src={homeCrest}
@@ -103,11 +95,9 @@ function CalendarPage() {
                           </div>
 
                           <div className="flex flex-col items-center gap-1 min-w-[64px]">
-                            <div
-                              className={`rounded-xl border-2 px-3 py-1.5 ${isFinished ? "border-emerald-500 bg-black/60" : "border-white/20 bg-black/40"}`}
-                            >
-                              <span className="text-xl font-black tabular-nums">
-                                {isFinished ? `${m.home_score} - ${m.away_score}` : "vs"}
+                            <div className="flex min-h-14 min-w-16 items-center justify-center rounded-xl border-2 border-gold bg-white px-3 py-2 shadow-lg [text-shadow:none]">
+                              <span className="text-xl font-black tabular-nums text-black">
+                                {isFinished ? `${m.home_score} - ${m.away_score}` : "VS"}
                               </span>
                             </div>
                             {m.is_megapremium ? (
@@ -122,7 +112,7 @@ function CalendarPage() {
                           </div>
 
                           <div className="flex flex-col items-center gap-1.5 text-center">
-                            <div className="h-11 w-11 rounded-full bg-white/95 flex items-center justify-center p-1.5 shadow-lg">
+                            <div className="flex h-11 w-11 items-center justify-center drop-shadow-lg">
                               {awayCrest && (
                                 <img
                                   src={awayCrest}
@@ -137,7 +127,7 @@ function CalendarPage() {
                           </div>
                         </div>
                         {homeStadium && (
-                          <div className="mt-2 text-right text-[10px] font-semibold text-white/65">
+                          <div className="mt-2 text-right text-[10px] font-semibold text-slate-200">
                             {homeStadium.stadiumName}
                           </div>
                         )}

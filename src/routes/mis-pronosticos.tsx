@@ -251,9 +251,9 @@ function CardFront({
   return (
     <div
       onClick={onEdit}
-      className={`relative overflow-hidden rounded-2xl shadow-soft border-t-2 border-b-2 ${
-        isFinished ? "border-emerald-500 cursor-default" : "cursor-pointer"
-      } ${!isFinished ? (match.is_megapremium ? "border-red-500" : match.is_premium ? "border-gold" : "border-flame") : ""}`}
+      className={`relative overflow-hidden rounded-2xl border border-white/80 shadow-soft ${
+        isFinished ? "cursor-default" : "cursor-pointer"
+      }`}
     >
       <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/70" />
@@ -288,15 +288,15 @@ function CardFront({
 
       <div className="relative px-4 pt-3 pb-4 text-white [text-shadow:0_2px_5px_rgba(0,0,0,.95)]">
         <div className="flex items-center justify-between mb-3">
-          <span className="inline-flex items-center rounded-full bg-gold text-gold-foreground text-[10px] font-black uppercase tracking-widest px-2.5 py-1">
+          <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-widest text-slate-800 [text-shadow:none]">
             Jornada {match.matchday}
           </span>
-          <span className="text-xs font-semibold text-white/70">{dateStr}</span>
+          <span className="text-xs font-semibold text-slate-200">{dateStr}</span>
         </div>
 
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
           <div className="flex flex-col items-center gap-2 text-center">
-            <div className="h-14 w-14 rounded-full bg-white/95 flex items-center justify-center p-2 shadow-lg">
+            <div className="flex h-14 w-14 items-center justify-center drop-shadow-lg">
               {homeCrest && (
                 <img src={homeCrest} alt={homeName} className="h-full w-full object-contain" />
               )}
@@ -310,12 +310,14 @@ function CardFront({
           <div className="flex flex-col items-center gap-1 min-w-[84px]">
             {isFinished ? (
               <>
-                <span className="text-2xl font-black tabular-nums leading-none">
-                  {match.home_score} - {match.away_score}
-                </span>
-                <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-400">
-                  Resultado
-                </span>
+                <div className="flex min-h-[74px] min-w-[84px] flex-col items-center justify-center rounded-xl border-2 border-gold bg-white px-2 py-2 text-black shadow-lg [text-shadow:none]">
+                  <span className="text-2xl font-black tabular-nums leading-none">
+                    {match.home_score} - {match.away_score}
+                  </span>
+                  <span className="mt-1 text-[8px] font-bold uppercase tracking-widest text-slate-500">
+                    Resultado
+                  </span>
+                </div>
                 {pred ? (
                   <span
                     className={`mt-1.5 pt-1.5 border-t border-white/15 text-sm font-bold tabular-nums ${
@@ -336,13 +338,15 @@ function CardFront({
               </>
             ) : (
               <>
-                <span className="text-2xl font-black tabular-nums leading-none">
-                  {pred ? `${pred.home_score} - ${pred.away_score}` : "VS"}
-                </span>
-                <span className="text-[8px] font-bold uppercase tracking-widest text-gold">
-                  Pronóstico
-                </span>
-                <span className="flex items-center gap-1 text-[9px] text-white/50">
+                <div className="flex min-h-[74px] min-w-[84px] flex-col items-center justify-center rounded-xl border-2 border-gold bg-white px-2 py-2 text-black shadow-lg [text-shadow:none]">
+                  <span className="text-2xl font-black tabular-nums leading-none text-black">
+                    {pred ? `${pred.home_score} - ${pred.away_score}` : "VS"}
+                  </span>
+                  <span className="mt-1 text-[8px] font-bold uppercase tracking-widest text-slate-500">
+                    Pronóstico
+                  </span>
+                </div>
+                <span className="flex items-center gap-1 text-[9px] text-slate-200">
                   <RotateCw className="h-2.5 w-2.5" />{" "}
                   {hasUser ? "Pulsa para editar" : "Inicia sesión para pronosticar"}
                 </span>
@@ -351,7 +355,7 @@ function CardFront({
           </div>
 
           <div className="flex flex-col items-center gap-2 text-center">
-            <div className="h-14 w-14 rounded-full bg-white/95 flex items-center justify-center p-2 shadow-lg">
+            <div className="flex h-14 w-14 items-center justify-center drop-shadow-lg">
               {awayCrest && (
                 <img src={awayCrest} alt={awayName} className="h-full w-full object-contain" />
               )}
@@ -364,9 +368,9 @@ function CardFront({
         </div>
 
         <div className="mt-3 flex items-center justify-between gap-3">
-          <span className="text-sm font-bold">{timeStr}</span>
+          <span className="text-sm font-bold text-slate-200">{timeStr}</span>
           {stadiumName && (
-            <span className="truncate text-right text-[10px] font-semibold text-white/65">
+            <span className="truncate text-right text-[10px] font-semibold text-slate-200">
               {stadiumName}
             </span>
           )}
