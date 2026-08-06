@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import championsFondo from "@/assets/champions/ChampionsFondo.webp";
-import championsEstadio from "@/assets/champions/ChampionsEstadio.webp";
+import championsFondo from "@/assets/champions/ChampionsLogoyCopa.webp";
+import championsEstadio from "@/assets/champions/ChampionsEstadio1.webp";
 
 export const Route = createFileRoute("/champions")({
   component: ChampionsPage,
