@@ -71,7 +71,7 @@ register(
   betisStadium,
   "Estadio de La Cartuja",
   ["Real Betis Balompié", "Real Betis", "Betis"],
-  "center 60%",
+  "center center",
 );
 register(celtaStadium, "Abanca Balaídos", [
   "RC Celta de Vigo",
@@ -98,7 +98,7 @@ register(
   malagaStadium,
   "La Rosaleda",
   ["Málaga CF", "Malaga CF", "Málaga", "Malaga"],
-  "center 58%",
+  "center center",
 );
 register(osasunaStadium, "El Sadar", ["Club Atlético Osasuna", "CA Osasuna", "Osasuna"]);
 register(racingStadium, "El Sardinero", [
@@ -106,10 +106,15 @@ register(racingStadium, "El Sardinero", [
   "Racing Santander",
   "Racing de Santander",
 ]);
-register(rayoStadium, "Vallecas", ["Rayo Vallecano de Madrid", "Rayo Vallecano", "Rayo"]);
+register(
+  rayoStadium,
+  "Vallecas",
+  ["Rayo Vallecano de Madrid", "Rayo Vallecano", "Rayo"],
+  "center center",
+);
 register(realMadridStadium, "Santiago Bernabéu", ["Real Madrid CF", "Real Madrid"]);
 register(realSociedadStadium, "Reale Arena", ["Real Sociedad de Fútbol", "Real Sociedad"]);
-register(sevillaStadium, "Ramón Sánchez-Pizjuán", ["Sevilla FC", "Sevilla"]);
+register(sevillaStadium, "Ramón Sánchez-Pizjuán", ["Sevilla FC", "Sevilla"], "center center");
 register(valenciaStadium, "Mestalla", ["Valencia CF", "Valencia"], "center 68%");
 register(villarrealStadium, "La Cerámica", ["Villarreal CF", "Villarreal"]);
 
