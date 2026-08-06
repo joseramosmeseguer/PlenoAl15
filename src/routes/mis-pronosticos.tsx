@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useClubMatches, useMyClubPredictions } from "@/lib/queries";
 import { getClubPredictionStats, type ClubPredictionStats } from "@/lib/club-predictions.functions";
@@ -7,16 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import {
-  ChevronLeft,
-  ChevronRight,
-  ChevronDown,
-  RotateCw,
-  CheckCircle2,
-  XCircle,
-  Star,
-  Trophy,
-} from "lucide-react";
+import { ChevronLeft, RotateCw, CheckCircle2, XCircle, Star, Trophy } from "lucide-react";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
 import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
 
@@ -39,6 +30,7 @@ function MyPredictions() {
     enabled: !!user,
   });
   const [matchday, setMatchday] = useState<number | null>(null);
+  const activeMatchdayRef = useRef<HTMLButtonElement | null>(null);
 
   const predMap = useMemo(() => {
     const m: Record<number, { home_score: number; away_score: number }> = {};
@@ -53,6 +45,16 @@ function MyPredictions() {
     [matches],
   );
 
+  const matchdayDates = useMemo(() => {
+    const dates: Record<number, Date> = {};
+    for (const match of matches ?? []) {
+      const date = new Date((match as any).utc_date);
+      const day = (match as any).matchday;
+      if (!dates[day] || date < dates[day]) dates[day] = date;
+    }
+    return dates;
+  }, [matches]);
+
   useEffect(() => {
     if (matchday === null && matchdays.length > 0) {
       const now = Date.now();
@@ -61,7 +63,14 @@ function MyPredictions() {
     }
   }, [matchdays, matches, matchday]);
 
-  const currentIndex = matchday !== null ? matchdays.indexOf(matchday) : -1;
+  useEffect(() => {
+    activeMatchdayRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [matchday]);
+
   const list = useMemo(
     () =>
       (matches ?? [])
@@ -70,15 +79,16 @@ function MyPredictions() {
     [matches, matchday],
   );
   const firstDate = list[0] ? new Date(list[0].utc_date) : null;
+  const predictedCount = list.filter((match: any) => predMap[match.id]).length;
+  const progress = list.length > 0 ? Math.round((predictedCount / list.length) * 100) : 0;
 
   return (
     <div className="space-y-5">
-      {/* Header */}
-      <div>
-        <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          Liga Pleno · Jornada {String(matchday ?? "").padStart(2, "0")}
-        </div>
-        <h1 className="display text-3xl mt-0.5">Todos los pronósticos</h1>
+      <div className="pt-1 text-center">
+        <h1 className="display text-4xl sm:text-5xl">Pronósticos</h1>
+        <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+          Elige una jornada y demuestra cuánto sabes de fútbol
+        </p>
       </div>
 
       {!user && (
@@ -87,53 +97,60 @@ function MyPredictions() {
         </div>
       )}
 
-      {/* Selector de jornada */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() =>
-            matchday !== null && currentIndex > 0 && setMatchday(matchdays[currentIndex - 1])
-          }
-          disabled={currentIndex <= 0}
-          className="h-11 w-11 shrink-0 rounded-xl border border-border bg-card flex items-center justify-center disabled:opacity-30 hover:bg-muted transition-colors"
+      <div className="space-y-3">
+        <div
+          className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          aria-label="Seleccionar jornada"
         >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-
-        <div className="relative flex-1 rounded-xl border border-border bg-card px-4 py-2 flex items-center justify-between">
-          <div>
-            <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Calendario 2026/27
-            </div>
-            <div className="font-bold text-sm">
-              Jornada {matchday ?? "…"}
-              {firstDate ? ` · ${firstDate.toLocaleDateString("es-ES")}` : ""}
-            </div>
-          </div>
-          <select
-            value={matchday ?? ""}
-            onChange={(e) => setMatchday(Number(e.target.value))}
-            className="appearance-none bg-transparent text-transparent absolute inset-0 w-full cursor-pointer"
-          >
-            {matchdays.map((jd) => (
-              <option key={jd} value={jd}>
-                Jornada {jd}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
+          {matchdays.map((journey) => {
+            const active = journey === matchday;
+            const date = matchdayDates[journey];
+            return (
+              <button
+                key={journey}
+                ref={active ? activeMatchdayRef : null}
+                type="button"
+                onClick={() => setMatchday(journey)}
+                className={`min-w-[104px] shrink-0 snap-center rounded-xl border px-3 py-2 text-left transition-all ${
+                  active
+                    ? "border-gold bg-gold text-slate-950 shadow-sm"
+                    : "border-border bg-card text-foreground hover:border-gold/50 hover:bg-muted"
+                }`}
+              >
+                <span className="block text-[10px] font-black uppercase tracking-wide">
+                  Jornada {journey}
+                </span>
+                <span
+                  className={`mt-0.5 block text-[9px] ${active ? "text-slate-700" : "text-muted-foreground"}`}
+                >
+                  {date
+                    ? date.toLocaleDateString("es-ES", { day: "2-digit", month: "short" })
+                    : "Fecha pendiente"}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
-        <button
-          onClick={() =>
-            matchday !== null &&
-            currentIndex < matchdays.length - 1 &&
-            setMatchday(matchdays[currentIndex + 1])
-          }
-          disabled={currentIndex < 0 || currentIndex >= matchdays.length - 1}
-          className="h-11 w-11 shrink-0 rounded-xl border border-border bg-card flex items-center justify-center disabled:opacity-30 hover:bg-muted transition-colors"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
+        <div className="rounded-xl border border-border bg-card px-3 py-2.5">
+          <div className="flex items-center justify-between gap-3 text-xs">
+            <span className="font-bold">
+              Jornada {matchday ?? "…"}
+              {firstDate ? ` · ${firstDate.toLocaleDateString("es-ES")}` : ""}
+            </span>
+            <span className="shrink-0 font-semibold text-muted-foreground">
+              {user ? `${predictedCount}/${list.length} listos` : `${list.length} partidos`}
+            </span>
+          </div>
+          {user && list.length > 0 && (
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-gold transition-[width] duration-300"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {list.length === 0 && (
