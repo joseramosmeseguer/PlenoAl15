@@ -1,5 +1,5 @@
 import alavesStadium from "@/assets/estadios/deportivo-alaves.jpg";
-import athleticStadium from "@/assets/estadios/athletic-club.webp";
+import athleticStadium from "@/assets/estadios/athletic-club.jpg";
 import atleticoStadium from "@/assets/estadios/atletico-madrid.jpg";
 import barcelonaStadium from "@/assets/estadios/barcelona.jpg";
 import betisStadium from "@/assets/estadios/real-betis.jpg";
@@ -22,6 +22,7 @@ import villarrealStadium from "@/assets/estadios/villarreal.webp";
 export type LaLigaTeamStadium = {
   stadium: string;
   stadiumName: string;
+  backgroundPosition: string;
 };
 
 const STADIUMS: Record<string, LaLigaTeamStadium> = {};
@@ -35,66 +36,82 @@ function normalizeTeamName(name: string) {
     .trim();
 }
 
-function register(stadium: string, stadiumName: string, ...teamNames: string[]) {
-  const value = { stadium, stadiumName };
+function register(
+  stadium: string,
+  stadiumName: string,
+  teamNames: string[],
+  backgroundPosition = "center 55%",
+) {
+  const value = { stadium, stadiumName, backgroundPosition };
   teamNames.forEach((name) => {
     STADIUMS[normalizeTeamName(name)] = value;
   });
 }
 
-register(alavesStadium, "Mendizorroza", "Deportivo Alavés", "Deportivo Alaves", "Alavés", "Alaves");
+register(
+  alavesStadium,
+  "Mendizorroza",
+  ["Deportivo Alavés", "Deportivo Alaves", "Alavés", "Alaves"],
+  "center 58%",
+);
 register(
   athleticStadium,
   "San Mamés",
-  "Athletic Club",
-  "Athletic Club de Bilbao",
-  "Athletic Bilbao",
+  ["Athletic Club", "Athletic Club de Bilbao", "Athletic Bilbao"],
+  "center 62%",
 );
 register(
   atleticoStadium,
   "Riyadh Air Metropolitano",
-  "Club Atlético de Madrid",
-  "Atlético de Madrid",
-  "Atletico Madrid",
+  ["Club Atlético de Madrid", "Atlético de Madrid", "Atletico Madrid"],
+  "center 56%",
 );
-register(barcelonaStadium, "Camp Nou", "FC Barcelona", "Barcelona");
-register(betisStadium, "Benito Villamarín", "Real Betis Balompié", "Real Betis", "Betis");
+register(barcelonaStadium, "Camp Nou", ["FC Barcelona", "Barcelona"], "center 58%");
 register(
-  celtaStadium,
-  "Abanca Balaídos",
+  betisStadium,
+  "Estadio de La Cartuja",
+  ["Real Betis Balompié", "Real Betis", "Betis"],
+  "center 60%",
+);
+register(celtaStadium, "Abanca Balaídos", [
   "RC Celta de Vigo",
   "Celta de Vigo",
   "Celta Vigo",
   "Celta",
-);
-register(
-  deportivoStadium,
-  "Riazor",
+]);
+register(deportivoStadium, "Riazor", [
   "RC Deportivo",
   "RC Deportivo La Coruña",
   "Deportivo de La Coruña",
   "Deportivo La Coruña",
   "Deportivo",
-);
-register(elcheStadium, "Martínez Valero", "Elche CF", "Elche");
-register(espanyolStadium, "RCDE Stadium", "RCD Espanyol de Barcelona", "RCD Espanyol", "Espanyol");
-register(getafeStadium, "Coliseum", "Getafe CF", "Getafe");
-register(levanteStadium, "Ciutat de València", "Levante UD", "Levante");
-register(malagaStadium, "La Rosaleda", "Málaga CF", "Malaga CF", "Málaga", "Malaga");
-register(osasunaStadium, "El Sadar", "Club Atlético Osasuna", "CA Osasuna", "Osasuna");
+]);
+register(elcheStadium, "Martínez Valero", ["Elche CF", "Elche"]);
+register(espanyolStadium, "RCDE Stadium", [
+  "RCD Espanyol de Barcelona",
+  "RCD Espanyol",
+  "Espanyol",
+]);
+register(getafeStadium, "Coliseum", ["Getafe CF", "Getafe"]);
+register(levanteStadium, "Ciutat de València", ["Levante UD", "Levante"]);
 register(
-  racingStadium,
-  "El Sardinero",
+  malagaStadium,
+  "La Rosaleda",
+  ["Málaga CF", "Malaga CF", "Málaga", "Malaga"],
+  "center 58%",
+);
+register(osasunaStadium, "El Sadar", ["Club Atlético Osasuna", "CA Osasuna", "Osasuna"]);
+register(racingStadium, "El Sardinero", [
   "Real Racing Club de Santander",
   "Racing Santander",
   "Racing de Santander",
-);
-register(rayoStadium, "Vallecas", "Rayo Vallecano de Madrid", "Rayo Vallecano", "Rayo");
-register(realMadridStadium, "Santiago Bernabéu", "Real Madrid CF", "Real Madrid");
-register(realSociedadStadium, "Reale Arena", "Real Sociedad de Fútbol", "Real Sociedad");
-register(sevillaStadium, "Ramón Sánchez-Pizjuán", "Sevilla FC", "Sevilla");
-register(valenciaStadium, "Mestalla", "Valencia CF", "Valencia");
-register(villarrealStadium, "La Cerámica", "Villarreal CF", "Villarreal");
+]);
+register(rayoStadium, "Vallecas", ["Rayo Vallecano de Madrid", "Rayo Vallecano", "Rayo"]);
+register(realMadridStadium, "Santiago Bernabéu", ["Real Madrid CF", "Real Madrid"]);
+register(realSociedadStadium, "Reale Arena", ["Real Sociedad de Fútbol", "Real Sociedad"]);
+register(sevillaStadium, "Ramón Sánchez-Pizjuán", ["Sevilla FC", "Sevilla"]);
+register(valenciaStadium, "Mestalla", ["Valencia CF", "Valencia"], "center 68%");
+register(villarrealStadium, "La Cerámica", ["Villarreal CF", "Villarreal"]);
 
 export function getLaLigaTeamStadium(teamName?: string | null): LaLigaTeamStadium | null {
   if (!teamName) return null;

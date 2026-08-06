@@ -185,6 +185,7 @@ function ClubMatchCard({
               isFinished={isFinished}
               bg={bg}
               stadiumName={homeStadium?.stadiumName}
+              backgroundPosition={homeStadium?.backgroundPosition}
               onEdit={openEdit}
               hasUser={!!user}
             />
@@ -217,6 +218,7 @@ function CardFront({
   isFinished,
   bg,
   stadiumName,
+  backgroundPosition,
   onEdit,
   hasUser,
 }: {
@@ -225,6 +227,7 @@ function CardFront({
   isFinished: boolean;
   bg: string;
   stadiumName?: string;
+  backgroundPosition?: string;
   onEdit: () => void;
   hasUser: boolean;
 }) {
@@ -255,7 +258,12 @@ function CardFront({
         isFinished ? "cursor-default" : "cursor-pointer"
       }`}
     >
-      <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <img
+        src={bg}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover"
+        style={{ objectPosition: backgroundPosition ?? "center 55%" }}
+      />
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/70" />
 
       {isFinished && pred && (
