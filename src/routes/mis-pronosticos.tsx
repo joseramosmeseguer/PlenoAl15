@@ -262,7 +262,7 @@ function CardFront({
         src={bg}
         alt=""
         className="absolute inset-0 h-full w-full object-cover"
-        style={{ objectPosition: backgroundPosition ?? "center 55%" }}
+        style={{ objectPosition: backgroundPosition ?? "center 32%" }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/70" />
 
