@@ -319,7 +319,7 @@ function CardFront({
 
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
           <div className="flex flex-col items-center gap-2 text-center">
-            <div className="flex h-14 w-14 items-center justify-center drop-shadow-lg">
+            <div className="flex h-12 w-12 items-center justify-center drop-shadow-lg">
               {homeCrest && (
                 <img src={homeCrest} alt={homeName} className="h-full w-full object-contain" />
               )}
@@ -333,11 +333,11 @@ function CardFront({
           <div className="flex flex-col items-center gap-1 min-w-[84px]">
             {isFinished ? (
               <>
-                <div className="flex min-h-[74px] min-w-[84px] flex-col items-center justify-center rounded-xl border-2 border-gold bg-white px-2 py-2 text-black shadow-lg [text-shadow:none]">
-                  <span className="text-2xl font-black tabular-nums leading-none">
+                <div className="flex min-h-[62px] min-w-[68px] flex-col items-center justify-center rounded-lg border-2 border-gold bg-white px-2 py-1.5 text-black shadow-lg [text-shadow:none]">
+                  <span className="text-xl font-black tabular-nums leading-none">
                     {match.home_score} - {match.away_score}
                   </span>
-                  <span className="mt-1 text-[8px] font-bold uppercase tracking-widest text-slate-500">
+                  <span className="mt-1 text-[7px] font-bold uppercase tracking-widest text-slate-500">
                     Resultado
                   </span>
                 </div>
@@ -361,11 +361,11 @@ function CardFront({
               </>
             ) : (
               <>
-                <div className="flex min-h-[74px] min-w-[84px] flex-col items-center justify-center rounded-xl border-2 border-gold bg-white px-2 py-2 text-black shadow-lg [text-shadow:none]">
-                  <span className="text-2xl font-black tabular-nums leading-none text-black">
+                <div className="flex min-h-[62px] min-w-[68px] flex-col items-center justify-center rounded-lg border-2 border-gold bg-white px-2 py-1.5 text-black shadow-lg [text-shadow:none]">
+                  <span className="text-xl font-black tabular-nums leading-none text-black">
                     {pred ? `${pred.home_score} - ${pred.away_score}` : "VS"}
                   </span>
-                  <span className="mt-1 text-[8px] font-bold uppercase tracking-widest text-slate-500">
+                  <span className="mt-1 text-[7px] font-bold uppercase tracking-widest text-slate-500">
                     Pronóstico
                   </span>
                 </div>
@@ -378,7 +378,7 @@ function CardFront({
           </div>
 
           <div className="flex flex-col items-center gap-2 text-center">
-            <div className="flex h-14 w-14 items-center justify-center drop-shadow-lg">
+            <div className="flex h-12 w-12 items-center justify-center drop-shadow-lg">
               {awayCrest && (
                 <img src={awayCrest} alt={awayName} className="h-full w-full object-contain" />
               )}

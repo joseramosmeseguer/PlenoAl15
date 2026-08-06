@@ -81,7 +81,7 @@ function CalendarPage() {
 
                         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                           <div className="flex flex-col items-center gap-1.5 text-center">
-                            <div className="flex h-11 w-11 items-center justify-center drop-shadow-lg">
+                            <div className="flex h-9 w-9 items-center justify-center drop-shadow-lg">
                               {homeCrest && (
                                 <img
                                   src={homeCrest}
@@ -95,9 +95,9 @@ function CalendarPage() {
                             </span>
                           </div>
 
-                          <div className="flex flex-col items-center gap-1 min-w-[64px]">
-                            <div className="flex min-h-14 min-w-16 items-center justify-center rounded-xl border-2 border-gold bg-white px-3 py-2 shadow-lg [text-shadow:none]">
-                              <span className="text-xl font-black tabular-nums text-black">
+                          <div className="flex min-w-[52px] flex-col items-center gap-1">
+                            <div className="flex min-h-12 min-w-12 items-center justify-center rounded-lg border-2 border-gold bg-white px-2 py-1.5 shadow-lg [text-shadow:none]">
+                              <span className="text-base font-black tabular-nums text-black">
                                 {isFinished ? `${m.home_score} - ${m.away_score}` : "VS"}
                               </span>
                             </div>
@@ -113,7 +113,7 @@ function CalendarPage() {
                           </div>
 
                           <div className="flex flex-col items-center gap-1.5 text-center">
-                            <div className="flex h-11 w-11 items-center justify-center drop-shadow-lg">
+                            <div className="flex h-9 w-9 items-center justify-center drop-shadow-lg">
                               {awayCrest && (
                                 <img
                                   src={awayCrest}
