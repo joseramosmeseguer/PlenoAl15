@@ -2,9 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useClubMatches, useMyClubPredictions } from "@/lib/queries";
+import { getClubPredictionStats, type ClubPredictionStats } from "@/lib/club-predictions.functions";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   ChevronLeft,
@@ -13,6 +14,8 @@ import {
   RotateCw,
   CheckCircle2,
   XCircle,
+  Star,
+  Trophy,
 } from "lucide-react";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
 import { getLaLigaTeamStadium } from "@/lib/laligaTeams";
@@ -30,6 +33,11 @@ function MyPredictions() {
   const { user } = useAuth();
   const { data: matches } = useClubMatches();
   const { data: myPreds } = useMyClubPredictions(user?.id);
+  const { data: predictionStats } = useQuery({
+    queryKey: ["club_prediction_stats"],
+    queryFn: () => getClubPredictionStats(),
+    enabled: !!user,
+  });
   const [matchday, setMatchday] = useState<number | null>(null);
 
   const predMap = useMemo(() => {
@@ -136,7 +144,12 @@ function MyPredictions() {
 
       <div className="space-y-4">
         {list.map((m: any) => (
-          <ClubMatchCard key={m.id} match={m} pred={predMap[m.id]} />
+          <ClubMatchCard
+            key={m.id}
+            match={m}
+            pred={predMap[m.id]}
+            stats={predictionStats?.[String(m.id)]}
+          />
         ))}
       </div>
     </div>
@@ -146,9 +159,11 @@ function MyPredictions() {
 function ClubMatchCard({
   match,
   pred,
+  stats,
 }: {
   match: any;
   pred?: { home_score: number; away_score: number };
+  stats?: ClubPredictionStats;
 }) {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -201,7 +216,7 @@ function ClubMatchCard({
             <CardBack
               match={match}
               pred={pred}
-              bg={bg}
+              stats={stats}
               onSaved={() => setFlipped(false)}
               onCancel={() => setFlipped(false)}
             />
@@ -391,13 +406,13 @@ function CardFront({
 function CardBack({
   match,
   pred,
-  bg,
+  stats,
   onSaved,
   onCancel,
 }: {
   match: any;
   pred?: { home_score: number; away_score: number };
-  bg: string;
+  stats?: ClubPredictionStats;
   onSaved: () => void;
   onCancel: () => void;
 }) {
@@ -426,72 +441,121 @@ function CardBack({
     }
     toast.success("Pronóstico guardado");
     qc.invalidateQueries({ queryKey: ["club_predictions", user.id] });
+    qc.invalidateQueries({ queryKey: ["club_prediction_stats"] });
     onSaved();
   }
 
-  return (
-    <div className="relative overflow-hidden rounded-2xl shadow-soft border-2 border-gold">
-      <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-      <div className="absolute inset-0 bg-black/85" />
+  const [homePct, drawPct, awayPct] = outcomePercentages(stats);
+  const homeCrest = crestUrl(match.home?.id);
+  const awayCrest = crestUrl(match.away?.id);
+  const premium = match.is_megapremium || match.is_premium;
 
-      <div className="relative px-4 py-4 text-white">
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-xs font-bold uppercase tracking-widest text-gold">
-            Jornada {match.matchday}
-          </span>
+  return (
+    <div className="overflow-hidden rounded-2xl border border-gold/70 bg-[#fffef9] text-slate-900 shadow-soft">
+      {premium && (
+        <div className="flex items-center justify-center gap-2 border-b border-gold/35 bg-gold/15 px-4 py-2.5 text-xs font-black uppercase tracking-wide text-amber-600">
+          <Star className="h-4 w-4 fill-current" />
+          {match.is_megapremium ? "Mega Premium · Triple puntuación" : "Premium · Doble puntuación"}
+        </div>
+      )}
+
+      <div className="px-4 py-4">
+        <div className="grid grid-cols-[32px_1fr_32px] items-center border-b border-slate-200 pb-4">
           <button
             type="button"
             onClick={onCancel}
-            className="text-xs text-white/50 hover:text-white"
+            aria-label="Volver al partido"
+            className="flex h-8 w-8 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900"
           >
-            Cancelar
+            <ChevronLeft className="h-5 w-5" />
           </button>
+          <div className="flex min-w-0 items-center justify-center gap-3 text-center">
+            {homeCrest && <img src={homeCrest} alt="" className="h-9 w-9 object-contain" />}
+            <span className="min-w-0 truncate text-sm font-black">{homeName}</span>
+            <span className="shrink-0 text-xs font-bold text-slate-400">VS</span>
+            <span className="min-w-0 truncate text-sm font-black">{awayName}</span>
+            {awayCrest && <img src={awayCrest} alt="" className="h-9 w-9 object-contain" />}
+          </div>
+          <span className="text-right text-[10px] font-bold uppercase text-slate-400">
+            J{match.matchday}
+          </span>
         </div>
 
-        <div className="flex items-center justify-center gap-6">
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-xs font-bold text-white/70 max-w-[80px] text-center leading-tight">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-4 py-5">
+          <div className="flex flex-col items-center gap-3">
+            <span className="max-w-[120px] text-center text-sm font-semibold text-slate-600">
               {homeName}
             </span>
             <ScoreStepper value={home} onChange={setHome} />
           </div>
-          <span className="font-black text-white/30 text-2xl">–</span>
-          <div className="flex flex-col items-center gap-2">
-            <span className="text-xs font-bold text-white/70 max-w-[80px] text-center leading-tight">
+          <span className="pb-2 text-3xl font-light text-slate-400">−</span>
+          <div className="flex flex-col items-center gap-3">
+            <span className="max-w-[120px] text-center text-sm font-semibold text-slate-600">
               {awayName}
             </span>
             <ScoreStepper value={away} onChange={setAway} />
           </div>
         </div>
 
+        <div className="grid grid-cols-3 border-y border-slate-200 py-3 text-center text-xs font-semibold text-slate-600">
+          <span>
+            {homePct}% {homeName}
+          </span>
+          <span>{drawPct}% Empate</span>
+          <span>
+            {awayName} {awayPct}%
+          </span>
+        </div>
+
+        <div className="flex items-center justify-center gap-6 py-3 text-xs font-semibold text-slate-600">
+          <span className="flex items-center gap-1.5">
+            <Trophy className="h-4 w-4 text-amber-600" /> 2 pts resultado
+          </span>
+          <span className="flex items-center gap-1.5 text-amber-600">
+            <Star className="h-4 w-4 fill-current" /> 6 pts exacto
+          </span>
+        </div>
+
         <button
           onClick={save}
           disabled={saving}
-          className="mt-5 w-full rounded-xl bg-gold text-gold-foreground text-sm font-black uppercase tracking-wide py-2.5 disabled:opacity-50"
+          className="w-full rounded-2xl bg-gold py-3.5 text-base font-black text-slate-950 shadow-sm transition-transform hover:scale-[1.01] disabled:opacity-50"
         >
-          {saving ? "Guardando…" : "Guardar y volver"}
+          {saving ? "Guardando…" : "Guardar pronóstico"}
         </button>
       </div>
     </div>
   );
 }
 
+function outcomePercentages(stats?: ClubPredictionStats): [number, number, number] {
+  if (!stats?.total) return [0, 0, 0];
+  const values = [stats.home, stats.draw, stats.away].map((count) => (count / stats.total) * 100);
+  const rounded = values.map(Math.floor);
+  const remainder = 100 - rounded.reduce((sum, value) => sum + value, 0);
+  const order = values
+    .map((value, index) => ({ index, fraction: value - Math.floor(value) }))
+    .sort((a, b) => b.fraction - a.fraction);
+  for (let index = 0; index < remainder; index += 1) rounded[order[index].index] += 1;
+  return rounded as [number, number, number];
+}
+
 function ScoreStepper({ value, onChange }: { value: string; onChange: (v: string) => void }) {
   const n = Number(value) || 0;
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex items-center gap-3">
       <button
         type="button"
         onClick={() => onChange(String(Math.max(0, n - 1)))}
-        className="h-6 w-6 rounded-full bg-white/15 text-white flex items-center justify-center text-sm font-bold hover:bg-white/25"
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xl font-medium text-slate-700 transition-colors hover:bg-slate-100"
       >
         −
       </button>
-      <span className="w-6 text-center font-black text-xl tabular-nums">{n}</span>
+      <span className="w-8 text-center text-4xl font-black tabular-nums text-slate-950">{n}</span>
       <button
         type="button"
         onClick={() => onChange(String(n + 1))}
-        className="h-6 w-6 rounded-full bg-white/15 text-white flex items-center justify-center text-sm font-bold hover:bg-white/25"
+        className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-50 text-xl font-medium text-slate-700 transition-colors hover:bg-slate-100"
       >
         +
       </button>
