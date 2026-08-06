@@ -50,26 +50,26 @@
 
   --gradient-pitch: linear-gradient(135deg, var(--pitch-deep), var(--pitch));
   --gradient-gold: linear-gradient(135deg, oklch(0.86 0.16 85), oklch(0.78 0.18 65));
-  --gradient-night: linear-gradient(180deg, oklch(0.18 0.04 160), oklch(0.12 0.03 160));
+  --gradient-night: linear-gradient(180deg, oklch(0.2 0.045 254), oklch(0.13 0.035 254));
 }
 
 :root {
   --radius: 0.85rem;
 
-  /* Backgrounds — tono oscuro por defecto */
-  --background: oklch(0.17 0.02 160);
+  /* Backgrounds — azul noche por defecto */
+  --background: oklch(0.17 0.025 254);
   --foreground: oklch(0.96 0.01 110);
 
-  --card: oklch(0.23 0.028 160);
+  --card: oklch(0.23 0.032 254);
   --card-foreground: oklch(0.96 0.01 110);
-  --popover: oklch(0.23 0.028 160);
+  --popover: oklch(0.23 0.032 254);
   --popover-foreground: oklch(0.96 0.01 110);
 
-  /* Primary = verde césped intenso */
-  --primary: oklch(0.68 0.16 152);
-  --primary-foreground: oklch(0.17 0.02 160);
-  --pitch: oklch(0.55 0.16 152);
-  --pitch-deep: oklch(0.26 0.08 160);
+  /* Primary = azul intenso */
+  --primary: oklch(0.62 0.17 255);
+  --primary-foreground: oklch(0.17 0.025 254);
+  --pitch: oklch(0.52 0.17 255);
+  --pitch-deep: oklch(0.24 0.09 255);
 
   /* Gold = trofeo */
   --gold: oklch(0.82 0.16 82);
@@ -78,26 +78,26 @@
   /* Flame = rojo afición / premium */
   --flame: oklch(0.62 0.22 28);
 
-  --secondary: oklch(0.29 0.038 160);
+  --secondary: oklch(0.29 0.042 254);
   --secondary-foreground: oklch(0.96 0.01 110);
-  --muted: oklch(0.29 0.038 160);
-  --muted-foreground: oklch(0.74 0.03 140);
+  --muted: oklch(0.29 0.042 254);
+  --muted-foreground: oklch(0.74 0.025 254);
   --accent: oklch(0.42 0.08 80);
   --accent-foreground: oklch(0.96 0.05 90);
   --destructive: oklch(0.6 0.22 27);
   --destructive-foreground: oklch(0.98 0.01 110);
   --border: oklch(1 0 0 / 14%);
   --input: oklch(1 0 0 / 18%);
-  --ring: oklch(0.68 0.14 152);
+  --ring: oklch(0.62 0.17 255);
 
-  --sidebar: oklch(0.17 0.02 160);
+  --sidebar: oklch(0.17 0.025 254);
   --sidebar-foreground: oklch(0.96 0.01 110);
-  --sidebar-primary: oklch(0.68 0.16 152);
-  --sidebar-primary-foreground: oklch(0.17 0.02 160);
+  --sidebar-primary: oklch(0.62 0.17 255);
+  --sidebar-primary-foreground: oklch(0.17 0.025 254);
   --sidebar-accent: oklch(0.42 0.08 80);
   --sidebar-accent-foreground: oklch(0.96 0.05 90);
   --sidebar-border: oklch(1 0 0 / 14%);
-  --sidebar-ring: oklch(0.68 0.14 152);
+  --sidebar-ring: oklch(0.62 0.17 255);
 }
 
 @layer base {

@@ -198,9 +198,12 @@ function CardFront({ match, pred, isFinished, bg, onEdit, hasUser }: {
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl shadow-soft border-t-2 border-b-2 ${
-      isFinished ? "border-emerald-500" : match.is_megapremium ? "border-red-500" : match.is_premium ? "border-gold" : "border-flame"
-    }`}>
+    <div
+      onClick={onEdit}
+      className={`relative overflow-hidden rounded-2xl shadow-soft border-t-2 border-b-2 ${
+        isFinished ? "border-emerald-500 cursor-default" : "cursor-pointer"
+      } ${!isFinished ? (match.is_megapremium ? "border-red-500" : match.is_premium ? "border-gold" : "border-flame") : ""}`}
+    >
       <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/85" />
 
@@ -233,39 +236,32 @@ function CardFront({ match, pred, isFinished, bg, onEdit, hasUser }: {
             <span className="text-[9px] font-bold uppercase tracking-widest text-white/50">Local</span>
           </div>
 
-          <div className="flex flex-col items-center gap-1.5">
-            <button
-              type="button"
-              onClick={onEdit}
-              disabled={isFinished}
-              className="flex flex-col items-center gap-1 rounded-2xl border-2 border-gold bg-black/60 px-4 py-2 min-w-[84px] disabled:opacity-100"
-            >
-              {isFinished ? (
-                <>
-                  <span className="text-2xl font-black tabular-nums leading-none">{match.home_score} - {match.away_score}</span>
-                  <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-400">Resultado</span>
-                  {pred ? (
-                    <span className={`mt-1 pt-1 border-t border-white/15 text-sm font-bold tabular-nums ${
-                      predResult === "exact" ? "text-emerald-400" : predResult === "outcome" ? "text-gold" : "text-red-400"
-                    }`}>
-                      Tu pronóstico: {pred.home_score}-{pred.away_score}
-                    </span>
-                  ) : (
-                    <span className="mt-1 pt-1 border-t border-white/15 text-[10px] text-white/40">Sin pronóstico</span>
-                  )}
-                </>
-              ) : (
-                <>
-                  <span className="text-2xl font-black tabular-nums leading-none">
-                    {pred ? `${pred.home_score} - ${pred.away_score}` : "VS"}
+          <div className="flex flex-col items-center gap-1 min-w-[84px]">
+            {isFinished ? (
+              <>
+                <span className="text-2xl font-black tabular-nums leading-none">{match.home_score} - {match.away_score}</span>
+                <span className="text-[8px] font-bold uppercase tracking-widest text-emerald-400">Resultado</span>
+                {pred ? (
+                  <span className={`mt-1.5 pt-1.5 border-t border-white/15 text-sm font-bold tabular-nums ${
+                    predResult === "exact" ? "text-emerald-400" : predResult === "outcome" ? "text-gold" : "text-red-400"
+                  }`}>
+                    Tu pronóstico: {pred.home_score}-{pred.away_score}
                   </span>
-                  <span className="text-[8px] font-bold uppercase tracking-widest text-gold">Pronóstico</span>
-                  <span className="flex items-center gap-1 text-[9px] text-white/50">
-                    <RotateCw className="h-2.5 w-2.5" /> {hasUser ? "Pulsa para editar" : "Inicia sesión para pronosticar"}
-                  </span>
-                </>
-              )}
-            </button>
+                ) : (
+                  <span className="mt-1.5 pt-1.5 border-t border-white/15 text-[10px] text-white/40">Sin pronóstico</span>
+                )}
+              </>
+            ) : (
+              <>
+                <span className="text-2xl font-black tabular-nums leading-none">
+                  {pred ? `${pred.home_score} - ${pred.away_score}` : "VS"}
+                </span>
+                <span className="text-[8px] font-bold uppercase tracking-widest text-gold">Pronóstico</span>
+                <span className="flex items-center gap-1 text-[9px] text-white/50">
+                  <RotateCw className="h-2.5 w-2.5" /> {hasUser ? "Pulsa para editar" : "Inicia sesión para pronosticar"}
+                </span>
+              </>
+            )}
           </div>
 
           <div className="flex flex-col items-center gap-2 text-center">
