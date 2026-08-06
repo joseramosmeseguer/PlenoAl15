@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
-import estadioBg from "@/assets/EstadioNormalOscuro.png";
+import loginBg from "@/assets/players/DrogbaySergioRamos.webp";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -75,8 +75,8 @@ function LoginPage() {
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
-      <img src={estadioBg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/85 via-black/75 to-black/90" />
+      <img src={loginBg} alt="" className="absolute inset-0 h-full w-full object-cover blur-[2px] scale-105" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/70 to-black/90" />
 
       <div className={`relative z-10 min-h-screen flex justify-center p-6 ${mode === "welcome" ? "items-start pt-48 md:pt-52" : "items-center"}`}>
         <div className="w-full max-w-sm">
@@ -190,6 +190,12 @@ function LoginPage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="absolute bottom-6 inset-x-0 text-center pointer-events-none">
+        <p className="text-xs font-bold uppercase tracking-[0.35em] text-white/60">
+          Lo nuestro es el <span className="text-gold">15</span>
+        </p>
       </div>
 
       <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
