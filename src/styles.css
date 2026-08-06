@@ -42,8 +42,8 @@
   --color-pitch-deep: var(--pitch-deep);
   --color-flame: var(--flame);
 
-  --font-display: "Anton", system-ui, sans-serif;
-  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-display: "Cinzel", Georgia, serif;
+  --font-sans: "Montserrat", system-ui, sans-serif;
 
   --shadow-soft: 0 10px 30px -12px color-mix(in oklab, var(--pitch-deep) 35%, transparent);
   --shadow-gold: 0 10px 40px -10px color-mix(in oklab, var(--gold) 60%, transparent);
@@ -101,31 +101,55 @@
 }
 
 @layer base {
-  * { border-color: var(--color-border); }
-  html, body { height: 100%; }
+  * {
+    border-color: var(--color-border);
+  }
+  html,
+  body {
+    height: 100%;
+  }
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, .display {
+  h1,
+  h2,
+  h3,
+  .display {
     font-family: var(--font-display);
-    letter-spacing: 0.01em;
+    letter-spacing: 0.025em;
+    font-weight: 800;
   }
 }
 
 @layer utilities {
-  .text-gold { color: var(--gold); }
-  .bg-gold { background-color: var(--gold); }
-  .bg-gradient-gold { background-image: var(--gradient-gold); }
-  .bg-gradient-pitch { background-image: var(--gradient-pitch); }
-  .bg-gradient-night { background-image: var(--gradient-night); }
-  .shadow-soft { box-shadow: var(--shadow-soft); }
-  .shadow-gold { box-shadow: var(--shadow-gold); }
+  .text-gold {
+    color: var(--gold);
+  }
+  .bg-gold {
+    background-color: var(--gold);
+  }
+  .bg-gradient-gold {
+    background-image: var(--gradient-gold);
+  }
+  .bg-gradient-pitch {
+    background-image: var(--gradient-pitch);
+  }
+  .bg-gradient-night {
+    background-image: var(--gradient-night);
+  }
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
+  }
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
   .premium-glow {
-    box-shadow: 0 0 0 1px color-mix(in oklab, var(--gold) 60%, transparent),
-                0 8px 30px -8px color-mix(in oklab, var(--gold) 50%, transparent);
+    box-shadow:
+      0 0 0 1px color-mix(in oklab, var(--gold) 60%, transparent),
+      0 8px 30px -8px color-mix(in oklab, var(--gold) 50%, transparent);
   }
   .pitch-stripes {
     background-image: repeating-linear-gradient(

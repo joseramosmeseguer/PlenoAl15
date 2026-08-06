@@ -20,7 +20,10 @@ function NotFoundComponent() {
         <div className="text-7xl mb-4">⚽</div>
         <h1 className="display text-5xl text-gold">404</h1>
         <p className="mt-2 text-white/80">Esta página se fue por la línea de fondo.</p>
-        <Link to="/" className="inline-block mt-6 px-5 py-2 rounded-md bg-gold text-gold-foreground font-semibold">
+        <Link
+          to="/"
+          className="inline-block mt-6 px-5 py-2 rounded-md bg-gold text-gold-foreground font-semibold"
+        >
           Volver a la clasificación
         </Link>
       </div>
@@ -55,14 +58,34 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "PlenoAl15" },
-      { name: "description", content: "Quiniela privada de LaLiga y la Champions entre amigos: pronósticos, ranking y bonus." },
+      {
+        name: "description",
+        content:
+          "Quiniela privada de LaLiga y la Champions entre amigos: pronósticos, ranking y bonus.",
+      },
       { property: "og:title", content: "PlenoAl15" },
-      { property: "og:description", content: "Quiniela privada de LaLiga y la Champions entre amigos: pronósticos, ranking y bonus." },
+      {
+        property: "og:description",
+        content:
+          "Quiniela privada de LaLiga y la Champions entre amigos: pronósticos, ranking y bonus.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:title", content: "PlenoAl15" },
-      { name: "twitter:description", content: "Quiniela privada de LaLiga y la Champions entre amigos: pronósticos, ranking y bonus." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Npr197xME4SuB9zpgnyBfZzxaCK2/social-images/social-1778498044579-f.elconfidencial.com_original_73c_eb7_54a_73ceb754a836af3d6dd36f9681ffdb39.webp" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/Npr197xME4SuB9zpgnyBfZzxaCK2/social-images/social-1778498044579-f.elconfidencial.com_original_73c_eb7_54a_73ceb754a836af3d6dd36f9681ffdb39.webp" },
+      {
+        name: "twitter:description",
+        content:
+          "Quiniela privada de LaLiga y la Champions entre amigos: pronósticos, ranking y bonus.",
+      },
+      {
+        property: "og:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/Npr197xME4SuB9zpgnyBfZzxaCK2/social-images/social-1778498044579-f.elconfidencial.com_original_73c_eb7_54a_73ceb754a836af3d6dd36f9681ffdb39.webp",
+      },
+      {
+        name: "twitter:image",
+        content:
+          "https://storage.googleapis.com/gpt-engineer-file-uploads/Npr197xME4SuB9zpgnyBfZzxaCK2/social-images/social-1778498044579-f.elconfidencial.com_original_73c_eb7_54a_73ceb754a836af3d6dd36f9681ffdb39.webp",
+      },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#0f1115" },
       { name: "apple-mobile-web-app-capable", content: "yes" },
@@ -73,7 +96,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&display=swap" },
+      {
+        rel: "stylesheet",
+        href: "https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Montserrat:wght@400;500;600;700;800&display=swap",
+      },
       { rel: "stylesheet", href: appCss },
       { rel: "manifest", href: "/manifest.json" },
       { rel: "apple-touch-icon", href: "/icon-apple.jpg" },

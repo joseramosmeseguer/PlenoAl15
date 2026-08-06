@@ -256,7 +256,7 @@ function CardFront({
       } ${!isFinished ? (match.is_megapremium ? "border-red-500" : match.is_premium ? "border-gold" : "border-flame") : ""}`}
     >
       <img src={bg} alt="" className="absolute inset-0 h-full w-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black/85" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/70" />
 
       {isFinished && pred && (
         <div
@@ -286,7 +286,7 @@ function CardFront({
         </div>
       )}
 
-      <div className="relative px-4 pt-3 pb-4 text-white">
+      <div className="relative px-4 pt-3 pb-4 text-white [text-shadow:0_2px_5px_rgba(0,0,0,.95)]">
         <div className="flex items-center justify-between mb-3">
           <span className="inline-flex items-center rounded-full bg-gold text-gold-foreground text-[10px] font-black uppercase tracking-widest px-2.5 py-1">
             Jornada {match.matchday}
