@@ -71,6 +71,7 @@ register(
   deportivoStadium,
   "Riazor",
   "RC Deportivo",
+  "RC Deportivo La Coruña",
   "Deportivo de La Coruña",
   "Deportivo La Coruña",
   "Deportivo",
