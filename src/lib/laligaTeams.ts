@@ -27,6 +27,8 @@ export type LaLigaTeamStadium = {
 
 const STADIUMS: Record<string, LaLigaTeamStadium> = {};
 
+const TEAM_DISPLAY_NAMES: Record<string, string> = {};
+
 function normalizeTeamName(name: string) {
   return name
     .normalize("NFD")
@@ -122,4 +124,25 @@ register(villarrealStadium, "La Cerámica", ["Villarreal CF", "Villarreal"]);
 export function getLaLigaTeamStadium(teamName?: string | null): LaLigaTeamStadium | null {
   if (!teamName) return null;
   return STADIUMS[normalizeTeamName(teamName)] ?? null;
+}
+
+function registerDisplayName(displayName: string, ...teamNames: string[]) {
+  teamNames.forEach((name) => {
+    TEAM_DISPLAY_NAMES[normalizeTeamName(name)] = displayName;
+  });
+}
+
+registerDisplayName("Rayo Vallecano", "Rayo Vallecano de Madrid", "Rayo Vallecano", "Rayo");
+registerDisplayName(
+  "Racing de Santander",
+  "Real Racing Club de Santander",
+  "Racing Santander",
+  "Racing de Santander",
+);
+registerDisplayName("RCD Espanyol", "RCD Espanyol de Barcelona", "RCD Espanyol", "Espanyol");
+registerDisplayName("RC Celta", "RC Celta de Vigo", "Celta de Vigo", "Celta Vigo", "Celta");
+
+export function getLaLigaTeamDisplayName(teamName?: string | null): string {
+  if (!teamName) return "?";
+  return TEAM_DISPLAY_NAMES[normalizeTeamName(teamName)] ?? teamName;
 }

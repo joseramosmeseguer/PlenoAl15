@@ -18,7 +18,7 @@ import {
   Trophy,
 } from "lucide-react";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
-import { getLaLigaTeamStadium } from "@/lib/laligaTeams";
+import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
 
 export const Route = createFileRoute("/mis-pronosticos")({
   component: MyPredictions,
@@ -246,8 +246,8 @@ function CardFront({
   onEdit: () => void;
   hasUser: boolean;
 }) {
-  const homeName = match.home?.name ?? "?";
-  const awayName = match.away?.name ?? "?";
+  const homeName = getLaLigaTeamDisplayName(match.home?.name);
+  const awayName = getLaLigaTeamDisplayName(match.away?.name);
   const homeCrest = crestUrl(match.home?.id);
   const awayCrest = crestUrl(match.away?.id);
   const kickoff = new Date(match.utc_date);
@@ -333,8 +333,8 @@ function CardFront({
           <div className="flex flex-col items-center gap-1 min-w-[84px]">
             {isFinished ? (
               <>
-                <div className="flex min-h-[62px] min-w-[68px] flex-col items-center justify-center rounded-lg border-2 border-gold bg-white px-2 py-1.5 text-black shadow-lg [text-shadow:none]">
-                  <span className="text-xl font-black tabular-nums leading-none">
+                <div className="flex min-h-[50px] min-w-[54px] flex-col items-center justify-center rounded-lg border-2 border-gold bg-white px-1.5 py-1 text-black shadow-lg [text-shadow:none]">
+                  <span className="text-base font-black tabular-nums leading-none">
                     {match.home_score} - {match.away_score}
                   </span>
                   <span className="mt-1 text-[7px] font-bold uppercase tracking-widest text-slate-500">
@@ -361,8 +361,8 @@ function CardFront({
               </>
             ) : (
               <>
-                <div className="flex min-h-[62px] min-w-[68px] flex-col items-center justify-center rounded-lg border-2 border-gold bg-white px-2 py-1.5 text-black shadow-lg [text-shadow:none]">
-                  <span className="text-xl font-black tabular-nums leading-none text-black">
+                <div className="flex min-h-[50px] min-w-[54px] flex-col items-center justify-center rounded-lg border-2 border-gold bg-white px-1.5 py-1 text-black shadow-lg [text-shadow:none]">
+                  <span className="text-base font-black tabular-nums leading-none text-black">
                     {pred ? `${pred.home_score} - ${pred.away_score}` : "VS"}
                   </span>
                   <span className="mt-1 text-[7px] font-bold uppercase tracking-widest text-slate-500">
@@ -418,8 +418,8 @@ function CardBack({
 }) {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const homeName = match.home?.name ?? "?";
-  const awayName = match.away?.name ?? "?";
+  const homeName = getLaLigaTeamDisplayName(match.home?.name);
+  const awayName = getLaLigaTeamDisplayName(match.away?.name);
   const homeLabel = match.home?.short_name ?? homeName;
   const awayLabel = match.away?.short_name ?? awayName;
   const [home, setHome] = useState(pred?.home_score?.toString() ?? "0");

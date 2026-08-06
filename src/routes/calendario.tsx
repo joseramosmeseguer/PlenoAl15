@@ -3,7 +3,7 @@ import { useMemo } from "react";
 import { useClubMatches } from "@/lib/queries";
 import { Calendar, Star } from "lucide-react";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
-import { getLaLigaTeamStadium } from "@/lib/laligaTeams";
+import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
 
 export const Route = createFileRoute("/calendario")({
   component: CalendarPage,
@@ -91,13 +91,13 @@ function CalendarPage() {
                               )}
                             </div>
                             <span className="text-xs font-bold leading-tight">
-                              {m.home?.short_name ?? m.home?.name}
+                              {getLaLigaTeamDisplayName(m.home?.name)}
                             </span>
                           </div>
 
-                          <div className="flex min-w-[52px] flex-col items-center gap-1">
-                            <div className="flex min-h-12 min-w-12 items-center justify-center rounded-lg border-2 border-gold bg-white px-2 py-1.5 shadow-lg [text-shadow:none]">
-                              <span className="text-base font-black tabular-nums text-black">
+                          <div className="flex min-w-[44px] flex-col items-center gap-1">
+                            <div className="flex min-h-10 min-w-10 items-center justify-center rounded-md border-2 border-gold bg-white px-1.5 py-1 shadow-lg [text-shadow:none]">
+                              <span className="text-sm font-black tabular-nums text-black">
                                 {isFinished ? `${m.home_score} - ${m.away_score}` : "VS"}
                               </span>
                             </div>
@@ -123,7 +123,7 @@ function CalendarPage() {
                               )}
                             </div>
                             <span className="text-xs font-bold leading-tight">
-                              {m.away?.short_name ?? m.away?.name}
+                              {getLaLigaTeamDisplayName(m.away?.name)}
                             </span>
                           </div>
                         </div>
