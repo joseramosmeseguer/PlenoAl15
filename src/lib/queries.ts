@@ -99,7 +99,7 @@ export function useMyProfile(userId?: string) {
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from("profiles")
-        .select("id, display_name, avatar_emoji, plays_individually")
+        .select("id, display_name, avatar_emoji, avatar_url, plays_individually")
         .eq("id", userId)
         .maybeSingle();
       if (error) throw error;
@@ -114,7 +114,7 @@ export function useProfiles() {
     queryFn: async () => {
       const { data, error } = await (supabase as any)
         .from("profiles")
-        .select("id, display_name, avatar_emoji, created_at, updated_at, is_hidden, plays_individually")
+        .select("id, display_name, avatar_emoji, avatar_url, created_at, updated_at, is_hidden, plays_individually")
         .eq("is_hidden", false)
         .order("display_name");
       if (error) throw error;

@@ -5,9 +5,10 @@ import { useAuth } from "@/lib/auth";
 import { useLeaderboard, useProfiles } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil, User, BarChart3 } from "lucide-react";
+import { Pencil, User, BarChart3, ImagePlus, Check } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import estadioEpicoImg from "@/assets/EstadioEpico1.png";
+import { AVATAR_OPTIONS } from "@/lib/avatars";
 
 export const Route = createFileRoute("/perfil")({
   component: Perfil,
@@ -19,6 +20,7 @@ function Perfil() {
   const { data: rows, isLoading } = useLeaderboard();
   const { data: profiles } = useProfiles();
   const [changeNameOpen, setChangeNameOpen] = useState(false);
+  const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
 
   const myProfile = useMemo(() => (profiles ?? []).find((p: any) => p.id === user?.id), [profiles, user]);
   const displayName = myProfile?.display_name ?? myProfile?.avatar_emoji ?? "campeón";
@@ -34,12 +36,30 @@ function Perfil() {
     <div className="space-y-5">
       {/* Cabecera */}
       <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-soft">
-        <div className="h-16 w-16 shrink-0 rounded-full bg-gradient-gold flex items-center justify-center text-2xl shadow-gold">
-          <User className="h-7 w-7 text-gold-foreground" />
-        </div>
+        <button
+          type="button"
+          onClick={() => setAvatarPickerOpen(true)}
+          title="Elegir avatar"
+          className="relative h-16 w-16 shrink-0 rounded-full bg-gradient-gold flex items-center justify-center text-2xl shadow-gold overflow-hidden group"
+        >
+          {myProfile?.avatar_url ? (
+            <img src={myProfile.avatar_url} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <User className="h-7 w-7 text-gold-foreground" />
+          )}
+          <span className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+            <ImagePlus className="h-5 w-5 text-white" />
+          </span>
+        </button>
         <div className="min-w-0 flex-1">
           <h1 className="display text-2xl truncate">{displayName}</h1>
-          <p className="text-xs text-muted-foreground">Avatar personalizable — próximamente</p>
+          <button
+            type="button"
+            onClick={() => setAvatarPickerOpen(true)}
+            className="text-xs text-primary hover:underline"
+          >
+            {myProfile?.avatar_url ? "Cambiar avatar" : "Elegir avatar"}
+          </button>
         </div>
         <button
           onClick={() => !nameAlreadyChanged && setChangeNameOpen(true)}
@@ -97,7 +117,68 @@ function Perfil() {
         userId={user.id}
         onClose={() => setChangeNameOpen(false)}
       />
+
+      <AvatarPickerModal
+        open={avatarPickerOpen}
+        currentAvatarUrl={myProfile?.avatar_url ?? null}
+        userId={user.id}
+        onClose={() => setAvatarPickerOpen(false)}
+      />
     </div>
+  );
+}
+
+function AvatarPickerModal({ open, currentAvatarUrl, userId, onClose }: {
+  open: boolean; currentAvatarUrl: string | null; userId: string; onClose: () => void;
+}) {
+  const qc = useQueryClient();
+  const [saving, setSaving] = useState<string | null>(null);
+
+  async function selectAvatar(url: string) {
+    setSaving(url);
+    const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("id", userId);
+    setSaving(null);
+    if (error) { toast.error("No se pudo guardar el avatar. Inténtalo de nuevo."); return; }
+    qc.invalidateQueries({ queryKey: ["profiles"] });
+    qc.invalidateQueries({ queryKey: ["my_profile", userId] });
+    toast.success("¡Avatar actualizado!");
+    onClose();
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <ImagePlus className="h-4 w-4" /> Elige tu avatar
+          </DialogTitle>
+          <DialogDescription>Aparecerá en tu perfil y en la clasificación.</DialogDescription>
+        </DialogHeader>
+        <div className="grid grid-cols-4 gap-3">
+          {AVATAR_OPTIONS.map((url) => {
+            const selected = url === currentAvatarUrl;
+            return (
+              <button
+                key={url}
+                type="button"
+                disabled={!!saving}
+                onClick={() => selectAvatar(url)}
+                className={`relative aspect-square rounded-full overflow-hidden border-2 transition-colors ${
+                  selected ? "border-gold" : "border-transparent hover:border-primary/50"
+                } disabled:opacity-50`}
+              >
+                <img src={url} alt="Avatar" className="h-full w-full object-cover" />
+                {selected && (
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/40">
+                    <Check className="h-5 w-5 text-white" />
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 

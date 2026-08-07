@@ -60,6 +60,12 @@ function Home() {
   const usersWithLeagues = useMemo(() => new Set((allMembers ?? []).map((m) => m.user_id)), [allMembers]);
   const list = rows ?? [];
 
+  const avatarByUserId = useMemo(() => {
+    const map: Record<string, string> = {};
+    (profiles ?? []).forEach((p: any) => { if (p.avatar_url) map[p.id] = p.avatar_url; });
+    return map;
+  }, [profiles]);
+
   const membersByLeague = useMemo(() => {
     const map: Record<string, Set<string>> = {};
     (allMembers ?? []).forEach(({ league_id, user_id }) => {
@@ -156,6 +162,9 @@ function Home() {
                     <span className="w-7 text-center font-bold text-base shrink-0">
                       {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : <span className="text-white/60 text-sm">{i + 1}</span>}
                     </span>
+                    {avatarByUserId[r.user_id] && (
+                      <img src={avatarByUserId[r.user_id]} alt="" className="h-6 w-6 rounded-full object-cover shrink-0" />
+                    )}
                     <span className="flex-1 font-semibold truncate text-sm">{r.display_name}</span>
                     <span className={`font-bold tabular-nums text-lg shrink-0 ${i === 0 ? "text-gold" : "text-white/90"}`}>
                       {r.total_points}
@@ -277,6 +286,9 @@ function Home() {
                     <span className="w-7 text-center font-bold text-base shrink-0">
                       {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : <span className="text-white/60 text-sm">{i + 1}</span>}
                     </span>
+                    {avatarByUserId[r.user_id] && (
+                      <img src={avatarByUserId[r.user_id]} alt="" className="h-6 w-6 rounded-full object-cover shrink-0" />
+                    )}
                     <span className="flex-1 font-semibold truncate text-sm">{r.display_name}</span>
                     {diff !== null && diff !== 0 && (
                       <span className={`text-[10px] font-bold tabular-nums shrink-0 ${diff > 0 ? "text-green-400" : "text-red-400"}`}>
