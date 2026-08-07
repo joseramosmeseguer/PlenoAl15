@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useClubMatches, useMyClubPredictions } from "@/lib/queries";
@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChevronLeft, RotateCw, CheckCircle2, XCircle, Star, Trophy } from "lucide-react";
+import { ChevronLeft, CheckCircle2, XCircle, Star, Trophy, Info } from "lucide-react";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
 import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
 
@@ -386,10 +386,14 @@ function CardFront({
                     Pronóstico
                   </span>
                 </div>
-                <span className="flex items-center gap-1 text-[9px] text-slate-200">
-                  <RotateCw className="h-2.5 w-2.5" />{" "}
-                  {hasUser ? "Pulsa para editar" : "Inicia sesión para pronosticar"}
-                </span>
+                <Link
+                  to="/calendario"
+                  search={{ match: match.id }}
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1 rounded-full border border-white/25 bg-black/30 px-2 py-0.5 text-[9px] font-semibold text-slate-100 hover:bg-black/50 transition-colors"
+                >
+                  <Info className="h-2.5 w-2.5" /> +Info
+                </Link>
               </>
             )}
           </div>

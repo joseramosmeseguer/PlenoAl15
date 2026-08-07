@@ -15,7 +15,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-night text-primary-foreground px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-night text-white px-4">
       <div className="text-center max-w-md">
         <div className="text-7xl mb-4">⚽</div>
         <h1 className="display text-5xl text-gold">404</h1>

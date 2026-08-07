@@ -102,7 +102,7 @@ function Admin() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-pitch-deep text-primary-foreground p-5 shadow-soft flex flex-wrap items-center gap-3 justify-between">
+      <div className="rounded-2xl bg-pitch-deep text-white p-5 shadow-soft flex flex-wrap items-center gap-3 justify-between">
         <div>
           <div className="display text-3xl flex items-center gap-2"><Shield className="h-6 w-6 text-gold" /> Panel de admin</div>
           <p className="text-white/80 text-sm">Gestiona partidos, resultados y bonus.</p>

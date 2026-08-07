@@ -66,7 +66,7 @@ function AllPredictions() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-gradient-pitch text-primary-foreground p-5 shadow-soft">
+      <div className="rounded-2xl bg-gradient-pitch text-white p-5 shadow-soft">
         <div className="display text-3xl flex items-center gap-2"><Users className="h-6 w-6" /> Pronósticos de todos</div>
         <p className="text-white/80 text-sm">Mira lo que ha puesto cada uno y ríete (o tiembla).</p>
       </div>

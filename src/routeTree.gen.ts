@@ -19,6 +19,7 @@ import { Route as InicioRouteImport } from './routes/inicio'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MinijuegoRouteImport } from './routes/minijuego'
 import { Route as MisPronosticosRouteImport } from './routes/mis-pronosticos'
+import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as PronosticosRouteImport } from './routes/pronosticos'
 import { Route as ReglasRouteImport } from './routes/reglas'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -74,6 +75,11 @@ const MisPronosticosRoute = MisPronosticosRouteImport.update({
   path: '/mis-pronosticos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PronosticosRoute = PronosticosRouteImport.update({
   id: '/pronosticos',
   path: '/pronosticos',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/minijuego': typeof MinijuegoRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
+  '/perfil': typeof PerfilRoute
   '/pronosticos': typeof PronosticosRoute
   '/reglas': typeof ReglasRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/minijuego': typeof MinijuegoRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
+  '/perfil': typeof PerfilRoute
   '/pronosticos': typeof PronosticosRoute
   '/reglas': typeof ReglasRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/minijuego': typeof MinijuegoRoute
   '/mis-pronosticos': typeof MisPronosticosRoute
+  '/perfil': typeof PerfilRoute
   '/pronosticos': typeof PronosticosRoute
   '/reglas': typeof ReglasRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/minijuego'
     | '/mis-pronosticos'
+    | '/perfil'
     | '/pronosticos'
     | '/reglas'
     | '/reset-password'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/minijuego'
     | '/mis-pronosticos'
+    | '/perfil'
     | '/pronosticos'
     | '/reglas'
     | '/reset-password'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/minijuego'
     | '/mis-pronosticos'
+    | '/perfil'
     | '/pronosticos'
     | '/reglas'
     | '/reset-password'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MinijuegoRoute: typeof MinijuegoRoute
   MisPronosticosRoute: typeof MisPronosticosRoute
+  PerfilRoute: typeof PerfilRoute
   PronosticosRoute: typeof PronosticosRoute
   ReglasRoute: typeof ReglasRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -285,6 +298,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MisPronosticosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/pronosticos': {
       id: '/pronosticos'
       path: '/pronosticos'
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MinijuegoRoute: MinijuegoRoute,
   MisPronosticosRoute: MisPronosticosRoute,
+  PerfilRoute: PerfilRoute,
   PronosticosRoute: PronosticosRoute,
   ReglasRoute: ReglasRoute,
   ResetPasswordRoute: ResetPasswordRoute,

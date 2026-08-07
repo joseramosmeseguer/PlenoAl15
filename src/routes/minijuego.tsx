@@ -15,7 +15,7 @@ export const Route = createFileRoute("/minijuego")({
 function Minijuego() {
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl bg-gradient-pitch text-primary-foreground p-5 shadow-soft">
+      <div className="rounded-2xl bg-gradient-pitch text-white p-5 shadow-soft">
         <div className="display text-3xl flex items-center gap-2">
           <Gamepad2 className="h-6 w-6 text-gold" /> Minijuego
         </div>

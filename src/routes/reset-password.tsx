@@ -35,7 +35,7 @@ function ResetPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen grid md:grid-cols-2 bg-gradient-night text-primary-foreground">
+    <div className="min-h-screen grid md:grid-cols-2 bg-gradient-night text-white">
       <div className="relative hidden md:block bg-gradient-pitch">
         <div className="relative z-10 h-full flex flex-col justify-end p-10">
           <div className="display text-6xl text-gold leading-none">PlenoAl15</div>

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Trophy, Calendar, ListChecks, BookOpen, Shield, LogOut, Menu, X, Star } from "lucide-react";
+import { Home, Trophy, Calendar, ListChecks, BookOpen, Shield, LogOut, Menu, X, Star, User, BarChart3, MoreHorizontal, LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMyLeagues, useMyProfile } from "@/lib/queries";
@@ -9,12 +9,16 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const NAV = [
+const NAV_PRIMARY = [
   { to: "/inicio", label: "Inicio", icon: Home },
   { to: "/", label: "Clasificación", icon: Trophy },
   { to: "/mis-pronosticos", label: "Pronósticos", icon: ListChecks },
   { to: "/calendario", label: "Calendario", icon: Calendar },
+] as const;
+
+const NAV_SECONDARY = [
   { to: "/champions", label: "Champions", icon: Star },
+  { to: "/estadisticas", label: "Estadísticas", icon: BarChart3 },
   { to: "/reglas", label: "Reglas", icon: BookOpen },
 ] as const;
 
@@ -22,6 +26,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, isAdmin, signOut, loading } = useAuth();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
   const [nameJustSet, setNameJustSet] = useState(false);
   const { data: myLeagues, isLoading: leaguesLoading } = useMyLeagues(user?.id);
   const { data: myProfile, isLoading: profileLoading } = useMyProfile(user?.id);
@@ -33,7 +38,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-night text-primary-foreground">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-night text-white">
         <div className="animate-pulse text-2xl display">Cargando…</div>
       </div>
     );
@@ -57,14 +62,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       )}
       {!needsName && needsLeague && <LeagueOnboarding />}
       {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-border bg-gradient-night text-primary-foreground">
+      <header className="sticky top-0 z-40 border-b border-border bg-gradient-night text-white">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
             <img src="/images/logo/logo-cuadrado.webp" alt="" className="h-9 w-9 rounded-full shadow-gold" />
             <div className="display text-2xl tracking-wide">PlenoAl15</div>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
-            {NAV.map((n) => {
+            {NAV_PRIMARY.map((n) => {
               const active = location.pathname === n.to;
               return (
                 <Link
@@ -78,6 +83,33 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 </Link>
               );
             })}
+            <div className="relative">
+              <button
+                onClick={() => setMoreOpen(!moreOpen)}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
+                  moreOpen ? "bg-white/15 text-white" : "text-white/75 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <MoreHorizontal className="h-4 w-4" /> Más
+              </button>
+              {moreOpen && (
+                <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-border bg-card shadow-soft overflow-hidden z-50">
+                  {NAV_SECONDARY.map((n) => {
+                    const Icon = n.icon;
+                    return (
+                      <Link
+                        key={n.to}
+                        to={n.to}
+                        onClick={() => setMoreOpen(false)}
+                        className="flex items-center gap-2 px-3 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
+                      >
+                        <Icon className="h-4 w-4 text-muted-foreground" /> {n.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
             {user ? (
               <>
                 {isAdmin && (
@@ -112,12 +144,28 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {open && (
           <div className="md:hidden border-t border-white/10 bg-pitch-deep">
             <div className="flex flex-col p-2">
-              {NAV.map((n) => (
+              {NAV_PRIMARY.map((n) => (
                 <Link
                   key={n.to}
                   to={n.to}
                   onClick={() => setOpen(false)}
                   className="px-3 py-2 rounded-md text-white/85 hover:bg-white/10"
+                >
+                  {n.label}
+                </Link>
+              ))}
+              {user && (
+                <Link to="/perfil" onClick={() => setOpen(false)} className="px-3 py-2 rounded-md text-white/85 hover:bg-white/10">
+                  Mi perfil
+                </Link>
+              )}
+              <div className="my-1 border-t border-white/10" />
+              {NAV_SECONDARY.map((n) => (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  onClick={() => setOpen(false)}
+                  className="px-3 py-2 rounded-md text-white/70 hover:bg-white/10"
                 >
                   {n.label}
                 </Link>
@@ -157,8 +205,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Bottom nav móvil */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur">
-        <div className="grid grid-cols-6">
-          {NAV.map((n) => {
+        <div className="grid grid-cols-5">
+          {NAV_PRIMARY.map((n) => {
             const Icon = n.icon;
             const active = location.pathname === n.to;
             return (
@@ -174,6 +222,25 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </Link>
             );
           })}
+          {user ? (
+            <Link
+              to="/perfil"
+              className={`flex flex-col items-center justify-center py-3 text-[10px] gap-1 ${
+                location.pathname === "/perfil" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <User className="h-5 w-5" />
+              Perfil
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="flex flex-col items-center justify-center py-3 text-[10px] gap-1 text-muted-foreground"
+            >
+              <LogIn className="h-5 w-5" />
+              Entrar
+            </Link>
+          )}
         </div>
       </nav>
     </div>
@@ -214,7 +281,7 @@ function OnboardingModal({ userId, onDone }: { userId: string; onDone: () => voi
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-pitch-deep/90 backdrop-blur-sm p-4">
-      <div className="w-full max-w-sm rounded-3xl bg-gradient-night border border-white/15 shadow-2xl p-8 text-primary-foreground flex flex-col items-center gap-6">
+      <div className="w-full max-w-sm rounded-3xl bg-gradient-night border border-white/15 shadow-2xl p-8 text-white flex flex-col items-center gap-6">
         <div className="h-16 w-16 rounded-full bg-gradient-gold flex items-center justify-center text-3xl shadow-gold">
           🏆
         </div>
