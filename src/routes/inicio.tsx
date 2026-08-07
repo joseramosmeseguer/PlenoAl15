@@ -93,14 +93,12 @@ function Inicio() {
 
   const actions = user
     ? [
-        { label: "Instalar app", icon: Download, onClick: installApp, accent: "text-gold" },
         { label: "Crear liga", icon: Plus, onClick: () => setCreateOpen(true), accent: "text-gold" },
         { label: "Unirse a liga", icon: KeyRound, onClick: () => setJoinOpen(true), accent: "text-foreground" },
         { label: "Ver reglas", icon: BookOpen, to: "/reglas", accent: "text-foreground" },
         { label: "Invitar a amigos", icon: Share2, onClick: invite, accent: "text-foreground" },
       ]
     : [
-        { label: "Instalar app", icon: Download, onClick: installApp, accent: "text-gold" },
         { label: "Crear cuenta / Entrar", icon: LogIn, to: "/login", accent: "text-gold" },
         { label: "Ver reglas", icon: BookOpen, to: "/reglas", accent: "text-foreground" },
       ];
@@ -152,6 +150,21 @@ function Inicio() {
           ))}
         </section>
       )}
+
+      {/* Instalar app */}
+      <button
+        type="button"
+        onClick={installApp}
+        className="w-full flex items-center gap-3 rounded-2xl border border-gold/40 bg-gold/10 p-4 shadow-soft hover:bg-gold/20 transition-colors text-left"
+      >
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/20">
+          <Download className="h-5 w-5 text-gold" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <span className="font-semibold text-sm block">Instalar la app</span>
+          <span className="text-xs text-muted-foreground">Acceso directo desde tu pantalla de inicio</span>
+        </div>
+      </button>
 
       {/* Accesos rápidos */}
       <div className="grid grid-cols-2 gap-3">

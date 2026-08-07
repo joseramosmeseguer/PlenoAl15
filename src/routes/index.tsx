@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Trophy, Crown, ChevronLeft, ChevronRight, ChevronDown, Plus, KeyRound } from "lucide-react";
+import { Trophy, Crown, Plus, KeyRound } from "lucide-react";
 import { useLeaderboard, useDailyWinner, useProfiles, useMyLeagues, useLeagues, useAllLeagueMembers, useAllSnapshots, useAnnouncements } from "@/lib/queries";
 import { AnnouncementCard } from "@/components/AnnouncementCard";
 import { isAnnouncementLive } from "@/lib/announcements";
@@ -101,7 +101,6 @@ function Home() {
   }, [filterLeagueList, hasAutoSelected, leagueFromUrl]);
 
   const selectedLeague = filterLeagueList.find((l: any) => l.id === selectedLeagueId) ?? null;
-  const currentIndex = filterLeagueList.findIndex((l: any) => l.id === selectedLeagueId);
 
   // Posiciones del día anterior para mostrar flechas de cambio
   const yesterdayPositions = useMemo(() => {
@@ -202,48 +201,37 @@ function Home() {
           </div>
         </section>
       ) : (
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => currentIndex > 0 && setSelectedLeagueId(filterLeagueList[currentIndex - 1].id)}
-            disabled={currentIndex <= 0}
-            className="h-11 w-11 shrink-0 rounded-xl border border-border bg-card flex items-center justify-center disabled:opacity-30 hover:bg-muted transition-colors"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </button>
-
-          <div className="relative flex-1 rounded-xl border border-border bg-card px-4 py-2 flex items-center justify-between">
-            <div className="min-w-0">
-              <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Tus ligas</div>
-              <div className="font-bold text-sm truncate">
-                {selectedLeague?.is_default ? "Individual" : selectedLeague?.name ?? "…"}
-                {selectedLeagueId && membersByLeague[selectedLeagueId] ? ` · ${membersByLeague[selectedLeagueId].size} miembros` : ""}
-              </div>
-            </div>
-            {filterLeagueList.length > 1 && (
-              <select
-                value={selectedLeagueId ?? ""}
-                onChange={(e) => setSelectedLeagueId(e.target.value)}
-                className="appearance-none bg-transparent text-transparent absolute inset-0 w-full cursor-pointer"
+        <div
+          className="flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          aria-label="Seleccionar liga"
+        >
+          {filterLeagueList.map((l: any) => {
+            const active = l.id === selectedLeagueId;
+            const memberCount = membersByLeague[l.id]?.size ?? 0;
+            return (
+              <button
+                key={l.id}
+                type="button"
+                onClick={() => setSelectedLeagueId(l.id)}
+                className={`min-w-[128px] shrink-0 snap-center rounded-xl border px-3 py-2 text-left transition-all ${
+                  active
+                    ? "border-gold bg-gold text-slate-950 shadow-sm"
+                    : "border-border bg-card text-foreground hover:border-gold/50 hover:bg-muted"
+                }`}
               >
-                {filterLeagueList.map((l: any) => (
-                  <option key={l.id} value={l.id}>{l.is_default ? "Individual" : l.name}</option>
-                ))}
-              </select>
-            )}
-            <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
-          </div>
-
+                <span className="block text-[10px] font-black uppercase tracking-wide truncate">
+                  {l.is_default ? "Individual" : l.name}
+                </span>
+                <span className={`mt-0.5 block text-[9px] ${active ? "text-slate-700" : "text-muted-foreground"}`}>
+                  {memberCount} miembro{memberCount !== 1 ? "s" : ""}
+                </span>
+              </button>
+            );
+          })}
           <button
-            onClick={() => currentIndex >= 0 && currentIndex < filterLeagueList.length - 1 && setSelectedLeagueId(filterLeagueList[currentIndex + 1].id)}
-            disabled={currentIndex < 0 || currentIndex >= filterLeagueList.length - 1}
-            className="h-11 w-11 shrink-0 rounded-xl border border-border bg-card flex items-center justify-center disabled:opacity-30 hover:bg-muted transition-colors"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </button>
-
-          <button
+            type="button"
             onClick={() => setAddOpen(true)}
-            className="h-11 w-11 shrink-0 rounded-xl border border-gold/40 bg-gold/10 text-gold flex items-center justify-center hover:bg-gold/20 transition-colors"
+            className="shrink-0 snap-center rounded-xl border border-dashed border-gold/40 bg-gold/10 text-gold px-4 flex items-center justify-center hover:bg-gold/20 transition-colors"
           >
             <Plus className="h-4 w-4" />
           </button>
