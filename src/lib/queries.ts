@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getLaLigaStandings, getLaLigaTeam } from "@/lib/laliga.functions";
 
 export type LeaderRow = {
   user_id: string;
@@ -63,6 +64,25 @@ export function useClubMatches() {
       if (error) throw error;
       return data;
     },
+  });
+}
+
+export function useLaLigaStandings() {
+  return useQuery({
+    queryKey: ["laliga_standings"],
+    queryFn: () => getLaLigaStandings(),
+    staleTime: 15 * 60 * 1000,
+    retry: 1,
+  });
+}
+
+export function useLaLigaTeam(teamId?: number | null) {
+  return useQuery({
+    queryKey: ["laliga_team", teamId],
+    enabled: !!teamId,
+    queryFn: () => getLaLigaTeam({ data: { teamId: teamId! } }),
+    staleTime: 60 * 60 * 1000,
+    retry: 1,
   });
 }
 
