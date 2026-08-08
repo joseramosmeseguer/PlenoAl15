@@ -22,12 +22,12 @@ interface BeforeInstallPromptEvent extends Event {
 // Colores distintos por liga para el monograma, elegidos de forma estable
 // según el id (para que no cambien al recargar).
 const LEAGUE_COLORS = [
-  "bg-gradient-gold text-gold-foreground shadow-gold",
-  "bg-blue-600 text-white",
-  "bg-emerald-600 text-white",
-  "bg-purple-600 text-white",
-  "bg-rose-600 text-white",
-  "bg-cyan-600 text-white",
+  "bg-gold/15 text-gold",
+  "bg-blue-500/15 text-blue-600",
+  "bg-emerald-500/15 text-emerald-600",
+  "bg-purple-500/15 text-purple-600",
+  "bg-rose-500/15 text-rose-600",
+  "bg-cyan-500/15 text-cyan-600",
 ];
 function leagueColor(id: string) {
   let hash = 0;
@@ -125,12 +125,12 @@ function Inicio() {
       <div className="relative -mt-6 md:-mt-8 overflow-hidden rounded-b-3xl shadow-soft">
         <img src={estadioEpicoImg} alt="" className="absolute inset-0 h-full w-full object-cover object-center scale-105" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-black/70" />
-        <div className="relative flex flex-col items-center justify-center gap-2 px-5 py-10 text-center">
+        <div className="relative flex items-center gap-4 px-5 py-6">
           <img src="/images/logo/logo-cuadrado.webp" alt="PlenoAl15" className="h-12 w-12 rounded-2xl shadow-gold shrink-0" />
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-xs font-bold uppercase tracking-widest text-white/60">Bienvenido</p>
             {user ? (
-              <Link to="/perfil" className="flex items-center justify-center gap-1 group">
+              <Link to="/perfil" className="flex items-center gap-1 group">
                 <h1 className="display text-2xl text-white truncate group-hover:text-gold transition-colors">{displayName}</h1>
                 <ChevronRight className="h-4 w-4 text-white/50 shrink-0 group-hover:text-gold transition-colors" />
               </Link>
