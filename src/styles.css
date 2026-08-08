@@ -4,11 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/*
- * Quiniela Mundial — design system
- * Estética: estadio nocturno + dorado de trofeo + verde césped + rojo afición.
- */
-
+/* Pleno al 15: blanco cálido, negro carbón y dorado de trofeo. */
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -16,7 +12,6 @@
   --radius-xl: calc(var(--radius) + 4px);
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 16px);
-
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -41,121 +36,93 @@
   --color-pitch: var(--pitch);
   --color-pitch-deep: var(--pitch-deep);
   --color-flame: var(--flame);
-
   --font-display: "Unbounded", system-ui, sans-serif;
   --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
-
-  --shadow-soft: 0 10px 30px -12px color-mix(in oklab, var(--pitch-deep) 35%, transparent);
-  --shadow-gold: 0 10px 40px -10px color-mix(in oklab, var(--gold) 60%, transparent);
-
-  --gradient-pitch: linear-gradient(135deg, var(--pitch-deep), var(--pitch));
-  --gradient-gold: linear-gradient(135deg, oklch(0.86 0.16 85), oklch(0.78 0.18 65));
-  --gradient-night: linear-gradient(180deg, oklch(0.24 0.04 195), oklch(0.15 0.03 195));
+  --shadow-soft: 0 18px 45px -28px oklch(0.12 0.01 80 / 42%), 0 2px 10px -6px oklch(0.12 0.01 80 / 18%);
+  --shadow-gold: 0 18px 42px -20px color-mix(in oklab, var(--gold) 55%, transparent);
+  --gradient-pitch: linear-gradient(135deg, oklch(0.11 0.009 70), oklch(0.24 0.014 72));
+  --gradient-gold: linear-gradient(135deg, oklch(0.88 0.13 88), oklch(0.72 0.15 72));
+  --gradient-night: linear-gradient(145deg, oklch(0.09 0.008 70), oklch(0.18 0.012 70));
 }
 
 :root {
-  --radius: 1.15rem;
-
-  /* Backgrounds — turquesa noche, más clarito que el azul anterior */
-  --background: oklch(0.2 0.03 195);
-  --foreground: oklch(0.96 0.01 110);
-
-  --card: oklch(0.27 0.035 195);
-  --card-foreground: oklch(0.96 0.01 110);
-  --popover: oklch(0.27 0.035 195);
-  --popover-foreground: oklch(0.96 0.01 110);
-
-  /* Primary = turquesa claro */
-  --primary: oklch(0.72 0.14 195);
-  --primary-foreground: oklch(0.18 0.03 195);
-  --pitch: oklch(0.6 0.13 195);
-  --pitch-deep: oklch(0.3 0.07 195);
-
-  /* Gold = trofeo */
-  --gold: oklch(0.82 0.16 82);
-  --gold-foreground: oklch(0.22 0.05 80);
-
-  /* Flame = rojo afición / premium */
-  --flame: oklch(0.62 0.22 28);
-
-  --secondary: oklch(0.32 0.04 195);
-  --secondary-foreground: oklch(0.96 0.01 110);
-  --muted: oklch(0.32 0.04 195);
-  --muted-foreground: oklch(0.76 0.025 195);
-  --accent: oklch(0.44 0.08 80);
-  --accent-foreground: oklch(0.96 0.05 90);
-  --destructive: oklch(0.6 0.22 27);
-  --destructive-foreground: oklch(0.98 0.01 110);
-  --border: oklch(1 0 0 / 6%);
-  --input: oklch(1 0 0 / 10%);
-  --ring: oklch(0.72 0.14 195);
-
-  --sidebar: oklch(0.2 0.03 195);
-  --sidebar-foreground: oklch(0.96 0.01 110);
-  --sidebar-primary: oklch(0.72 0.14 195);
-  --sidebar-primary-foreground: oklch(0.18 0.03 195);
-  --sidebar-accent: oklch(0.44 0.08 80);
-  --sidebar-accent-foreground: oklch(0.96 0.05 90);
-  --sidebar-border: oklch(1 0 0 / 6%);
-  --sidebar-ring: oklch(0.72 0.14 195);
+  --radius: 0.9rem;
+  --background: oklch(0.975 0.008 85);
+  --foreground: oklch(0.15 0.012 70);
+  --card: oklch(0.998 0.002 85);
+  --card-foreground: oklch(0.15 0.012 70);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.012 70);
+  --primary: oklch(0.18 0.012 70);
+  --primary-foreground: oklch(0.985 0.006 85);
+  /* Alias históricos: ahora son tonos carbón para actualizar toda la app sin romper componentes. */
+  --pitch: oklch(0.27 0.014 72);
+  --pitch-deep: oklch(0.11 0.009 70);
+  --gold: oklch(0.75 0.145 78);
+  --gold-foreground: oklch(0.16 0.018 70);
+  --flame: oklch(0.58 0.22 28);
+  --secondary: oklch(0.94 0.009 82);
+  --secondary-foreground: oklch(0.2 0.012 70);
+  --muted: oklch(0.945 0.007 82);
+  --muted-foreground: oklch(0.49 0.018 70);
+  --accent: oklch(0.91 0.045 82);
+  --accent-foreground: oklch(0.19 0.015 70);
+  --destructive: oklch(0.58 0.22 27);
+  --destructive-foreground: oklch(0.98 0.01 90);
+  --border: oklch(0.86 0.012 80);
+  --input: oklch(0.89 0.012 80);
+  --ring: oklch(0.75 0.145 78);
+  --sidebar: oklch(0.12 0.01 70);
+  --sidebar-foreground: oklch(0.98 0.005 85);
+  --sidebar-primary: oklch(0.75 0.145 78);
+  --sidebar-primary-foreground: oklch(0.16 0.018 70);
+  --sidebar-accent: oklch(0.22 0.014 70);
+  --sidebar-accent-foreground: oklch(0.98 0.005 85);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.75 0.145 78);
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
-  }
-  html,
+  * { border-color: var(--color-border); }
+  html, body { height: 100%; }
   body {
-    height: 100%;
-  }
-  body {
-    background-color: var(--color-background);
+    background:
+      radial-gradient(circle at 8% 0%, color-mix(in oklab, var(--gold) 9%, transparent), transparent 24rem),
+      linear-gradient(180deg, oklch(0.99 0.004 85), var(--color-background) 34rem);
+    background-attachment: fixed;
     color: var(--color-foreground);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
-  h1,
-  h2,
-  h3,
-  .display {
+  h1, h2, h3, .display {
     font-family: var(--font-display);
     letter-spacing: 0.025em;
     font-weight: 800;
   }
+  ::selection {
+    background: color-mix(in oklab, var(--gold) 42%, white);
+    color: var(--foreground);
+  }
 }
 
 @layer utilities {
-  .text-gold {
-    color: var(--gold);
-  }
-  .bg-gold {
-    background-color: var(--gold);
-  }
-  .bg-gradient-gold {
-    background-image: var(--gradient-gold);
-  }
-  .bg-gradient-pitch {
-    background-image: var(--gradient-pitch);
-  }
-  .bg-gradient-night {
-    background-image: var(--gradient-night);
-  }
-  .shadow-soft {
-    box-shadow: var(--shadow-soft);
-  }
-  .shadow-gold {
-    box-shadow: var(--shadow-gold);
-  }
+  .text-gold { color: var(--gold); }
+  .bg-gold { background-color: var(--gold); }
+  .bg-gradient-gold { background-image: var(--gradient-gold); }
+  .bg-gradient-pitch { background-image: var(--gradient-pitch); }
+  .bg-gradient-night { background-image: var(--gradient-night); }
+  .shadow-soft { box-shadow: var(--shadow-soft); }
+  .shadow-gold { box-shadow: var(--shadow-gold); }
   .premium-glow {
-    box-shadow:
-      0 0 0 1px color-mix(in oklab, var(--gold) 60%, transparent),
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--gold) 60%, transparent),
       0 8px 30px -8px color-mix(in oklab, var(--gold) 50%, transparent);
   }
+  .surface-panel {
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--card) 96%, var(--gold));
+    box-shadow: var(--shadow-soft);
+  }
   .pitch-stripes {
-    background-image: repeating-linear-gradient(
-      90deg,
-      color-mix(in oklab, var(--pitch) 92%, white) 0 40px,
-      color-mix(in oklab, var(--pitch) 88%, black) 40px 80px
-    );
+    background-image: repeating-linear-gradient(90deg, oklch(0.18 0.012 70) 0 40px, oklch(0.22 0.014 70) 40px 80px);
   }
 }

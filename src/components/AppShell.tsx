@@ -50,7 +50,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-transparent">
       {needsName && user && (
         <OnboardingModal
           userId={user.id}
@@ -62,11 +62,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       )}
       {!needsName && needsLeague && <LeagueOnboarding />}
       {/* Top bar */}
-      <header className="sticky top-0 z-40 border-b border-border bg-gradient-night text-white">
+      <header className="sticky top-0 z-40 border-b border-gold/35 bg-[#11110f]/96 text-white shadow-[0_8px_28px_-20px_rgba(0,0,0,.8)] backdrop-blur-xl">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src="/images/logo/logo-cuadrado.webp" alt="" className="h-9 w-9 rounded-full shadow-gold" />
-            <div className="display text-2xl tracking-wide">PlenoAl15</div>
+            <img src="/images/logo/logo-cuadrado.webp" alt="" className="h-9 w-9 rounded-full ring-1 ring-gold/45 shadow-gold" />
+            <div className="display text-xl tracking-[0.08em] sm:text-2xl">Pleno<span className="text-gold">Al15</span></div>
           </Link>
           <nav className="hidden md:flex items-center gap-1">
             {NAV_PRIMARY.map((n) => {
@@ -76,7 +76,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                   key={n.to}
                   to={n.to}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    active ? "bg-white/15 text-white" : "text-white/75 hover:bg-white/10 hover:text-white"
+                    active ? "bg-gold text-gold-foreground shadow-sm" : "text-white/70 hover:bg-white/8 hover:text-white"
                   }`}
                 >
                   {n.label}
@@ -87,7 +87,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button
                 onClick={() => setMoreOpen(!moreOpen)}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-1 ${
-                  moreOpen ? "bg-white/15 text-white" : "text-white/75 hover:bg-white/10 hover:text-white"
+                  moreOpen ? "bg-gold text-gold-foreground" : "text-white/70 hover:bg-white/8 hover:text-white"
                 }`}
               >
                 <MoreHorizontal className="h-4 w-4" /> Más
@@ -142,7 +142,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           </button>
         </div>
         {open && (
-          <div className="md:hidden border-t border-white/10 bg-pitch-deep">
+          <div className="md:hidden border-t border-gold/20 bg-[#11110f]">
             <div className="flex flex-col p-2">
               {NAV_PRIMARY.map((n) => (
                 <Link
@@ -201,10 +201,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         )}
       </header>
 
-      <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-6 pb-24 md:pb-10">{children}</main>
+      <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-6 pb-24 md:py-8 md:pb-12">{children}</main>
 
       {/* Bottom nav móvil */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-border bg-card/95 backdrop-blur">
+      <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-black/10 bg-white/95 shadow-[0_-12px_30px_-22px_rgba(0,0,0,.45)] backdrop-blur-xl">
         <div className="grid grid-cols-5">
           {NAV_PRIMARY.map((n) => {
             const Icon = n.icon;
@@ -214,10 +214,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 key={n.to}
                 to={n.to}
                 className={`flex flex-col items-center justify-center py-3 text-[10px] gap-1 ${
-                  active ? "text-primary" : "text-muted-foreground"
+                  active ? "text-black" : "text-muted-foreground"
                 }`}
               >
-                <Icon className="h-5 w-5" />
+                <Icon className={`h-5 w-5 ${active ? "stroke-[2.5] text-gold" : ""}`} />
                 {n.label.split(" ")[0]}
               </Link>
             );
@@ -226,7 +226,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <Link
               to="/perfil"
               className={`flex flex-col items-center justify-center py-3 text-[10px] gap-1 ${
-                location.pathname === "/perfil" ? "text-primary" : "text-muted-foreground"
+                location.pathname === "/perfil" ? "text-black" : "text-muted-foreground"
               }`}
             >
               <User className="h-5 w-5" />

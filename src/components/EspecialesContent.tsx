@@ -18,18 +18,18 @@ const SECTION_META: Record<string, {
 }> = {
   mis_especiales_generales: {
     title: "Generales", icon: Trophy,
-    bg: "bg-emerald-900", border: "border-emerald-600/50", text: "text-emerald-50", bar: "bg-emerald-400",
-    accent: "#34d399",
+    bg: "bg-[#171714]", border: "border-gold/35", text: "text-stone-50", bar: "bg-gold",
+    accent: "#c69a32",
   },
   mis_especiales_tops: {
     title: "Tops del torneo", icon: Star,
-    bg: "bg-amber-900", border: "border-amber-600/50", text: "text-amber-50", bar: "bg-amber-400",
-    accent: "#fbbf24",
+    bg: "bg-[#201b11]", border: "border-gold/55", text: "text-amber-50", bar: "bg-gradient-gold",
+    accent: "#d4a72c",
   },
   mis_especiales_grupos: {
     title: "Fase de grupos", icon: Flag,
-    bg: "bg-teal-900", border: "border-teal-600/50", text: "text-teal-50", bar: "bg-teal-400",
-    accent: "#2dd4bf",
+    bg: "bg-[#282724]", border: "border-stone-500/45", text: "text-stone-50", bar: "bg-stone-300",
+    accent: "#d6d3d1",
   },
 };
 
@@ -141,7 +141,7 @@ export function EspecialesContent({ showHero = true }: { showHero?: boolean }) {
                 ? "text-red-400 border-red-800/50 bg-red-950/40"
                 : cd.variant === "amber"
                 ? "text-amber-300 border-amber-700/50 bg-amber-950/40"
-                : "text-emerald-400 border-emerald-800/50 bg-emerald-950/40";
+                : "text-stone-200 border-white/15 bg-white/5";
               return (
                 <div className={`flex items-center gap-2 px-4 py-1.5 text-xs ${text}`}>
                   <span className="opacity-50">Cierra en</span>
