@@ -464,6 +464,8 @@ function CardBack({
   const [home, setHome] = useState(pred?.home_score?.toString() ?? "0");
   const [away, setAway] = useState(pred?.away_score?.toString() ?? "0");
   const [saving, setSaving] = useState(false);
+  const pointsOutcome = match.is_megapremium ? 15 : match.is_premium ? 10 : 5;
+  const pointsExact = match.is_megapremium ? 45 : match.is_premium ? 30 : 15;
 
   async function save() {
     if (!user) return;
@@ -562,10 +564,10 @@ function CardBack({
 
         <div className="grid grid-cols-2 gap-2 py-2.5 text-center text-[10px] font-semibold text-slate-600 sm:flex sm:items-center sm:justify-center sm:gap-6 sm:py-3 sm:text-xs">
           <span className="flex items-center justify-center gap-1 sm:gap-1.5">
-            <Trophy className="h-3.5 w-3.5 shrink-0 text-amber-600 sm:h-4 sm:w-4" /> 2 pts resultado
+            <Trophy className="h-3.5 w-3.5 shrink-0 text-amber-600 sm:h-4 sm:w-4" /> {pointsOutcome} pts resultado
           </span>
           <span className="flex items-center justify-center gap-1 text-amber-600 sm:gap-1.5">
-            <Star className="h-3.5 w-3.5 shrink-0 fill-current sm:h-4 sm:w-4" /> 6 pts exacto
+            <Star className="h-3.5 w-3.5 shrink-0 fill-current sm:h-4 sm:w-4" /> {pointsExact} pts exacto
           </span>
         </div>
 

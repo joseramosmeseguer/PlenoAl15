@@ -28,7 +28,7 @@ function Perfil() {
 
   const myProfile = useMemo(() => (profiles ?? []).find((p: any) => p.id === user?.id), [profiles, user]);
   const displayName = myProfile?.display_name ?? myProfile?.avatar_emoji ?? "campeón";
-  const nameAlreadyChanged = !!user && !!localStorage.getItem(`name_changed_${user.id}`);
+  const nameAlreadyChanged = !!myProfile?.name_changed;
 
   const createdLeagues = useMemo(
     () => (myLeagues ?? []).map((m: any) => m.league).filter((l: any) => l && !l.is_default && l.creator_id === user?.id),
@@ -67,26 +67,27 @@ function Perfil() {
         </button>
         <div className="min-w-0 flex-1">
           <h1 className="display text-2xl truncate">{displayName}</h1>
-          <button
-            type="button"
-            onClick={() => setAvatarPickerOpen(true)}
-            className="text-xs text-primary hover:underline"
-          >
-            {myProfile?.avatar_url ? "Cambiar avatar" : "Elegir avatar"}
-          </button>
+          <div className="flex items-center gap-3 mt-0.5">
+            <button
+              type="button"
+              onClick={() => setAvatarPickerOpen(true)}
+              className="text-xs text-primary hover:underline"
+            >
+              {myProfile?.avatar_url ? "Cambiar avatar" : "Elegir avatar"}
+            </button>
+            <button
+              type="button"
+              onClick={() => !nameAlreadyChanged && setChangeNameOpen(true)}
+              disabled={nameAlreadyChanged}
+              title={nameAlreadyChanged ? "Ya has usado tu único cambio de nombre" : "Cambiar tu nombre visible"}
+              className={`flex items-center gap-1 text-xs ${
+                nameAlreadyChanged ? "text-muted-foreground/40 cursor-not-allowed" : "text-primary hover:underline"
+              }`}
+            >
+              <Pencil className="h-3 w-3" /> {nameAlreadyChanged ? "Nombre bloqueado" : "Editar nombre"}
+            </button>
+          </div>
         </div>
-        <button
-          onClick={() => !nameAlreadyChanged && setChangeNameOpen(true)}
-          disabled={nameAlreadyChanged}
-          title={nameAlreadyChanged ? "Solo puedes cambiar el nombre una vez" : "Cambiar tu nombre visible"}
-          className={`shrink-0 flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-colors ${
-            nameAlreadyChanged
-              ? "border-border text-muted-foreground/40 cursor-not-allowed"
-              : "border-border bg-background hover:bg-muted text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Pencil className="h-3.5 w-3.5" />
-        </button>
       </div>
 
       {/* Tus puntos */}
@@ -256,10 +257,9 @@ function ChangeNameModal({ open, currentName, userId, onClose }: {
       setSaving(false);
       return;
     }
-    const { error } = await supabase.from("profiles").update({ display_name: trimmed }).eq("id", userId);
+    const { error } = await supabase.from("profiles").update({ display_name: trimmed, name_changed: true }).eq("id", userId);
     setSaving(false);
     if (error) { toast.error("No se pudo guardar. Inténtalo de nuevo."); return; }
-    localStorage.setItem(`name_changed_${userId}`, "1");
     qc.invalidateQueries({ queryKey: ["profiles"] });
     qc.invalidateQueries({ queryKey: ["leaderboard"] });
     toast.success(`¡Listo! Ahora te llamas ${trimmed}.`);
