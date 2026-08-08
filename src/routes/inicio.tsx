@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useProfiles, useMyLeagues, useAllLeagueMembers } from "@/lib/queries";
 import { CreateLeagueModal, JoinLeagueModal } from "@/components/LeaguesSection";
-import { Plus, KeyRound, BookOpen, Share2, Newspaper, ChevronRight, LogIn, Download, Users } from "lucide-react";
+import { Plus, KeyRound, BookOpen, Share2, Newspaper, ChevronRight, LogIn, Download, Users, User } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import estadioEpicoImg from "@/assets/EstadioEpico2.png";
@@ -101,8 +101,8 @@ function Inicio() {
 
   return (
     <div className="space-y-6">
-      {/* Cabecera */}
-      <div className="relative overflow-hidden rounded-3xl shadow-soft">
+      {/* Cabecera: cuelga pegada de la barra superior */}
+      <div className="relative -mt-6 md:-mt-8 overflow-hidden rounded-b-3xl shadow-soft">
         <img src={estadioEpicoImg} alt="" className="absolute inset-0 h-full w-full object-cover object-center scale-105" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
         <div className="relative flex items-center gap-4 p-5">
@@ -130,10 +130,15 @@ function Inicio() {
           {myLeagueList.map((league: any) => (
             <Link
               key={league.id}
-              to="/"
+              to="/clasificacion"
               search={{ league: league.id }}
               className="flex items-center gap-3 px-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
             >
+              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-black text-sm ${
+                league.is_default ? "bg-muted text-muted-foreground" : "bg-gradient-gold text-gold-foreground shadow-gold"
+              }`}>
+                {league.is_default ? <User className="h-4 w-4" /> : league.name.charAt(0).toUpperCase()}
+              </div>
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-sm truncate">{league.is_default ? "Individual" : league.name}</div>
                 <div className="text-xs text-muted-foreground flex items-center gap-1">
@@ -152,7 +157,7 @@ function Inicio() {
         onClick={installApp}
         className="relative w-full overflow-hidden rounded-2xl shadow-soft text-left"
       >
-        <img src={estadioInstalarImg} alt="" className="absolute inset-0 h-full w-full object-cover blur-sm scale-110" />
+        <img src={estadioInstalarImg} alt="" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/30" />
         <div className="relative flex items-center gap-3 p-4">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/20 ring-1 ring-gold/40">

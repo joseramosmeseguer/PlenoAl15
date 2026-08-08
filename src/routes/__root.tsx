@@ -21,10 +21,10 @@ function NotFoundComponent() {
         <h1 className="display text-5xl text-gold">404</h1>
         <p className="mt-2 text-white/80">Esta página se fue por la línea de fondo.</p>
         <Link
-          to="/"
+          to="/inicio"
           className="inline-block mt-6 px-5 py-2 rounded-md bg-gold text-gold-foreground font-semibold"
         >
-          Volver a la clasificación
+          Volver al inicio
         </Link>
       </div>
     </div>

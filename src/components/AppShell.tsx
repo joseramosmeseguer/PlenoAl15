@@ -11,7 +11,7 @@ import { toast } from "sonner";
 
 const NAV_PRIMARY = [
   { to: "/inicio", label: "Inicio", icon: Home },
-  { to: "/", label: "Clasificación", icon: Trophy },
+  { to: "/clasificacion", label: "Clasificación", icon: Trophy },
   { to: "/mis-pronosticos", label: "Pronósticos", icon: ListChecks },
   { to: "/calendario", label: "LaLiga", icon: Calendar },
 ] as const;
@@ -64,7 +64,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Top bar */}
       <header className="sticky top-0 z-40 border-b border-gold/35 bg-[#11110f]/96 text-white shadow-[0_8px_28px_-20px_rgba(0,0,0,.8)] backdrop-blur-xl">
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to="/inicio" className="flex items-center gap-2">
             <img src="/images/logo/logo-cuadrado.webp" alt="" className="h-9 w-9 rounded-full ring-1 ring-gold/45 shadow-gold" />
             <div className="display text-xl tracking-[0.08em] sm:text-2xl">Pleno<span className="text-gold">Al15</span></div>
           </Link>

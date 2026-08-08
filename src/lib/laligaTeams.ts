@@ -141,6 +141,7 @@ registerDisplayName(
 );
 registerDisplayName("RCD Espanyol", "RCD Espanyol de Barcelona", "RCD Espanyol", "Espanyol");
 registerDisplayName("RC Celta", "RC Celta de Vigo", "Celta de Vigo", "Celta Vigo", "Celta");
+registerDisplayName("Deportivo", "RC Deportivo", "RC Deportivo La Coruña", "Deportivo de La Coruña", "Deportivo La Coruña");
 
 export function getLaLigaTeamDisplayName(teamName?: string | null): string {
   if (!teamName) return "?";

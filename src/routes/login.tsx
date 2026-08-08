@@ -23,7 +23,7 @@ function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (user) navigate({ to: "/" });
+    if (user) navigate({ to: "/inicio" });
   }, [user, navigate]);
 
   async function submit(e: React.FormEvent) {

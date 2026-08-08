@@ -51,7 +51,7 @@ function Admin() {
   const [tab, setTab] = useState<"matches" | "users" | "ligas" | "noticias" | "anuncios">("matches");
 
   useEffect(() => {
-    if (!loading && (!user || !isAdmin)) navigate({ to: "/" });
+    if (!loading && (!user || !isAdmin)) navigate({ to: "/inicio" });
   }, [user, isAdmin, loading, navigate]);
 
   if (!user || !isAdmin) return null;

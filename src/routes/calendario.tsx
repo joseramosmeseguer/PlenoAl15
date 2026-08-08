@@ -131,8 +131,8 @@ function MatchCard({ match: m, onOpen }: any) {
     <img src={stadium?.stadium ?? estadioFondo} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" style={{ objectPosition: stadium?.backgroundPosition ?? "center" }} />
     <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/85" />
     {(m.is_premium || m.is_megapremium) && (
-      <div className={`absolute top-2 right-2 z-10 flex items-center gap-1 text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full shadow-sm ${m.is_megapremium ? "bg-red-600 text-white" : "bg-gold text-gold-foreground"}`}>
-        <Sparkles className="h-2.5 w-2.5" /> {m.is_megapremium ? "Mega Premium" : "Premium"}
+      <div className={`relative flex items-center justify-center gap-1.5 py-1.5 text-[9px] font-black uppercase tracking-widest ${m.is_megapremium ? "bg-red-600 text-white" : "bg-gold text-gold-foreground"}`}>
+        <Sparkles className="h-3 w-3" /> {m.is_megapremium ? "Mega Premium" : "Premium"}
       </div>
     )}
     <div className="relative flex min-h-48 flex-col p-4 text-white">
@@ -200,7 +200,13 @@ function Info({ icon: Icon, label, value }: any) { return <div className="rounde
 function Stat({ value, label }: any) { return <div className="rounded-xl bg-black p-3 text-center text-white"><p className="text-xl font-black text-gold">{value}</p><p className="text-[9px] uppercase tracking-widest text-white/55">{label}</p></div>; }
 function SectionTitle({ icon: Icon, children }: any) { return <h3 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-widest"><Icon className="h-4 w-4 text-gold" />{children}</h3>; }
 function FormCard({ team, row, matches }: any) { const form = teamForm(team.id, matches); return <div className="rounded-xl border bg-white p-3"><div className="flex items-center gap-2"><img src={crestUrl(team) ?? ""} className="h-7 w-7 object-contain" alt=""/><div><b className="block text-xs">{getLaLigaTeamDisplayName(team.name)}</b><span className="text-[9px] text-muted-foreground">{row ? `${row.position}º · ${row.points} pts` : "Sin clasificación"}</span></div></div><div className="mt-3 flex gap-1">{form.length ? form.map((v:string,i:number)=><span key={i} className={`flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-black text-white ${v === "V" ? "bg-emerald-600" : v === "E" ? "bg-amber-500" : "bg-red-500"}`}>{v}</span>) : <span className="text-[10px] text-muted-foreground">Sin partidos jugados</span>}</div></div>; }
-function RecentList({ team, matches }: any) { const recent = matches.filter((m:any)=>finished(m)&&(m.home?.id===team.id||m.away?.id===team.id)).sort((a:any,b:any)=>+new Date(b.utc_date)-+new Date(a.utc_date)).slice(0,5); return <div className="overflow-hidden rounded-xl border bg-white">{recent.length ? recent.map((m:any)=><div key={m.id} className="flex items-center gap-2 border-b px-3 py-2.5 text-[10px] last:border-0"><span className="w-14 truncate font-bold">{m.home?.id===team.id ? getLaLigaTeamDisplayName(m.away?.name) : getLaLigaTeamDisplayName(m.home?.name)}</span><span className="ml-auto font-black tabular-nums">{m.home_score}-{m.away_score}</span><span className={`h-2 w-2 rounded-full ${resultFor(team.id,m)==="V"?"bg-emerald-500":resultFor(team.id,m)==="E"?"bg-amber-400":"bg-red-500"}`} /></div>) : <p className="p-4 text-center text-[10px] text-muted-foreground">Sin resultados todavía</p>}</div>; }
+function RecentList({ team, matches }: any) { const recent = matches.filter((m:any)=>finished(m)&&(m.home?.id===team.id||m.away?.id===team.id)).sort((a:any,b:any)=>+new Date(b.utc_date)-+new Date(a.utc_date)).slice(0,5); return <div className="overflow-hidden rounded-xl border bg-white">{recent.length ? recent.map((m:any)=><div key={m.id} className="flex items-center gap-1.5 border-b px-2.5 py-2 text-[10px] last:border-0">
+  <img src={crestUrl(m.home) ?? ""} alt="" className="h-4 w-4 shrink-0 object-contain" />
+  <span className="min-w-0 flex-1 truncate font-bold">{m.home?.short_name ?? getLaLigaTeamDisplayName(m.home?.name)} - {m.away?.short_name ?? getLaLigaTeamDisplayName(m.away?.name)}</span>
+  <img src={crestUrl(m.away) ?? ""} alt="" className="h-4 w-4 shrink-0 object-contain" />
+  <span className="shrink-0 font-black tabular-nums">{m.home_score}-{m.away_score}</span>
+  <span className={`h-2 w-2 shrink-0 rounded-full ${resultFor(team.id,m)==="V"?"bg-emerald-500":resultFor(team.id,m)==="E"?"bg-amber-400":"bg-red-500"}`} />
+</div>) : <p className="p-4 text-center text-[10px] text-muted-foreground">Sin resultados todavía</p>}</div>; }
 function Empty({ text }: { text: string }) { return <div className="rounded-2xl border border-dashed bg-white/60 py-10 text-center text-sm text-muted-foreground">{text}</div>; }
 function Legend({ color, text }: any) { return <span className="flex items-center gap-1.5"><i className={`h-2.5 w-1 rounded-full ${color}`} />{text}</span>; }
 function zone(p:number){ return p<=4?"border-blue-600":p===5?"border-sky-400":p===6?"border-amber-400":p>=18?"border-red-500":"border-transparent"; }

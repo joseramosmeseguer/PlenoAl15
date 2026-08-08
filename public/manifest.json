@@ -2,7 +2,7 @@
   "name": "PlenoAl15",
   "short_name": "PlenoAl15",
   "description": "Quiniela privada de LaLiga entre amigos: pronósticos, ranking y bonus.",
-  "start_url": "/",
+  "start_url": "/inicio",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#d8d6d3",

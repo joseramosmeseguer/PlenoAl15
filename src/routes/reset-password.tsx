@@ -26,7 +26,7 @@ function ResetPasswordPage() {
       const { error } = await supabase.auth.updateUser({ password });
       if (error) throw error;
       toast.success("¡Contraseña actualizada!");
-      navigate({ to: "/" });
+      navigate({ to: "/inicio" });
     } catch (e: any) {
       toast.error(e.message ?? "No se pudo actualizar. Pide un nuevo enlace desde el login.");
     } finally {

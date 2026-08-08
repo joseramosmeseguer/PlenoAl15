@@ -7,10 +7,11 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ChevronLeft, CheckCircle2, XCircle, Star, Trophy, Info } from "lucide-react";
+import { ChevronLeft, CheckCircle2, XCircle, Star, Trophy, Info, Lock } from "lucide-react";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
 import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
 import { SectionHero } from "@/components/SectionHero";
+import { isLocked } from "@/lib/scoring";
 
 export const Route = createFileRoute("/mis-pronosticos")({
   component: MyPredictions,
@@ -182,13 +183,14 @@ function ClubMatchCard({
   const navigate = useNavigate();
   const qc = useQueryClient();
   const isFinished = match.status === "FINISHED";
+  const locked = isLocked(match.utc_date, match.predictions_locked);
   const homeStadium = getLaLigaTeamStadium(match.home?.name);
   const bg = homeStadium?.stadium ?? estadioFondo;
 
   const [flipped, setFlipped] = useState(false);
 
   function openEdit() {
-    if (isFinished) return;
+    if (isFinished || locked) return;
     if (!user) {
       navigate({ to: "/login" });
       return;
@@ -211,6 +213,7 @@ function ClubMatchCard({
               match={match}
               pred={pred}
               isFinished={isFinished}
+              locked={locked}
               bg={bg}
               stadiumName={homeStadium?.stadiumName}
               backgroundPosition={homeStadium?.backgroundPosition}
@@ -244,6 +247,7 @@ function CardFront({
   match,
   pred,
   isFinished,
+  locked,
   bg,
   stadiumName,
   backgroundPosition,
@@ -253,6 +257,7 @@ function CardFront({
   match: any;
   pred?: { home_score: number; away_score: number };
   isFinished: boolean;
+  locked: boolean;
   bg: string;
   stadiumName?: string;
   backgroundPosition?: string;
@@ -283,7 +288,7 @@ function CardFront({
     <div
       onClick={onEdit}
       className={`relative overflow-hidden rounded-2xl border border-white/80 shadow-soft ${
-        isFinished ? "cursor-default" : "cursor-pointer"
+        isFinished || locked ? "cursor-default" : "cursor-pointer"
       }`}
     >
       <img
@@ -294,40 +299,13 @@ function CardFront({
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/30 to-black/70" />
 
-      {isFinished && pred && (
-        <div
-          className={`absolute top-2 right-2 z-10 flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-            predResult === "exact"
-              ? "bg-gold text-gold-foreground"
-              : predResult === "outcome"
-                ? "bg-emerald-500 text-white"
-                : "bg-destructive text-white"
-          }`}
-        >
-          {predResult === "exact" && (
-            <>
-              <CheckCircle2 className="h-3 w-3" /> Exacto
-            </>
-          )}
-          {predResult === "outcome" && (
-            <>
-              <CheckCircle2 className="h-3 w-3" /> Acierto
-            </>
-          )}
-          {predResult === "miss" && (
-            <>
-              <XCircle className="h-3 w-3" /> Fallo
-            </>
-          )}
-        </div>
-      )}
       {(match.is_premium || match.is_megapremium) && (
         <div
-          className={`absolute top-2 left-2 z-10 flex items-center gap-1 text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full shadow-sm ${
+          className={`relative flex items-center justify-center gap-1.5 py-2 text-[10px] font-black uppercase tracking-widest [text-shadow:none] ${
             match.is_megapremium ? "bg-red-600 text-white" : "bg-gold text-gold-foreground"
           }`}
         >
-          <Star className="h-2.5 w-2.5 fill-current" /> {match.is_megapremium ? "Mega Premium" : "Premium"}
+          <Star className="h-3 w-3 fill-current" /> {match.is_megapremium ? "Mega Premium · Triple puntuación" : "Premium · Doble puntuación"}
         </div>
       )}
 
@@ -388,9 +366,14 @@ function CardFront({
                     {pred ? `${pred.home_score} - ${pred.away_score}` : "VS"}
                   </span>
                   <span className="mt-1 text-[7px] font-bold uppercase tracking-widest text-slate-500">
-                    Pronóstico
+                    {locked ? "Cerrado" : "Pronóstico"}
                   </span>
                 </div>
+                {locked && (
+                  <span className="flex items-center gap-1 rounded-full bg-black/40 px-2 py-0.5 text-[9px] font-semibold text-white/70">
+                    <Lock className="h-2.5 w-2.5" /> Bloqueado
+                  </span>
+                )}
                 <Link
                   to="/calendario"
                   search={{ match: match.id }}
@@ -415,6 +398,36 @@ function CardFront({
             </span>
           </div>
         </div>
+
+        {isFinished && pred && (
+          <div className="mt-3 flex justify-center">
+            <span
+              className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full [text-shadow:none] ${
+                predResult === "exact"
+                  ? "bg-gold text-gold-foreground"
+                  : predResult === "outcome"
+                    ? "bg-emerald-500 text-white"
+                    : "bg-destructive text-white"
+              }`}
+            >
+              {predResult === "exact" && (
+                <>
+                  <CheckCircle2 className="h-3 w-3" /> Exacto
+                </>
+              )}
+              {predResult === "outcome" && (
+                <>
+                  <CheckCircle2 className="h-3 w-3" /> Acierto
+                </>
+              )}
+              {predResult === "miss" && (
+                <>
+                  <XCircle className="h-3 w-3" /> Fallo
+                </>
+              )}
+            </span>
+          </div>
+        )}
 
         <div className="mt-3 flex items-center justify-between gap-3">
           <span className="text-sm font-bold text-slate-200">{timeStr}</span>
