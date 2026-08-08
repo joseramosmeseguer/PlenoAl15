@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Trophy, Calendar, ListChecks, BookOpen, Shield, LogOut, Menu, X, Star, User, BarChart3, MoreHorizontal, LogIn } from "lucide-react";
+import { Home, Trophy, Calendar, ListChecks, BookOpen, Shield, LogOut, Menu, X, Star, User, BarChart3, MoreHorizontal, LogIn, Eye, EyeOff } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMyLeagues, useMyProfile } from "@/lib/queries";
@@ -23,7 +23,7 @@ const NAV_SECONDARY = [
 ] as const;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { user, isAdmin, signOut, loading } = useAuth();
+  const { user, isAdmin, realIsAdmin, viewingAsUser, setViewingAsUser, signOut, loading } = useAuth();
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
@@ -202,6 +202,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </header>
 
       <main className="flex-1 mx-auto w-full max-w-6xl px-4 py-6 pb-24 md:py-8 md:pb-12">{children}</main>
+
+      {/* Alternar vista admin / usuario — solo visible para admins reales */}
+      {realIsAdmin && (
+        <button
+          type="button"
+          onClick={() => setViewingAsUser(!viewingAsUser)}
+          className={`fixed z-50 right-4 bottom-24 md:bottom-6 flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-bold shadow-lg transition-colors ${
+            viewingAsUser
+              ? "bg-amber-500 text-black hover:bg-amber-400"
+              : "bg-black text-gold border border-gold/40 hover:bg-black/80"
+          }`}
+        >
+          {viewingAsUser ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+          {viewingAsUser ? "Viendo como usuario" : "Vista admin"}
+        </button>
+      )}
 
       {/* Bottom nav móvil */}
       <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-black/10 bg-white/95 shadow-[0_-12px_30px_-22px_rgba(0,0,0,.45)] backdrop-blur-xl">

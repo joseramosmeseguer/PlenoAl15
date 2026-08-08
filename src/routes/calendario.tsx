@@ -7,7 +7,7 @@ import estadioFondo from "@/assets/Estadiofutbolfondo.png";
 import laLigaBanner from "@/assets/LaLiga1.webp";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
-  CalendarDays, ChevronRight, Clock3, Goal, MapPin, Shield, Shirt,
+  CalendarDays, ChevronRight, Clock3, Goal, MapPin, Shield, Shirt, Sparkles,
   Trophy, TrendingUp, Users, X,
 } from "lucide-react";
 

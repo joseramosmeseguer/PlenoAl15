@@ -1,11 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useAuth } from "@/lib/auth";
 import championsFondo from "@/assets/champions/ChampionsLogoyCopa.webp";
 import championsEstadio from "@/assets/champions/ChampionsEstadio1.webp";
 
 export const Route = createFileRoute("/champions")({
-  component: ChampionsPage,
+  component: ChampionsRoute,
   head: () => ({ meta: [{ title: "Champions League · PlenoAl15" }] }),
 });
+
+function ChampionsRoute() {
+  const { isAdmin } = useAuth();
+  return isAdmin ? <ChampionsPage /> : <ChampionsComingSoon />;
+}
+
+function ChampionsComingSoon() {
+  return (
+    <div className="relative -mt-2 min-h-[70vh] overflow-hidden rounded-3xl shadow-soft flex items-center justify-center">
+      <img src={championsFondo} alt="" className="absolute inset-0 h-full w-full object-cover" />
+      <div className="absolute inset-0 bg-black/55" />
+      <div className="relative text-center px-6">
+        <p className="display text-3xl text-white">Próximamente…</p>
+        <p className="mt-2 text-sm text-white/70">Competiciones entre ligas</p>
+      </div>
+    </div>
+  );
+}
 
 type Zone = "direct" | "playoff" | "out";
 
