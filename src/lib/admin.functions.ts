@@ -5,10 +5,18 @@ import { ADMIN_EMAILS } from "@/lib/admin-emails";
 import { z } from "zod";
 
 async function assertAdmin(ctx: { supabase: any; userId: string; claims?: any }) {
-  // La lista de ADMIN_EMAILS manda siempre, aunque el rol en la base de
-  // datos estuviera mal puesto.
-  const email = ctx.claims?.email;
-  if (!email || !ADMIN_EMAILS.includes(email)) throw new Response("Solo admin", { status: 403 });
+  // La lista de ADMIN_EMAILS manda siempre, aunque el rol en la base de datos
+  // estuviera mal puesto. No nos fiamos del claim "email" del JWT (con las
+  // claves de firma asimétricas no siempre viene poblado) — lo buscamos en
+  // la base de datos con la service role, que es fiable siempre.
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("email")
+    .eq("id", ctx.userId)
+    .maybeSingle();
+  if (!profile?.email || !ADMIN_EMAILS.includes(profile.email)) {
+    throw new Response("Solo admin", { status: 403 });
+  }
   const { data } = await ctx.supabase
     .from("user_roles")
     .select("role")

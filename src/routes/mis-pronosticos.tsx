@@ -298,9 +298,9 @@ function CardFront({
         <div
           className={`absolute top-2 right-2 z-10 flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
             predResult === "exact"
-              ? "bg-emerald-500 text-white"
+              ? "bg-gold text-gold-foreground"
               : predResult === "outcome"
-                ? "bg-gold text-gold-foreground"
+                ? "bg-emerald-500 text-white"
                 : "bg-destructive text-white"
           }`}
         >
@@ -319,6 +319,15 @@ function CardFront({
               <XCircle className="h-3 w-3" /> Fallo
             </>
           )}
+        </div>
+      )}
+      {(match.is_premium || match.is_megapremium) && (
+        <div
+          className={`absolute top-2 left-2 z-10 flex items-center gap-1 text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full shadow-sm ${
+            match.is_megapremium ? "bg-red-600 text-white" : "bg-gold text-gold-foreground"
+          }`}
+        >
+          <Star className="h-2.5 w-2.5 fill-current" /> {match.is_megapremium ? "Mega Premium" : "Premium"}
         </div>
       )}
 
@@ -356,15 +365,15 @@ function CardFront({
                 </div>
                 {pred ? (
                   <span
-                    className={`mt-1.5 pt-1.5 border-t border-white/15 text-sm font-bold tabular-nums ${
+                    className={`mt-1.5 rounded-full px-2 py-0.5 text-[10px] font-bold tabular-nums [text-shadow:none] ${
                       predResult === "exact"
-                        ? "text-emerald-400"
+                        ? "bg-gold/20 text-gold"
                         : predResult === "outcome"
-                          ? "text-gold"
-                          : "text-red-400"
+                          ? "bg-emerald-500/20 text-emerald-300"
+                          : "bg-red-500/20 text-red-300"
                     }`}
                   >
-                    Tu pronóstico: {pred.home_score}-{pred.away_score}
+                    Tú: {pred.home_score}-{pred.away_score}
                   </span>
                 ) : (
                   <span className="mt-1.5 pt-1.5 border-t border-white/15 text-[10px] text-white/40">

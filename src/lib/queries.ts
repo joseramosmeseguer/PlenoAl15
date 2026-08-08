@@ -9,6 +9,7 @@ export type LeaderRow = {
   match_points: number;
   bonus_points: number;
   juego_points: number;
+  club_points: number;
   total_points: number;
   exact_count: number;
   outcome_count: number;

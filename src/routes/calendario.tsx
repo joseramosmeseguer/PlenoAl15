@@ -35,6 +35,10 @@ const TABS: { id: Tab; label: string; icon: typeof Trophy }[] = [
   { id: "teams", label: "Equipos", icon: Shield },
 ];
 
+// Los diálogos de partido/equipo caen desde arriba, pegados a la cabecera,
+// en vez del recuadro cuadrado centrado por defecto.
+const SHEET_CLASS = "top-3 sm:top-6 translate-y-0 rounded-3xl data-[state=open]:slide-in-from-top-6 data-[state=closed]:slide-out-to-top-6 data-[state=open]:zoom-in-100 data-[state=closed]:zoom-out-100";
+
 function crestUrl(team?: Team | null) {
   return team?.id ? `/images/crests/${team.id}.png` : team?.crest_url ?? null;
 }
@@ -126,6 +130,11 @@ function MatchCard({ match: m, onOpen }: any) {
   return <button onClick={onOpen} className="group relative min-h-48 overflow-hidden rounded-2xl border border-white/80 text-left shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-xl">
     <img src={stadium?.stadium ?? estadioFondo} alt="" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" style={{ objectPosition: stadium?.backgroundPosition ?? "center" }} />
     <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/25 to-black/85" />
+    {(m.is_premium || m.is_megapremium) && (
+      <div className={`absolute top-2 right-2 z-10 flex items-center gap-1 text-[9px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full shadow-sm ${m.is_megapremium ? "bg-red-600 text-white" : "bg-gold text-gold-foreground"}`}>
+        <Sparkles className="h-2.5 w-2.5" /> {m.is_megapremium ? "Mega Premium" : "Premium"}
+      </div>
+    )}
     <div className="relative flex min-h-48 flex-col p-4 text-white">
       <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-white/70"><span>Jornada {m.matchday}</span><span>{kickoff.toLocaleDateString("es-ES", { day: "2-digit", month: "short" })} · {kickoff.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}</span></div>
       <div className="my-auto grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-center">
@@ -166,7 +175,7 @@ function StandingsTab({ rows, onOpen }: { rows: TableRow[]; onOpen: (team: Team)
 function MatchDialog({ match, matches, table, onClose, onTeam }: any) {
   if (!match) return null; const stadium = getLaLigaTeamStadium(match.home?.name); const kickoff = new Date(match.utc_date);
   const homeRow = table.find((r: TableRow) => r.team.id === match.home?.id); const awayRow = table.find((r: TableRow) => r.team.id === match.away?.id);
-  return <Dialog open={!!match} onOpenChange={open => !open && onClose()}><DialogContent className="max-h-[92vh] max-w-2xl overflow-y-auto p-0"><DialogHeader className="sr-only"><DialogTitle>Detalle del partido</DialogTitle><DialogDescription>Información y estadísticas del encuentro</DialogDescription></DialogHeader>
+  return <Dialog open={!!match} onOpenChange={open => !open && onClose()}><DialogContent className={`${SHEET_CLASS} max-h-[88vh] max-w-2xl overflow-y-auto p-0`}><DialogHeader className="sr-only"><DialogTitle>Detalle del partido</DialogTitle><DialogDescription>Información y estadísticas del encuentro</DialogDescription></DialogHeader>
     <div className="relative h-48 overflow-hidden bg-black sm:h-56"><img src={stadium?.stadium ?? estadioFondo} alt="" className="h-full w-full object-cover opacity-60" style={{ objectPosition: stadium?.backgroundPosition }} /><div className="absolute inset-0 bg-gradient-to-t from-black via-black/15 to-black/50" /><button onClick={onClose} className="absolute right-3 top-3 rounded-full bg-black/45 p-2 text-white backdrop-blur"><X className="h-4 w-4" /></button><div className="absolute inset-x-4 bottom-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3 text-center text-white"><button onClick={() => onTeam(match.home)}><TeamBadge team={match.home} /></button><div><div className="text-2xl font-black">{finished(match) ? `${match.home_score} - ${match.away_score}` : "VS"}</div><span className="text-[9px] uppercase tracking-widest text-gold">Jornada {match.matchday}</span></div><button onClick={() => onTeam(match.away)}><TeamBadge team={match.away} /></button></div></div>
     <div className="space-y-5 p-5"><div className="grid grid-cols-2 gap-3"><Info icon={CalendarDays} label="Fecha" value={kickoff.toLocaleDateString("es-ES", { weekday:"long", day:"numeric", month:"long" })} /><Info icon={Clock3} label="Hora" value={kickoff.toLocaleTimeString("es-ES", { hour:"2-digit",minute:"2-digit" })} /><Info icon={MapPin} label="Estadio" value={stadium?.stadiumName ?? "Por confirmar"} /><Info icon={Trophy} label="Estado" value={finished(match) ? "Finalizado" : "Próximo partido"} /></div>
       <div><SectionTitle icon={TrendingUp}>Momento de los equipos</SectionTitle><div className="grid grid-cols-2 gap-3"><FormCard team={match.home} row={homeRow} matches={matches} /><FormCard team={match.away} row={awayRow} matches={matches} /></div></div>
@@ -178,7 +187,7 @@ function TeamDialog({ team, matches, table, onClose }: any) {
   const { data: squad, isLoading } = useClubPlayers(team?.id); if (!team) return null;
   const stadium = getLaLigaTeamStadium(team.name); const row = table.find((r: TableRow) => r.team.id === team.id);
   const players = squad ?? [];
-  return <Dialog open={!!team} onOpenChange={open => !open && onClose()}><DialogContent className="max-h-[92vh] max-w-3xl overflow-y-auto p-0"><DialogHeader className="sr-only"><DialogTitle>{getLaLigaTeamDisplayName(team.name)}</DialogTitle><DialogDescription>Ficha oficial del club</DialogDescription></DialogHeader>
+  return <Dialog open={!!team} onOpenChange={open => !open && onClose()}><DialogContent className={`${SHEET_CLASS} max-h-[88vh] max-w-3xl overflow-y-auto p-0`}><DialogHeader className="sr-only"><DialogTitle>{getLaLigaTeamDisplayName(team.name)}</DialogTitle><DialogDescription>Ficha oficial del club</DialogDescription></DialogHeader>
     <div className="relative h-52 overflow-hidden bg-black"><img src={stadium?.stadium ?? estadioFondo} alt="" className="h-full w-full object-cover opacity-55" style={{ objectPosition: stadium?.backgroundPosition }} /><div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/35" /><button onClick={onClose} className="absolute right-3 top-3 rounded-full bg-black/45 p-2 text-white"><X className="h-4 w-4" /></button><div className="absolute inset-x-5 bottom-5 flex items-end gap-4 text-white"><img src={crestUrl(team) ?? ""} alt="" className="h-20 w-20 object-contain drop-shadow-2xl" /><div><p className="text-[9px] font-black uppercase tracking-[.25em] text-gold">Ficha del club</p><h2 className="display text-2xl sm:text-3xl">{getLaLigaTeamDisplayName(team.name)}</h2><p className="mt-1 text-xs text-white/60">{team.area_name ?? "España"} · {stadium?.stadiumName ?? team.venue}</p></div></div></div>
     <div className="space-y-6 p-5"><div className="grid grid-cols-2 gap-2 sm:grid-cols-4"><Stat value={row?.position ? `#${row.position}` : "—"} label="Posición" /><Stat value={row?.points ?? 0} label="Puntos" /><Stat value={row?.playedGames ?? 0} label="Partidos" /><Stat value={`${row?.won ?? 0}-${row?.draw ?? 0}-${row?.lost ?? 0}`} label="G-E-P" /></div>
       <div className="grid gap-3 sm:grid-cols-2"><Info icon={MapPin} label="Estadio" value={stadium?.stadiumName ?? team.venue ?? "Por confirmar"} /><Info icon={Users} label="Entrenador" value={team.coach_name ?? "Sin información"} /></div>

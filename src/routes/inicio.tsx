@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth";
-import { useProfiles, useMyLeagues, useLeaderboard, useAllLeagueMembers } from "@/lib/queries";
+import { useProfiles, useMyLeagues, useAllLeagueMembers } from "@/lib/queries";
 import { CreateLeagueModal, JoinLeagueModal } from "@/components/LeaguesSection";
 import { Plus, KeyRound, BookOpen, Share2, Newspaper, ChevronRight, LogIn, Download, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import estadioEpicoImg from "@/assets/EstadioEpico2.png";
+import estadioInstalarImg from "@/assets/Estadiofutbolfondo.png";
 
 export const Route = createFileRoute("/inicio")({
   component: Inicio,
@@ -21,7 +23,6 @@ function Inicio() {
   const { user } = useAuth();
   const { data: profiles } = useProfiles();
   const { data: myLeagues } = useMyLeagues(user?.id);
-  const { data: rows } = useLeaderboard();
   const { data: allMembers } = useAllLeagueMembers();
   const myProfile = (profiles ?? []).find((p: any) => p.id === user?.id);
   const displayName = myProfile?.display_name ?? myProfile?.avatar_emoji ?? "campeón";
@@ -42,11 +43,6 @@ function Inicio() {
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
-
-  const myPoints = useMemo(() => {
-    const row = (rows ?? []).find((r) => r.user_id === user?.id);
-    return row?.total_points ?? 0;
-  }, [rows, user]);
 
   const memberCountByLeague = useMemo(() => {
     const map: Record<string, number> = {};
@@ -106,18 +102,22 @@ function Inicio() {
   return (
     <div className="space-y-6">
       {/* Cabecera */}
-      <div className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-soft">
-        <img src="/images/logo/logo-cuadrado.webp" alt="PlenoAl15" className="h-14 w-14 rounded-2xl shadow-gold shrink-0" />
-        <div className="min-w-0 flex-1">
-          <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Bienvenido</p>
-          {user ? (
-            <Link to="/perfil" className="flex items-center gap-1 group">
-              <h1 className="display text-2xl truncate group-hover:text-primary transition-colors">{displayName}</h1>
-              <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
-            </Link>
-          ) : (
-            <h1 className="display text-2xl truncate">a PlenoAl15</h1>
-          )}
+      <div className="relative overflow-hidden rounded-3xl shadow-soft">
+        <img src={estadioEpicoImg} alt="" className="absolute inset-0 h-full w-full object-cover object-center scale-105" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
+        <div className="relative flex items-center gap-4 p-5">
+          <img src="/images/logo/logo-cuadrado.webp" alt="PlenoAl15" className="h-14 w-14 rounded-2xl shadow-gold shrink-0" />
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold uppercase tracking-widest text-white/60">Bienvenido</p>
+            {user ? (
+              <Link to="/perfil" className="flex items-center gap-1 group">
+                <h1 className="display text-2xl text-white truncate group-hover:text-gold transition-colors">{displayName}</h1>
+                <ChevronRight className="h-4 w-4 text-white/50 shrink-0 group-hover:text-gold transition-colors" />
+              </Link>
+            ) : (
+              <h1 className="display text-2xl text-white truncate">a PlenoAl15</h1>
+            )}
+          </div>
         </div>
       </div>
 
@@ -134,16 +134,11 @@ function Inicio() {
               search={{ league: league.id }}
               className="flex items-center gap-3 px-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
             >
-              <span className="text-xl shrink-0">{league.is_default ? "👤" : "👥"}</span>
               <div className="flex-1 min-w-0">
                 <div className="font-semibold text-sm truncate">{league.is_default ? "Individual" : league.name}</div>
                 <div className="text-xs text-muted-foreground flex items-center gap-1">
                   <Users className="h-3 w-3" /> {memberCountByLeague[league.id] ?? 0} participantes
                 </div>
-              </div>
-              <div className="text-right shrink-0">
-                <div className="font-bold text-gold tabular-nums">{myPoints}</div>
-                <div className="text-[9px] text-muted-foreground uppercase tracking-wide">pts</div>
               </div>
               <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
             </Link>
@@ -155,29 +150,33 @@ function Inicio() {
       <button
         type="button"
         onClick={installApp}
-        className="w-full flex items-center gap-3 rounded-2xl border border-gold/40 bg-gold/10 p-4 shadow-soft hover:bg-gold/20 transition-colors text-left"
+        className="relative w-full overflow-hidden rounded-2xl shadow-soft text-left"
       >
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/20">
-          <Download className="h-5 w-5 text-gold" />
-        </div>
-        <div className="flex-1 min-w-0">
-          <span className="font-semibold text-sm block">Instalar la app</span>
-          <span className="text-xs text-muted-foreground">Acceso directo desde tu pantalla de inicio</span>
+        <img src={estadioInstalarImg} alt="" className="absolute inset-0 h-full w-full object-cover blur-sm scale-110" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/30" />
+        <div className="relative flex items-center gap-3 p-4">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/20 ring-1 ring-gold/40">
+            <Download className="h-5 w-5 text-gold" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <span className="font-semibold text-sm text-white block">Instalar la app</span>
+            <span className="text-xs text-white/70">Acceso directo desde tu pantalla de inicio</span>
+          </div>
         </div>
       </button>
 
       {/* Accesos rápidos */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-2">
         {actions.map(({ label, icon: Icon, to, onClick, accent }) => {
           const content = (
             <>
-              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
-                <Icon className={`h-5 w-5 ${accent}`} />
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted shrink-0">
+                <Icon className={`h-4 w-4 ${accent}`} />
               </div>
-              <span className="font-semibold text-sm">{label}</span>
+              <span className="font-semibold text-xs truncate">{label}</span>
             </>
           );
-          const className = "flex flex-col items-start gap-3 rounded-2xl border border-border bg-card p-4 shadow-soft hover:bg-muted/60 transition-colors text-left";
+          const className = "flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-2.5 shadow-soft hover:bg-muted/60 transition-colors text-left";
           return to ? (
             <Link key={label} to={to} className={className}>{content}</Link>
           ) : (
@@ -187,14 +186,14 @@ function Inicio() {
       </div>
 
       {/* Noticias */}
-      <section className="rounded-2xl border border-border bg-card shadow-soft overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-          <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-muted-foreground">
+      <section className="rounded-2xl border border-white/10 bg-[#0a0a0a] text-white shadow-soft overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+          <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white/60">
             <Newspaper className="h-4 w-4" /> Noticias
           </h2>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          <ChevronRight className="h-4 w-4 text-white/40" />
         </div>
-        <p className="text-sm text-muted-foreground py-8 text-center">Todavía no hay noticias.</p>
+        <p className="text-sm text-white/50 py-8 text-center">Todavía no hay noticias.</p>
       </section>
 
       <CreateLeagueModal open={createOpen} onClose={() => setCreateOpen(false)} />
