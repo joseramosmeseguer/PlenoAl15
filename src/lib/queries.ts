@@ -505,6 +505,20 @@ export function useAnnouncements() {
   });
 }
 
+export function useNews() {
+  return useQuery({
+    queryKey: ["news"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("news")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+}
+
 export type DailySnap = { snapshot_date: string; user_id: string; total_points: number; position: number };
 
 export function useAllSnapshots() {

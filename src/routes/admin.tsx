@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { syncResults, fetchWorldCupFixtures } from "@/lib/sync.functions";
+import { fetchWorldCupFixtures } from "@/lib/sync.functions";
 import { getAdminProfiles, getAdminBonusQuestions, getAdminLeagues, getAdminLeagueMembers, updateParticipant, deleteParticipant, setParticipantHidden } from "@/lib/admin.functions";
 import { Shield, RefreshCcw, Plus, Lock, Cloud, EyeOff, Eye, Trash2, ChevronDown } from "lucide-react";
 import { formatKickoff, STAGE_LABELS } from "@/lib/scoring";
@@ -18,37 +18,37 @@ import { LOCATION_GROUPS, LOCATIONS, locationLabel } from "@/lib/bonus-locations
 import { resolveLabel } from "@/lib/bonusTally";
 import { AdminRealStats } from "@/components/admin/AdminRealStats";
 import { AdminAnnouncements } from "@/components/admin/AdminAnnouncements";
+import { AdminNews } from "@/components/admin/AdminNews";
 
 export const Route = createFileRoute("/admin")({
   component: Admin,
-  head: () => ({ meta: [{ title: "Admin · El Mundial" }] }),
+  head: () => ({ meta: [{ title: "Admin · PlenoAl15" }] }),
 });
 
 function Admin() {
   const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const qc = useQueryClient();
-  const { data: matches } = useMatches();
-  const { data: teams } = useTeams();
   const { data: clubMatches } = useClubMatches();
-  const fetchAdminBonus = useServerFn(getAdminBonusQuestions);
   const fetchAdminProfiles = useServerFn(getAdminProfiles);
-  const { data: bonus } = useQuery({
-    queryKey: ["admin_bonus_questions"],
-    queryFn: () => fetchAdminBonus({}),
-    enabled: !!user && isAdmin,
-  });
   const { data: profiles } = useQuery({
     queryKey: ["admin_profiles"],
     queryFn: () => fetchAdminProfiles({}),
     enabled: !!user && isAdmin,
   });
-  const [tab, setTab] = useState<"matches" | "bonus" | "users" | "fixtures" | "ligas" | "preds" | "stats" | "encuesta" | "anuncios">("matches");
-  const sync = useServerFn(syncResults);
-  const fetchFixtures = useServerFn(fetchWorldCupFixtures);
-  const [syncing, setSyncing] = useState(false);
-  const [loadingFx, setLoadingFx] = useState(false);
-  const [fxResult, setFxResult] = useState<Awaited<ReturnType<typeof fetchWorldCupFixtures>> | null>(null);
+  const fetchAdminLeagues = useServerFn(getAdminLeagues);
+  const fetchAdminLeagueMembers = useServerFn(getAdminLeagueMembers);
+  const { data: leagues } = useQuery({
+    queryKey: ["admin_leagues"],
+    queryFn: () => fetchAdminLeagues({}),
+    enabled: !!user && isAdmin,
+  });
+  const { data: allMembers } = useQuery({
+    queryKey: ["admin_all_league_members"],
+    queryFn: () => fetchAdminLeagueMembers({}),
+    enabled: !!user && isAdmin,
+  });
+  const [tab, setTab] = useState<"matches" | "users" | "ligas" | "noticias" | "anuncios">("matches");
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) navigate({ to: "/" });
@@ -72,45 +72,14 @@ function Admin() {
     qc.invalidateQueries();
   }
 
-  async function doSync() {
-    setSyncing(true);
-    try {
-      const r = await sync({});
-      toast.success(`Sincronizado: ${r.updated} partidos (${r.finished} finalizados)`);
-      if (r.errors.length) toast.error(r.errors.slice(0, 2).join(" · "));
-      qc.invalidateQueries();
-    } catch (e: any) {
-      toast.error(e.message ?? "Error al sincronizar");
-    } finally {
-      setSyncing(false);
-    }
-  }
-
-  async function loadFixtures(autoMap: boolean) {
-    setLoadingFx(true);
-    try {
-      const r = await fetchFixtures({ data: { autoMap } });
-      setFxResult(r);
-      toast.success(`${r.total} fixtures · ${r.mapped} emparejados${autoMap ? ` · ${r.applied} aplicados` : ""}`);
-      qc.invalidateQueries({ queryKey: ["matches"] });
-    } catch (e: any) {
-      toast.error(e.message ?? "Error al cargar fixtures");
-    } finally {
-      setLoadingFx(false);
-    }
-  }
-
   return (
     <div className="space-y-5">
       <div className="rounded-2xl bg-pitch-deep text-white p-5 shadow-soft flex flex-wrap items-center gap-3 justify-between">
         <div>
           <div className="display text-3xl flex items-center gap-2"><Shield className="h-6 w-6 text-gold" /> Panel de admin</div>
-          <p className="text-white/80 text-sm">Gestiona partidos, resultados y bonus.</p>
+          <p className="text-white/80 text-sm">Gestiona jornadas, participantes, ligas y contenido de la web.</p>
         </div>
         <div className="flex gap-2 flex-wrap">
-          <Button onClick={doSync} disabled={syncing} variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
-            <Cloud className="h-4 w-4 mr-1" /> {syncing ? "Sincronizando…" : "Sync resultados"}
-          </Button>
           <Button onClick={recalc} className="bg-gold text-gold-foreground hover:bg-gold/90">
             <RefreshCcw className="h-4 w-4 mr-1" /> Recalcular puntos
           </Button>
@@ -118,7 +87,7 @@ function Admin() {
       </div>
 
       <div className="flex gap-2 flex-wrap">
-        {[["matches","Partidos"],["bonus","Bonus"],["users","Participantes"],["fixtures","Fixtures API"],["ligas","Ligas"],["preds","Pronósticos"],["stats","Stats reales"],["encuesta","Encuesta"],["anuncios","Anuncios"]].map(([k,l]) => (
+        {[["matches","Partidos"],["users","Participantes"],["ligas","Ligas"],["noticias","Noticias"],["anuncios","Anuncios"]].map(([k,l]) => (
           <button key={k} onClick={() => setTab(k as any)}
             className={`px-3 py-1.5 rounded-full text-sm border ${tab===k ? "bg-primary text-primary-foreground border-primary" : "border-border"}`}>
             {l}
@@ -146,7 +115,6 @@ function Admin() {
           )}
         </div>
       )}
-      {tab === "bonus" && <AdminBonus bonus={bonus ?? []} teams={teams ?? []} onChange={() => qc.invalidateQueries({ queryKey: ["admin_bonus_questions"] })} />}
       {tab === "users" && (
         <div className="space-y-3">
           <div className="rounded-xl border border-border bg-card p-4">
@@ -158,6 +126,8 @@ function Admin() {
                 <AdminUserRow
                   key={p.id}
                   profile={p}
+                  leagues={leagues ?? []}
+                  memberships={(allMembers ?? []).filter((m: any) => m.user_id === p.id)}
                   onChange={() => qc.invalidateQueries()}
                 />
               ))}
@@ -175,6 +145,8 @@ function Admin() {
                 <AdminUserRow
                   key={p.id}
                   profile={p}
+                  leagues={leagues ?? []}
+                  memberships={(allMembers ?? []).filter((m: any) => m.user_id === p.id)}
                   onChange={() => qc.invalidateQueries()}
                 />
               ))}
@@ -185,76 +157,8 @@ function Admin() {
           </div>
         </div>
       )}
-      {tab === "fixtures" && (
-        <div className="space-y-3">
-          <div className="rounded-xl border border-border bg-card p-4">
-            <div className="flex items-start justify-between gap-3 flex-wrap">
-              <div>
-                <h3 className="display text-xl">Fixtures de API-Football</h3>
-                <p className="text-sm text-muted-foreground">
-                  Carga todos los partidos del Mundial (liga 1, temporada 2026) y empareja
-                  automáticamente sus IDs con los partidos de la quiniela.
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" disabled={loadingFx} onClick={() => loadFixtures(false)}>
-                  Solo previsualizar
-                </Button>
-                <Button disabled={loadingFx} onClick={() => loadFixtures(true)}>
-                  <Cloud className="h-4 w-4 mr-1" /> {loadingFx ? "Cargando…" : "Cargar y emparejar"}
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {fxResult && (
-            <>
-              <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                <div className="rounded-lg bg-muted p-3"><div className="display text-2xl">{fxResult.total}</div><div className="text-xs text-muted-foreground">Fixtures totales</div></div>
-                <div className="rounded-lg bg-muted p-3"><div className="display text-2xl text-primary">{fxResult.mapped}</div><div className="text-xs text-muted-foreground">Emparejados</div></div>
-                <div className="rounded-lg bg-muted p-3"><div className="display text-2xl text-gold">{fxResult.applied}</div><div className="text-xs text-muted-foreground">Aplicados</div></div>
-              </div>
-
-              {(fxResult.mappedList?.length ?? 0) > 0 && (
-                <div className="rounded-xl border border-border bg-card p-4">
-                  <h4 className="display text-lg mb-2">Emparejados ({fxResult.mappedList?.length ?? 0})</h4>
-                  <div className="max-h-64 overflow-y-auto divide-y divide-border text-sm">
-                    {(fxResult.mappedList ?? []).map((m) => (
-                      <div key={m.fixtureId} className="py-1.5 flex items-center justify-between gap-2">
-                        <span className="truncate flex-1">{m.home} vs {m.away}</span>
-                        <span className="text-xs text-muted-foreground">{new Date(m.date).toLocaleDateString("es-ES")}</span>
-                        <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded">{m.fixtureId}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {(fxResult.unmatched?.length ?? 0) > 0 && (
-                <div className="rounded-xl border border-flame/40 bg-flame/5 p-4">
-                  <h4 className="display text-lg mb-2">Sin emparejar ({fxResult.unmatched?.length ?? 0})</h4>
-                  <p className="text-xs text-muted-foreground mb-2">
-                    Suelen ser eliminatorias cuyos rivales aún no se conocen. Cópialos a mano cuando se decidan.
-                  </p>
-                  <div className="max-h-64 overflow-y-auto divide-y divide-border text-sm">
-                    {(fxResult.unmatched ?? []).map((m) => (
-                      <div key={m.fixtureId} className="py-1.5 flex items-center justify-between gap-2">
-                        <span className="truncate flex-1">{m.home} vs {m.away}</span>
-                        <span className="text-xs text-muted-foreground">{new Date(m.date).toLocaleDateString("es-ES")}</span>
-                        <span className="font-mono text-xs bg-muted px-2 py-0.5 rounded">{m.fixtureId}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      )}
-      {tab === "ligas" && <AdminLeaguesTab profiles={profiles ?? []} />}
-      {tab === "preds" && <AdminPredictions />}
-      {tab === "stats" && <AdminRealStats />}
-      {tab === "encuesta" && <AdminSurvey profiles={profiles ?? []} />}
+      {tab === "ligas" && <AdminLeaguesTab profiles={profiles ?? []} leagues={leagues ?? []} allMembers={allMembers ?? []} />}
+      {tab === "noticias" && <AdminNews />}
       {tab === "anuncios" && <AdminAnnouncements />}
     </div>
   );
@@ -347,25 +251,11 @@ function AdminClubMatchRow({ match, onChange }: { match: any; onChange: () => vo
 
 // ── Admin: Ligas ─────────────────────────────────────────────
 
-function AdminLeaguesTab({ profiles }: { profiles: any[] }) {
+function AdminLeaguesTab({ profiles, leagues, allMembers }: { profiles: any[]; leagues: any[]; allMembers: any[] }) {
   const qc = useQueryClient();
   const [expandedLeague, setExpandedLeague] = useState<string | null>(null);
   const [addUserLeague, setAddUserLeague] = useState<{ id: string; name: string } | null>(null);
   const [addUserId, setAddUserId] = useState("");
-
-  // Vía segura (server function): invite_code y el listado completo de membresías
-  // no son legibles desde el cliente para usuarios normales.
-  const fetchAdminLeagues = useServerFn(getAdminLeagues);
-  const fetchAdminLeagueMembers = useServerFn(getAdminLeagueMembers);
-  const { data: leagues } = useQuery({
-    queryKey: ["admin_leagues"],
-    queryFn: () => fetchAdminLeagues({}),
-  });
-
-  const { data: allMembers } = useQuery({
-    queryKey: ["admin_all_league_members"],
-    queryFn: () => fetchAdminLeagueMembers({}),
-  });
 
   const profileMap = useMemo(() => {
     const m: Record<string, any> = {};
@@ -1286,13 +1176,47 @@ function toLocalDT(iso: string): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function AdminUserRow({ profile, onChange }: { profile: any; onChange: () => void }) {
+function AdminUserRow({ profile, leagues, memberships, onChange }: {
+  profile: any; leagues: any[]; memberships: any[]; onChange: () => void;
+}) {
   const updateFn = useServerFn(updateParticipant);
   const deleteFn = useServerFn(deleteParticipant);
   const hideFn = useServerFn(setParticipantHidden);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(profile.display_name ?? "");
   const [saving, setSaving] = useState(false);
+  const [movingTo, setMovingTo] = useState("");
+
+  const currentLeagues = memberships
+    .map((m) => leagues.find((l) => l.id === m.league_id))
+    .filter(Boolean);
+  const createdLeagues = leagues.filter((l) => l.creator_id === profile.id && !l.is_default);
+
+  async function moveToLeague() {
+    if (!movingTo) return;
+    setSaving(true);
+    try {
+      // Sale de todas las ligas no-default en las que esté y entra en la elegida.
+      const toLeave = memberships.filter((m) => {
+        const league = leagues.find((l) => l.id === m.league_id);
+        return league && !league.is_default && m.league_id !== movingTo;
+      });
+      for (const m of toLeave) {
+        await (supabase as any).from("league_memberships").delete().eq("league_id", m.league_id).eq("user_id", profile.id);
+      }
+      const { error } = await (supabase as any)
+        .from("league_memberships")
+        .upsert({ league_id: movingTo, user_id: profile.id, is_league_admin: false }, { onConflict: "league_id,user_id" });
+      if (error) throw error;
+      toast.success("Participante movido de liga");
+      setMovingTo("");
+      onChange();
+    } catch (e: any) {
+      toast.error(e.message ?? "Error al cambiar de liga");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function save() {
     setSaving(true);
@@ -1350,9 +1274,32 @@ function AdminUserRow({ profile, onChange }: { profile: any; onChange: () => voi
               )}
             </div>
             <div className="text-xs text-muted-foreground truncate">{profile.email}</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">
+              {currentLeagues.length > 0
+                ? currentLeagues.map((l: any) => l.is_default ? "Individual" : l.name).join(", ")
+                : "Sin liga"}
+              {createdLeagues.length > 0 && (
+                <span className="text-gold"> · creó {createdLeagues.length === 1 ? `"${createdLeagues[0].name}"` : `${createdLeagues.length} ligas`}</span>
+              )}
+            </div>
           </div>
         )}
       </div>
+      {!editing && leagues.length > 0 && (
+        <div className="flex gap-1.5 items-center">
+          <select
+            value={movingTo}
+            onChange={(e) => setMovingTo(e.target.value)}
+            className="flex-1 min-w-0 rounded-lg border border-border bg-background px-2 py-1 text-xs"
+          >
+            <option value="">Mover a liga…</option>
+            {leagues.map((l: any) => (
+              <option key={l.id} value={l.id}>{l.is_default ? "Individual" : l.name}</option>
+            ))}
+          </select>
+          <Button size="sm" variant="outline" disabled={saving || !movingTo} onClick={moveToLeague}>Mover</Button>
+        </div>
+      )}
       <div className="flex gap-1 justify-end">
         {editing ? (
           <>

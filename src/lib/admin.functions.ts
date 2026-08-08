@@ -1,9 +1,14 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { ADMIN_EMAILS } from "@/lib/admin-emails";
 import { z } from "zod";
 
-async function assertAdmin(ctx: { supabase: any; userId: string }) {
+async function assertAdmin(ctx: { supabase: any; userId: string; claims?: any }) {
+  // La lista de ADMIN_EMAILS manda siempre, aunque el rol en la base de
+  // datos estuviera mal puesto.
+  const email = ctx.claims?.email;
+  if (!email || !ADMIN_EMAILS.includes(email)) throw new Response("Solo admin", { status: 403 });
   const { data } = await ctx.supabase
     .from("user_roles")
     .select("role")
