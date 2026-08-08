@@ -5,6 +5,7 @@ import { useClubMatches, useLaLigaStandings, useLaLigaTeam } from "@/lib/queries
 import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { SectionHero } from "@/components/SectionHero";
 import {
   CalendarDays, ChevronRight, Clock3, Goal, MapPin, Shield, Shirt, Sparkles,
   Trophy, TrendingUp, Users, X,
@@ -26,9 +27,9 @@ type TableRow = {
 };
 
 const TABS: { id: Tab; label: string; icon: typeof Trophy }[] = [
+  { id: "standings", label: "Clasificación", icon: Trophy },
   { id: "calendar", label: "Calendario", icon: CalendarDays },
   { id: "teams", label: "Equipos", icon: Shield },
-  { id: "standings", label: "Clasificación", icon: Trophy },
 ];
 
 function crestUrl(team?: Team | null) {
@@ -43,7 +44,7 @@ function LaLigaPage() {
   const { data: matches, isLoading } = useClubMatches();
   const { data: officialTable } = useLaLigaStandings();
   const { match: matchFromUrl } = Route.useSearch();
-  const [tab, setTab] = useState<Tab>("calendar");
+  const [tab, setTab] = useState<Tab>("standings");
   const [matchday, setMatchday] = useState<number | "all">(1);
   const [selectedMatch, setSelectedMatch] = useState<any | null>(null);
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
@@ -63,24 +64,17 @@ function LaLigaPage() {
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-[1.75rem] bg-gradient-night px-5 py-7 text-white shadow-soft sm:px-8 sm:py-9">
-        <div className="absolute -right-14 -top-20 h-56 w-56 rounded-full border-[36px] border-gold/10" />
-        <div className="absolute bottom-0 right-8 h-px w-52 bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
-        <div className="relative max-w-2xl">
-          <p className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-gold"><Sparkles className="h-3.5 w-3.5" /> Temporada 2026/27</p>
-          <h1 className="display text-4xl sm:text-5xl">LA LIGA</h1>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-white/65">Partidos, clubes y clasificación en un mismo espacio. Explora la competición jornada a jornada.</p>
-          <div className="mt-5 flex flex-wrap gap-2 text-xs text-white/65">
+      <SectionHero title="LA LIGA" eyebrow="Temporada 2026/27" subtitle="Clasificación, partidos y clubes en un mismo espacio." icon={Sparkles}>
+          <div className="mt-3 hidden flex-wrap gap-2 text-xs text-white/65 sm:flex">
             <Metric value={teams.length || 20} label="equipos" />
             <Metric value={leagueMatches.length || 380} label="partidos" />
             <Metric value={matchdays.length || 38} label="jornadas" />
           </div>
-        </div>
-      </section>
+      </SectionHero>
 
       <nav className="grid grid-cols-3 rounded-2xl border border-border bg-white p-1.5 shadow-soft" aria-label="Secciones de La Liga">
         {TABS.map(({ id, label, icon: Icon }) => (
-          <button key={id} onClick={() => setTab(id)} className={`relative flex items-center justify-center gap-1.5 rounded-xl px-2 py-3 text-[11px] font-black transition-all sm:text-sm ${tab === id ? "bg-black text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
+          <button key={id} onClick={() => setTab(id)} className={`relative flex min-w-0 items-center justify-center gap-1 rounded-xl px-1 py-3 text-[9px] font-black transition-all sm:gap-1.5 sm:px-2 sm:text-sm ${tab === id ? "bg-black text-white shadow-md" : "text-muted-foreground hover:bg-muted hover:text-foreground"}`}>
             <Icon className={`h-4 w-4 ${tab === id ? "text-gold" : ""}`} /> {label}
             {tab === id && <motion.span layoutId="league-tab" className="absolute -bottom-0.5 h-1 w-7 rounded-full bg-gold" />}
           </button>
@@ -153,7 +147,15 @@ function TeamsTab({ teams, table, matches, onOpen }: any) {
 
 function StandingsTab({ rows, onOpen }: { rows: TableRow[]; onOpen: (team: Team) => void }) {
   return <div className="space-y-4"><div><h2 className="display text-2xl">Clasificación</h2><p className="text-xs text-muted-foreground">Tabla general de la competición.</p></div>
-    <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-soft"><div className="overflow-x-auto"><table className="w-full min-w-[720px] text-xs"><thead className="bg-black text-white"><tr>{["Pos", "Equipo", "PJ", "G", "E", "P", "GF", "GC", "DG", "Pts"].map((h, i) => <th key={h} className={`px-3 py-3 text-center font-black ${i === 1 ? "text-left" : ""}`}>{h}</th>)}</tr></thead><tbody>{rows.map(row => <tr key={row.team.id} onClick={() => onOpen(row.team)} className="cursor-pointer border-b last:border-0 hover:bg-gold/8"><td className="px-3 py-3"><span className={`mx-auto flex h-7 w-7 items-center justify-center rounded-md border-l-4 font-black ${zone(row.position)}`}>{row.position}</span></td><td className="px-3 py-3"><div className="flex items-center gap-2"><img src={crestUrl(row.team) ?? ""} alt="" className="h-7 w-7 object-contain" /><b>{getLaLigaTeamDisplayName(row.team.name)}</b></div></td>{[row.playedGames,row.won,row.draw,row.lost,row.goalsFor,row.goalsAgainst].map((v,i)=><td key={i} className="px-3 py-3 text-center tabular-nums text-muted-foreground">{v}</td>)}<td className="px-3 py-3 text-center font-bold tabular-nums">{row.goalDifference > 0 ? "+" : ""}{row.goalDifference}</td><td className="px-3 py-3 text-center text-sm font-black">{row.points}</td></tr>)}</tbody></table></div>
+    <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-soft">
+      <div className="sm:hidden">
+        <div className="grid grid-cols-[32px_1fr_34px] items-center bg-black px-2 py-2 text-[8px] font-black uppercase tracking-wider text-white/70"><span>Pos</span><span>Equipo</span><span className="text-center text-gold">Pts</span></div>
+        {rows.map(row => <button key={row.team.id} onClick={() => onOpen(row.team)} className="w-full border-b px-2 py-2.5 text-left last:border-0 active:bg-gold/10">
+          <div className="grid grid-cols-[32px_1fr_34px] items-center"><span className={`flex h-7 w-7 items-center justify-center rounded-md border-l-4 text-xs font-black ${zone(row.position)}`}>{row.position}</span><span className="flex min-w-0 items-center gap-2"><img src={crestUrl(row.team) ?? ""} alt="" className="h-7 w-7 shrink-0 object-contain"/><b className="truncate text-[11px]">{getLaLigaTeamDisplayName(row.team.name)}</b></span><b className="text-center text-sm">{row.points}</b></div>
+          <div className="ml-8 mt-2 grid grid-cols-8 gap-0.5 rounded-lg bg-muted/55 px-1 py-1.5">{[["PJ",row.playedGames],["G",row.won],["E",row.draw],["P",row.lost],["GF",row.goalsFor],["GC",row.goalsAgainst],["DG",`${row.goalDifference>0?"+":""}${row.goalDifference}`],["PTS",row.points]].map(([label,value])=><span key={label} className="text-center"><small className="block text-[6px] font-black uppercase text-muted-foreground">{label}</small><b className="block text-[9px] tabular-nums">{value}</b></span>)}</div>
+        </button>)}
+      </div>
+      <div className="hidden overflow-x-auto sm:block"><table className="w-full min-w-[720px] text-xs"><thead className="bg-black text-white"><tr>{["Pos", "Equipo", "PJ", "G", "E", "P", "GF", "GC", "DG", "Pts"].map((h, i) => <th key={h} className={`px-3 py-3 text-center font-black ${i === 1 ? "text-left" : ""}`}>{h}</th>)}</tr></thead><tbody>{rows.map(row => <tr key={row.team.id} onClick={() => onOpen(row.team)} className="cursor-pointer border-b last:border-0 hover:bg-gold/8"><td className="px-3 py-3"><span className={`mx-auto flex h-7 w-7 items-center justify-center rounded-md border-l-4 font-black ${zone(row.position)}`}>{row.position}</span></td><td className="px-3 py-3"><div className="flex items-center gap-2"><img src={crestUrl(row.team) ?? ""} alt="" className="h-7 w-7 object-contain" /><b>{getLaLigaTeamDisplayName(row.team.name)}</b></div></td>{[row.playedGames,row.won,row.draw,row.lost,row.goalsFor,row.goalsAgainst].map((v,i)=><td key={i} className="px-3 py-3 text-center tabular-nums text-muted-foreground">{v}</td>)}<td className="px-3 py-3 text-center font-bold tabular-nums">{row.goalDifference > 0 ? "+" : ""}{row.goalDifference}</td><td className="px-3 py-3 text-center text-sm font-black">{row.points}</td></tr>)}</tbody></table></div>
       <div className="flex flex-wrap gap-x-4 gap-y-2 border-t bg-muted/45 px-4 py-3 text-[10px] text-muted-foreground"><Legend color="bg-blue-600" text="Champions" /><Legend color="bg-sky-400" text="Europa" /><Legend color="bg-amber-400" text="Conference" /><Legend color="bg-red-500" text="Descenso" /></div>
     </div></div>;
 }

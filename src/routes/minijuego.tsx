@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth";
 import { useBonusQuestions, useBonusPredictions, useTeams, useMatches } from "@/lib/queries";
 import { useQueryClient } from "@tanstack/react-query";
 import { BonusCard } from "@/components/BonusCard";
+import { SectionHero } from "@/components/SectionHero";
 
 export const Route = createFileRoute("/minijuego")({
   component: Minijuego,
@@ -15,12 +16,7 @@ export const Route = createFileRoute("/minijuego")({
 function Minijuego() {
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl bg-gradient-pitch text-white p-5 shadow-soft">
-        <div className="display text-3xl flex items-center gap-2">
-          <Gamepad2 className="h-6 w-6 text-gold" /> Minijuego
-        </div>
-        <p className="text-white/80 text-sm">Pequeños retos extra durante el torneo.</p>
-      </div>
+      <SectionHero title="MINIJUEGO" eyebrow="Retos extra" subtitle="Pequeños desafíos para sumar más puntos durante el torneo." icon={Gamepad2} />
 
       <Tabs defaultValue="diaria" className="space-y-4">
         <TabsList className="grid w-full grid-cols-3">

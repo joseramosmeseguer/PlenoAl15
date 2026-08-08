@@ -8,6 +8,7 @@ import { Star, Users, ChevronDown } from "lucide-react";
 import { StatsContent } from "@/components/StatsContent";
 import { RulesContent } from "@/components/RulesContent";
 import { STAGE_BADGE_COLORS } from "@/lib/stageColors";
+import { SectionHero } from "@/components/SectionHero";
 
 export const Route = createFileRoute("/pronosticos")({
   component: AllPredictions,
@@ -66,10 +67,7 @@ function AllPredictions() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl bg-gradient-pitch text-white p-5 shadow-soft">
-        <div className="display text-3xl flex items-center gap-2"><Users className="h-6 w-6" /> Pronósticos de todos</div>
-        <p className="text-white/80 text-sm">Mira lo que ha puesto cada uno y ríete (o tiembla).</p>
-      </div>
+      <SectionHero title="PRONÓSTICOS DE TODOS" eyebrow="La comunidad" subtitle="Mira lo que ha puesto cada uno y compara resultados." icon={Users} />
 
       <div className="flex gap-2 flex-wrap">
         {tabs.map(([k, l]) => (

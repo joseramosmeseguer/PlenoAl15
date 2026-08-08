@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { ChevronLeft, CheckCircle2, XCircle, Star, Trophy, Info } from "lucide-react";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
 import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
+import { SectionHero } from "@/components/SectionHero";
 
 export const Route = createFileRoute("/mis-pronosticos")({
   component: MyPredictions,
@@ -84,12 +85,7 @@ function MyPredictions() {
 
   return (
     <div className="space-y-5">
-      <div className="pt-1 text-center">
-        <h1 className="display text-4xl sm:text-5xl">Pronósticos</h1>
-        <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-          Elige una jornada y demuestra cuánto sabes de fútbol
-        </p>
-      </div>
+      <SectionHero title="PRONÓSTICOS" eyebrow="Pleno al 15" subtitle="Elige una jornada y demuestra cuánto sabes de fútbol." icon={Trophy} />
 
       {!user && (
         <div className="rounded-xl border border-dashed border-gold/40 bg-card px-4 py-2.5 text-xs text-muted-foreground text-center">
