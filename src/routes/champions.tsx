@@ -15,12 +15,12 @@ function ChampionsRoute() {
 
 function ChampionsComingSoon() {
   return (
-    <div className="relative -mt-2 min-h-[70vh] overflow-hidden rounded-3xl shadow-soft flex items-center justify-center">
+    <div className="fixed inset-0 z-0 flex items-center justify-center">
       <img src={championsFondo} alt="" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-black/55" />
       <div className="relative text-center px-6">
-        <p className="display text-3xl text-white">Próximamente…</p>
-        <p className="mt-2 text-sm text-white/70">Competiciones entre ligas</p>
+        <p className="text-sm font-bold uppercase tracking-widest text-white/70">Próximamente…</p>
+        <p className="display text-4xl sm:text-5xl text-white mt-2">Competiciones entre ligas</p>
       </div>
     </div>
   );

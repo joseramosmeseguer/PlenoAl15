@@ -71,8 +71,8 @@ function LaLigaPage() {
 
   return (
     <div className="space-y-6">
-      <div className="overflow-hidden rounded-2xl sm:rounded-[1.75rem] shadow-soft">
-        <img src={laLigaBanner} alt="LaLiga" className="w-full h-auto object-cover" />
+      <div className="overflow-hidden rounded-2xl sm:rounded-[1.75rem] shadow-soft h-24 sm:h-32">
+        <img src={laLigaBanner} alt="LaLiga" className="w-full h-full object-cover object-center" />
       </div>
 
       <nav className="grid grid-cols-3 rounded-2xl border border-border bg-white p-1.5 shadow-soft" aria-label="Secciones de La Liga">

@@ -1,4 +1,5 @@
-import { BookOpen, Trophy, Lock, Users } from "lucide-react";
+import { BookOpen, Trophy, Lock, Users, Star } from "lucide-react";
+import championsFondo from "@/assets/champions/ChampionsEstadio1.webp";
 
 export function RulesContent({ showHeader = true }: { showHeader?: boolean }) {
   return (
@@ -9,6 +10,14 @@ export function RulesContent({ showHeader = true }: { showHeader?: boolean }) {
           <p className="text-white/80 text-sm">Cómo se puntúa en PlenoAl15.</p>
         </div>
       )}
+
+      <div className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+        <p className="text-sm text-muted-foreground">
+          Cada jornada de LaLiga, pronosticas el resultado de los partidos en <strong className="text-foreground">Pronósticos</strong> y
+          ganas puntos según lo acertado que estés. Los partidos y resultados se ven en <strong className="text-foreground">Calendario</strong>,
+          y tu puntuación y la del resto en <strong className="text-foreground">Clasificación</strong>.
+        </p>
+      </div>
 
       <Section icon={<Trophy className="text-primary" />} title="Puntos por partido">
         <Row label="Partido normal — resultado (1X2)" pts="5 pts" />
@@ -46,6 +55,17 @@ export function RulesContent({ showHeader = true }: { showHeader?: boolean }) {
           <li>Puedes crear hasta <strong className="text-foreground">4 ligas</strong>.</li>
         </ul>
       </Section>
+
+      <div className="relative overflow-hidden rounded-2xl shadow-soft min-h-[160px] flex items-center justify-center" style={{ backgroundColor: "#060f2b" }}>
+        <img src={championsFondo} alt="" className="absolute inset-0 h-full w-full object-cover opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#060f2b] via-[#060f2b]/60 to-[#060f2b]/20" />
+        <div className="relative text-center px-6 py-8">
+          <p className="flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-blue-300">
+            <Star className="h-3 w-3" /> Champions · Competiciones entre ligas
+          </p>
+          <p className="display text-2xl text-white mt-2">Próximamente</p>
+        </div>
+      </div>
     </div>
   );
 }
