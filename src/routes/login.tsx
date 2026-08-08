@@ -208,11 +208,15 @@ function LoginPage() {
               <div className="space-y-2 text-sm text-foreground/90 text-left">
                 <p>
                   Es una quiniela privada entre amigos: cada jornada de LaLiga pronosticas el resultado de los
-                  partidos y ganas puntos según lo acertado que estés.
+                  partidos y compites por ver quién sabe más de fútbol.
                 </p>
                 <p className="text-muted-foreground">
                   Puedes jugar solo o crear/unirte a una liga privada con tu grupo para tener vuestra propia
                   clasificación.
+                </p>
+                <p className="text-xs text-muted-foreground/70">
+                  Ganas puntos por acertar el resultado, y más aún por el marcador exacto — algo más en los
+                  partidos Premium.
                 </p>
               </div>
             </DialogDescription>

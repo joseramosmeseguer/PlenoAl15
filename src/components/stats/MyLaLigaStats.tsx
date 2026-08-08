@@ -17,6 +17,10 @@ function outcomeOf(h: number, a: number) {
   return h > a ? "H" : h < a ? "A" : "D";
 }
 
+function crestUrl(teamId?: number | null) {
+  return teamId ? `/images/crests/${teamId}.png` : null;
+}
+
 export function MyLaLigaStats() {
   const { user } = useAuth();
   const { data: myPreds } = useMyClubPredictions(user?.id);
@@ -86,8 +90,12 @@ export function MyLaLigaStats() {
                     <span className="font-bold text-foreground">{r.points} pts</span>
                   </span>
                 </div>
-                <div className="mt-1 font-semibold text-foreground truncate">
-                  {getLaLigaTeamDisplayName(r.match.home?.name)} {r.match.home_score ?? "–"}-{r.match.away_score ?? "–"} {getLaLigaTeamDisplayName(r.match.away?.name)}
+                <div className="mt-1 flex items-center gap-1.5 font-semibold text-foreground">
+                  <img src={crestUrl(r.match.home_team_id) ?? ""} alt="" className="h-5 w-5 shrink-0 object-contain" />
+                  <span className="truncate">{getLaLigaTeamDisplayName(r.match.home?.name)}</span>
+                  <span className="shrink-0 tabular-nums">{r.match.home_score ?? "–"}-{r.match.away_score ?? "–"}</span>
+                  <span className="truncate">{getLaLigaTeamDisplayName(r.match.away?.name)}</span>
+                  <img src={crestUrl(r.match.away_team_id) ?? ""} alt="" className="h-5 w-5 shrink-0 object-contain" />
                 </div>
                 <div className="mt-0.5 text-muted-foreground">
                   Tu pronóstico: <b className="text-foreground">{r.pred.home_score}-{r.pred.away_score}</b> · {RESULT_STYLE[r.result].label}
