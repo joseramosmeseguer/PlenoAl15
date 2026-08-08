@@ -61,7 +61,7 @@ function Admin() {
   useEffect(() => {
     if (membersError) toast.error(`No se pudieron cargar los miembros: ${(membersError as any).message ?? membersError}`);
   }, [membersError]);
-  const [tab, setTab] = useState<"matches" | "users" | "ligas" | "noticias" | "anuncios">("matches");
+  const [tab, setTab] = useState<"matches" | "users" | "ligas" | "noticias" | "anuncios" | "stats">("matches");
 
   useEffect(() => {
     if (!loading && (!user || !isAdmin)) navigate({ to: "/inicio" });
@@ -100,7 +100,7 @@ function Admin() {
       </div>
 
       <div className="flex gap-2 flex-wrap">
-        {[["matches","Partidos"],["users","Participantes"],["ligas","Ligas"],["noticias","Noticias"],["anuncios","Anuncios"]].map(([k,l]) => (
+        {[["matches","Partidos"],["users","Participantes"],["ligas","Ligas"],["noticias","Noticias"],["anuncios","Anuncios"],["stats","Stats reales"]].map(([k,l]) => (
           <button key={k} onClick={() => setTab(k as any)}
             className={`px-3 py-1.5 rounded-full text-sm border ${tab===k ? "bg-primary text-primary-foreground border-primary" : "border-border"}`}>
             {l}
@@ -173,6 +173,7 @@ function Admin() {
       {tab === "ligas" && <AdminLeaguesTab profiles={profiles ?? []} leagues={leagues ?? []} allMembers={allMembers ?? []} />}
       {tab === "noticias" && <AdminNews />}
       {tab === "anuncios" && <AdminAnnouncements />}
+      {tab === "stats" && <AdminRealStats />}
     </div>
   );
 }

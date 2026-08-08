@@ -111,6 +111,29 @@ export function useMyClubPredictions(userId?: string) {
   });
 }
 
+export function useAllClubPredictions() {
+  return useQuery({
+    queryKey: ["all_club_predictions"],
+    queryFn: async () => {
+      const hidden = await fetchHiddenIds();
+      const PAGE = 1000;
+      let all: any[] = [];
+      let from = 0;
+      while (true) {
+        const { data, error } = await (supabase as any)
+          .from("club_predictions")
+          .select("*")
+          .range(from, from + PAGE - 1);
+        if (error) throw error;
+        all = all.concat(data ?? []);
+        if ((data ?? []).length < PAGE) break;
+        from += PAGE;
+      }
+      return all.filter((p: any) => !hidden.has(p.user_id));
+    },
+  });
+}
+
 export function useTeams() {
   return useQuery({
     queryKey: ["teams"],
