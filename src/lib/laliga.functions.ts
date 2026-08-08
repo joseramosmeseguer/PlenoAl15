@@ -16,7 +16,3 @@ export const getLaLigaStandings = createServerFn({ method: "GET" }).handler(asyn
   const payload = await footballData("/competitions/PD/standings");
   return payload?.standings?.find((standing: any) => standing.type === "TOTAL")?.table ?? [];
 });
-
-export const getLaLigaTeam = createServerFn({ method: "GET" })
-  .inputValidator((data: { teamId: number }) => ({ teamId: Number(data.teamId) }))
-  .handler(async ({ data }) => footballData(`/teams/${data.teamId}`));

@@ -13,7 +13,7 @@ const NAV_PRIMARY = [
   { to: "/inicio", label: "Inicio", icon: Home },
   { to: "/", label: "Clasificación", icon: Trophy },
   { to: "/mis-pronosticos", label: "Pronósticos", icon: ListChecks },
-  { to: "/calendario", label: "La Liga", icon: Calendar },
+  { to: "/calendario", label: "LaLiga", icon: Calendar },
 ] as const;
 
 const NAV_SECONDARY = [

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { getLaLigaStandings, getLaLigaTeam } from "@/lib/laliga.functions";
+import { getLaLigaStandings } from "@/lib/laliga.functions";
 
 export type LeaderRow = {
   user_id: string;
@@ -76,13 +76,22 @@ export function useLaLigaStandings() {
   });
 }
 
-export function useLaLigaTeam(teamId?: number | null) {
+export function useClubPlayers(teamId?: number | null) {
   return useQuery({
-    queryKey: ["laliga_team", teamId],
+    queryKey: ["club_players", teamId],
     enabled: !!teamId,
-    queryFn: () => getLaLigaTeam({ data: { teamId: teamId! } }),
-    staleTime: 60 * 60 * 1000,
-    retry: 1,
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("club_players")
+        .select("*")
+        .eq("team_id", teamId!)
+        .order("shirt_number", { nullsFirst: false });
+      if (error) throw error;
+      return data as {
+        id: number; team_id: number; name: string; position: string | null;
+        date_of_birth: string | null; nationality: string | null; shirt_number: number | null;
+      }[];
+    },
   });
 }
 

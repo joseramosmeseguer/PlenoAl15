@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useClubMatches, useLaLigaStandings, useLaLigaTeam } from "@/lib/queries";
+import { useClubMatches, useLaLigaStandings, useClubPlayers } from "@/lib/queries";
 import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -20,7 +20,10 @@ export const Route = createFileRoute("/calendario")({
 });
 
 type Tab = "calendar" | "teams" | "standings";
-type Team = { id: number; name: string; short_name?: string; tla?: string; crest_url?: string };
+type Team = {
+  id: number; name: string; short_name?: string; tla?: string; crest_url?: string;
+  coach_name?: string | null; coach_nationality?: string | null; venue?: string | null; area_name?: string | null;
+};
 type TableRow = {
   position: number; team: Team; playedGames: number; won: number; draw: number; lost: number;
   goalsFor: number; goalsAgainst: number; goalDifference: number; points: number; form?: string;
@@ -172,14 +175,14 @@ function MatchDialog({ match, matches, table, onClose, onTeam }: any) {
 }
 
 function TeamDialog({ team, matches, table, onClose }: any) {
-  const { data: detail, isLoading } = useLaLigaTeam(team?.id); if (!team) return null;
+  const { data: squad, isLoading } = useClubPlayers(team?.id); if (!team) return null;
   const stadium = getLaLigaTeamStadium(team.name); const row = table.find((r: TableRow) => r.team.id === team.id);
-  const squad = detail?.squad ?? [];
+  const players = squad ?? [];
   return <Dialog open={!!team} onOpenChange={open => !open && onClose()}><DialogContent className="max-h-[92vh] max-w-3xl overflow-y-auto p-0"><DialogHeader className="sr-only"><DialogTitle>{getLaLigaTeamDisplayName(team.name)}</DialogTitle><DialogDescription>Ficha oficial del club</DialogDescription></DialogHeader>
-    <div className="relative h-52 overflow-hidden bg-black"><img src={stadium?.stadium ?? estadioFondo} alt="" className="h-full w-full object-cover opacity-55" style={{ objectPosition: stadium?.backgroundPosition }} /><div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/35" /><button onClick={onClose} className="absolute right-3 top-3 rounded-full bg-black/45 p-2 text-white"><X className="h-4 w-4" /></button><div className="absolute inset-x-5 bottom-5 flex items-end gap-4 text-white"><img src={crestUrl(team) ?? ""} alt="" className="h-20 w-20 object-contain drop-shadow-2xl" /><div><p className="text-[9px] font-black uppercase tracking-[.25em] text-gold">Ficha del club</p><h2 className="display text-2xl sm:text-3xl">{getLaLigaTeamDisplayName(team.name)}</h2><p className="mt-1 text-xs text-white/60">{detail?.area?.name ?? "España"} · {stadium?.stadiumName ?? detail?.venue}</p></div></div></div>
+    <div className="relative h-52 overflow-hidden bg-black"><img src={stadium?.stadium ?? estadioFondo} alt="" className="h-full w-full object-cover opacity-55" style={{ objectPosition: stadium?.backgroundPosition }} /><div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/35" /><button onClick={onClose} className="absolute right-3 top-3 rounded-full bg-black/45 p-2 text-white"><X className="h-4 w-4" /></button><div className="absolute inset-x-5 bottom-5 flex items-end gap-4 text-white"><img src={crestUrl(team) ?? ""} alt="" className="h-20 w-20 object-contain drop-shadow-2xl" /><div><p className="text-[9px] font-black uppercase tracking-[.25em] text-gold">Ficha del club</p><h2 className="display text-2xl sm:text-3xl">{getLaLigaTeamDisplayName(team.name)}</h2><p className="mt-1 text-xs text-white/60">{team.area_name ?? "España"} · {stadium?.stadiumName ?? team.venue}</p></div></div></div>
     <div className="space-y-6 p-5"><div className="grid grid-cols-2 gap-2 sm:grid-cols-4"><Stat value={row?.position ? `#${row.position}` : "—"} label="Posición" /><Stat value={row?.points ?? 0} label="Puntos" /><Stat value={row?.playedGames ?? 0} label="Partidos" /><Stat value={`${row?.won ?? 0}-${row?.draw ?? 0}-${row?.lost ?? 0}`} label="G-E-P" /></div>
-      <div className="grid gap-3 sm:grid-cols-2"><Info icon={MapPin} label="Estadio" value={stadium?.stadiumName ?? detail?.venue ?? "Por confirmar"} /><Info icon={Users} label="Entrenador" value={detail?.coach?.name ?? (isLoading ? "Cargando…" : "Sin información")} /></div>
-      <div><SectionTitle icon={Shirt}>Plantilla</SectionTitle>{isLoading ? <Empty text="Cargando plantilla…" /> : squad.length ? <div className="grid gap-2 sm:grid-cols-2">{squad.map((player:any)=><div key={player.id} className="flex items-center gap-3 rounded-xl border bg-white p-3"><div className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-xs font-black text-gold">{initials(player.name)}</div><div className="min-w-0"><p className="truncate text-sm font-bold">{player.name}</p><p className="text-[10px] text-muted-foreground">{positionLabel(player.position)}{player.nationality ? ` · ${player.nationality}` : ""}</p></div></div>)}</div> : <Empty text="La plantilla estará disponible cuando la fuente oficial publique los datos." />}</div>
+      <div className="grid gap-3 sm:grid-cols-2"><Info icon={MapPin} label="Estadio" value={stadium?.stadiumName ?? team.venue ?? "Por confirmar"} /><Info icon={Users} label="Entrenador" value={team.coach_name ?? "Sin información"} /></div>
+      <div><SectionTitle icon={Shirt}>Plantilla</SectionTitle>{isLoading ? <Empty text="Cargando plantilla…" /> : players.length ? <div className="grid gap-2 sm:grid-cols-2">{players.map((player:any)=><div key={player.id} className="flex items-center gap-3 rounded-xl border bg-white p-3"><div className="flex h-9 w-9 items-center justify-center rounded-full bg-black text-xs font-black text-gold">{initials(player.name)}</div><div className="min-w-0"><p className="truncate text-sm font-bold">{player.name}{player.shirt_number ? ` · #${player.shirt_number}` : ""}</p><p className="text-[10px] text-muted-foreground">{positionLabel(player.position)}{player.nationality ? ` · ${player.nationality}` : ""}</p></div></div>)}</div> : <Empty text="La plantilla estará disponible cuando la fuente oficial publique los datos." />}</div>
       <div><SectionTitle icon={Goal}>Últimos encuentros</SectionTitle><RecentList team={team} matches={matches} /></div>
     </div></DialogContent></Dialog>;
 }
