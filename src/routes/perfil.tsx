@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
-import { useLeaderboard, useProfiles } from "@/lib/queries";
+import { useLeaderboard, useProfiles, useMyLeagues, useAllLeagueMembers } from "@/lib/queries";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pencil, User, BarChart3, ImagePlus, Check } from "lucide-react";
+import { Pencil, User, BarChart3, ImagePlus, Check, Shield, Users } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import estadioEpicoImg from "@/assets/EstadioEpico1.png";
 import { AVATAR_OPTIONS } from "@/lib/avatars";
+import { ManageLeagueModal } from "@/components/LeaguesSection";
 
 export const Route = createFileRoute("/perfil")({
   component: Perfil,
@@ -19,12 +20,25 @@ function Perfil() {
   const { user } = useAuth();
   const { data: rows, isLoading } = useLeaderboard();
   const { data: profiles } = useProfiles();
+  const { data: myLeagues } = useMyLeagues(user?.id);
+  const { data: allMembers } = useAllLeagueMembers();
   const [changeNameOpen, setChangeNameOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
+  const [managingLeague, setManagingLeague] = useState<{ id: string; name: string } | null>(null);
 
   const myProfile = useMemo(() => (profiles ?? []).find((p: any) => p.id === user?.id), [profiles, user]);
   const displayName = myProfile?.display_name ?? myProfile?.avatar_emoji ?? "campeón";
   const nameAlreadyChanged = !!user && !!localStorage.getItem(`name_changed_${user.id}`);
+
+  const createdLeagues = useMemo(
+    () => (myLeagues ?? []).map((m: any) => m.league).filter((l: any) => l && !l.is_default && l.creator_id === user?.id),
+    [myLeagues, user],
+  );
+  const memberCountByLeague = useMemo(() => {
+    const map: Record<string, number> = {};
+    (allMembers ?? []).forEach(({ league_id }: any) => { map[league_id] = (map[league_id] ?? 0) + 1; });
+    return map;
+  }, [allMembers]);
 
   const list = rows ?? [];
   const myPos = user ? list.findIndex((r) => r.user_id === user.id) : -1;
@@ -98,6 +112,35 @@ function Perfil() {
 
       {isLoading && <p className="text-sm text-muted-foreground text-center py-4">Cargando…</p>}
 
+      {/* Ligas que has creado */}
+      {createdLeagues.length > 0 && (
+        <section className="rounded-2xl bg-card border border-border shadow-soft overflow-hidden">
+          <div className="px-5 py-3 border-b border-border flex items-center gap-2">
+            <Shield className="h-4 w-4 text-muted-foreground" />
+            <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Tus ligas</span>
+          </div>
+          <div>
+            {createdLeagues.map((league: any) => (
+              <div key={league.id} className="flex items-center justify-between gap-3 px-5 py-2.5 border-b border-border last:border-0">
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold truncate">{league.name}</p>
+                  <p className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Users className="h-3 w-3" /> {memberCountByLeague[league.id] ?? 0} participantes
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setManagingLeague({ id: league.id, name: league.name })}
+                  className="shrink-0 rounded-lg border border-border px-2.5 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  Gestionar
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Estadísticas */}
       <section className="rounded-2xl bg-card border border-border shadow-soft overflow-hidden">
         <div className="px-5 py-4 border-b border-border flex items-center gap-2">
@@ -124,6 +167,15 @@ function Perfil() {
         userId={user.id}
         onClose={() => setAvatarPickerOpen(false)}
       />
+
+      {managingLeague && (
+        <ManageLeagueModal
+          leagueId={managingLeague.id}
+          leagueName={managingLeague.name}
+          open={!!managingLeague}
+          onClose={() => setManagingLeague(null)}
+        />
+      )}
     </div>
   );
 }

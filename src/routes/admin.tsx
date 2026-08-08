@@ -31,23 +31,36 @@ function Admin() {
   const qc = useQueryClient();
   const { data: clubMatches } = useClubMatches();
   const fetchAdminProfiles = useServerFn(getAdminProfiles);
-  const { data: profiles } = useQuery({
+  const { data: profiles, error: profilesError } = useQuery({
     queryKey: ["admin_profiles"],
     queryFn: () => fetchAdminProfiles({}),
     enabled: !!user && isAdmin,
+    retry: false,
   });
   const fetchAdminLeagues = useServerFn(getAdminLeagues);
   const fetchAdminLeagueMembers = useServerFn(getAdminLeagueMembers);
-  const { data: leagues } = useQuery({
+  const { data: leagues, error: leaguesError } = useQuery({
     queryKey: ["admin_leagues"],
     queryFn: () => fetchAdminLeagues({}),
     enabled: !!user && isAdmin,
+    retry: false,
   });
-  const { data: allMembers } = useQuery({
+  const { data: allMembers, error: membersError } = useQuery({
     queryKey: ["admin_all_league_members"],
     queryFn: () => fetchAdminLeagueMembers({}),
     enabled: !!user && isAdmin,
+    retry: false,
   });
+
+  useEffect(() => {
+    if (profilesError) toast.error(`No se pudieron cargar los participantes: ${(profilesError as any).message ?? profilesError}`);
+  }, [profilesError]);
+  useEffect(() => {
+    if (leaguesError) toast.error(`No se pudieron cargar las ligas: ${(leaguesError as any).message ?? leaguesError}`);
+  }, [leaguesError]);
+  useEffect(() => {
+    if (membersError) toast.error(`No se pudieron cargar los miembros: ${(membersError as any).message ?? membersError}`);
+  }, [membersError]);
   const [tab, setTab] = useState<"matches" | "users" | "ligas" | "noticias" | "anuncios">("matches");
 
   useEffect(() => {

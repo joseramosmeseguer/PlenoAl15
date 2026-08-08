@@ -200,10 +200,16 @@ function Info({ icon: Icon, label, value }: any) { return <div className="rounde
 function Stat({ value, label }: any) { return <div className="rounded-xl bg-black p-3 text-center text-white"><p className="text-xl font-black text-gold">{value}</p><p className="text-[9px] uppercase tracking-widest text-white/55">{label}</p></div>; }
 function SectionTitle({ icon: Icon, children }: any) { return <h3 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-widest"><Icon className="h-4 w-4 text-gold" />{children}</h3>; }
 function FormCard({ team, row, matches }: any) { const form = teamForm(team.id, matches); return <div className="rounded-xl border bg-white p-3"><div className="flex items-center gap-2"><img src={crestUrl(team) ?? ""} className="h-7 w-7 object-contain" alt=""/><div><b className="block text-xs">{getLaLigaTeamDisplayName(team.name)}</b><span className="text-[9px] text-muted-foreground">{row ? `${row.position}º · ${row.points} pts` : "Sin clasificación"}</span></div></div><div className="mt-3 flex gap-1">{form.length ? form.map((v:string,i:number)=><span key={i} className={`flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-black text-white ${v === "V" ? "bg-emerald-600" : v === "E" ? "bg-amber-500" : "bg-red-500"}`}>{v}</span>) : <span className="text-[10px] text-muted-foreground">Sin partidos jugados</span>}</div></div>; }
-function RecentList({ team, matches }: any) { const recent = matches.filter((m:any)=>finished(m)&&(m.home?.id===team.id||m.away?.id===team.id)).sort((a:any,b:any)=>+new Date(b.utc_date)-+new Date(a.utc_date)).slice(0,5); return <div className="overflow-hidden rounded-xl border bg-white">{recent.length ? recent.map((m:any)=><div key={m.id} className="flex items-center gap-1.5 border-b px-2.5 py-2 text-[10px] last:border-0">
-  <img src={crestUrl(m.home) ?? ""} alt="" className="h-4 w-4 shrink-0 object-contain" />
-  <span className="min-w-0 flex-1 truncate font-bold">{m.home?.short_name ?? getLaLigaTeamDisplayName(m.home?.name)} - {m.away?.short_name ?? getLaLigaTeamDisplayName(m.away?.name)}</span>
-  <img src={crestUrl(m.away) ?? ""} alt="" className="h-4 w-4 shrink-0 object-contain" />
+function RecentList({ team, matches }: any) { const recent = matches.filter((m:any)=>finished(m)&&(m.home?.id===team.id||m.away?.id===team.id)).sort((a:any,b:any)=>+new Date(b.utc_date)-+new Date(a.utc_date)).slice(0,5); return <div className="overflow-hidden rounded-xl border bg-white">{recent.length ? recent.map((m:any)=><div key={m.id} className="flex items-center gap-2 border-b px-2.5 py-2 text-[10px] last:border-0">
+  <span className="flex min-w-0 flex-1 items-center justify-end gap-1 truncate">
+    <span className="truncate">{m.home?.short_name ?? getLaLigaTeamDisplayName(m.home?.name)}</span>
+    <img src={crestUrl(m.home) ?? ""} alt="" className="h-4 w-4 shrink-0 object-contain" />
+  </span>
+  <span className="shrink-0 text-muted-foreground">–</span>
+  <span className="flex min-w-0 flex-1 items-center gap-1 truncate">
+    <img src={crestUrl(m.away) ?? ""} alt="" className="h-4 w-4 shrink-0 object-contain" />
+    <span className="truncate">{m.away?.short_name ?? getLaLigaTeamDisplayName(m.away?.name)}</span>
+  </span>
   <span className="shrink-0 font-black tabular-nums">{m.home_score}-{m.away_score}</span>
   <span className={`h-2 w-2 shrink-0 rounded-full ${resultFor(team.id,m)==="V"?"bg-emerald-500":resultFor(team.id,m)==="E"?"bg-amber-400":"bg-red-500"}`} />
 </div>) : <p className="p-4 text-center text-[10px] text-muted-foreground">Sin resultados todavía</p>}</div>; }

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/lib/auth";
 import { useProfiles, useMyLeagues, useAllLeagueMembers } from "@/lib/queries";
 import { CreateLeagueModal, JoinLeagueModal } from "@/components/LeaguesSection";
-import { Plus, KeyRound, BookOpen, Share2, Newspaper, ChevronRight, LogIn, Download, Users, User } from "lucide-react";
+import { Plus, KeyRound, BookOpen, Share2, Newspaper, ChevronRight, LogIn, Download, Users, User, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import estadioEpicoImg from "@/assets/EstadioEpico2.png";
@@ -17,6 +17,22 @@ export const Route = createFileRoute("/inicio")({
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+}
+
+// Colores distintos por liga para el monograma, elegidos de forma estable
+// según el id (para que no cambien al recargar).
+const LEAGUE_COLORS = [
+  "bg-gradient-gold text-gold-foreground shadow-gold",
+  "bg-blue-600 text-white",
+  "bg-emerald-600 text-white",
+  "bg-purple-600 text-white",
+  "bg-rose-600 text-white",
+  "bg-cyan-600 text-white",
+];
+function leagueColor(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) >>> 0;
+  return LEAGUE_COLORS[hash % LEAGUE_COLORS.length];
 }
 
 function Inicio() {
@@ -104,13 +120,13 @@ function Inicio() {
       {/* Cabecera: cuelga pegada de la barra superior */}
       <div className="relative -mt-6 md:-mt-8 overflow-hidden rounded-b-3xl shadow-soft">
         <img src={estadioEpicoImg} alt="" className="absolute inset-0 h-full w-full object-cover object-center scale-105" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30" />
-        <div className="relative flex items-center gap-4 p-5">
-          <img src="/images/logo/logo-cuadrado.webp" alt="PlenoAl15" className="h-14 w-14 rounded-2xl shadow-gold shrink-0" />
-          <div className="min-w-0 flex-1">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/55 to-black/70" />
+        <div className="relative flex flex-col items-center justify-center gap-2 px-5 py-10 text-center">
+          <img src="/images/logo/logo-cuadrado.webp" alt="PlenoAl15" className="h-12 w-12 rounded-2xl shadow-gold shrink-0" />
+          <div className="min-w-0">
             <p className="text-xs font-bold uppercase tracking-widest text-white/60">Bienvenido</p>
             {user ? (
-              <Link to="/perfil" className="flex items-center gap-1 group">
+              <Link to="/perfil" className="flex items-center justify-center gap-1 group">
                 <h1 className="display text-2xl text-white truncate group-hover:text-gold transition-colors">{displayName}</h1>
                 <ChevronRight className="h-4 w-4 text-white/50 shrink-0 group-hover:text-gold transition-colors" />
               </Link>
@@ -127,27 +143,43 @@ function Inicio() {
           <div className="px-4 py-3 border-b border-border">
             <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Mis ligas</span>
           </div>
-          {myLeagueList.map((league: any) => (
-            <Link
-              key={league.id}
-              to="/clasificacion"
-              search={{ league: league.id }}
-              className="flex items-center gap-3 px-4 py-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors"
-            >
-              <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-black text-sm ${
-                league.is_default ? "bg-muted text-muted-foreground" : "bg-gradient-gold text-gold-foreground shadow-gold"
-              }`}>
-                {league.is_default ? <User className="h-4 w-4" /> : league.name.charAt(0).toUpperCase()}
+          {myLeagueList.map((league: any) => {
+            const isCreator = !league.is_default && league.creator_id === user?.id;
+            return (
+              <div key={league.id} className="flex items-center border-b border-border last:border-b-0">
+                <Link
+                  to="/clasificacion"
+                  search={{ league: league.id }}
+                  className="flex flex-1 min-w-0 items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors"
+                >
+                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-black text-sm ${
+                    league.is_default ? "bg-muted text-muted-foreground" : leagueColor(league.id)
+                  }`}>
+                    {league.is_default ? <User className="h-4 w-4" /> : league.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm truncate">{league.is_default ? "Individual" : league.name}</div>
+                    <div className="text-xs text-muted-foreground flex items-center gap-1.5">
+                      <span className="flex items-center gap-1"><Users className="h-3 w-3" /> {memberCountByLeague[league.id] ?? 0}</span>
+                      {!league.is_default && league.invite_code && (
+                        <span className="font-mono text-[10px] text-muted-foreground/50">· {league.invite_code}</span>
+                      )}
+                    </div>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                </Link>
+                {isCreator && (
+                  <Link
+                    to="/perfil"
+                    title="Gestionar liga"
+                    className="shrink-0 flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:bg-muted hover:text-foreground transition-colors mr-3"
+                  >
+                    <Settings className="h-3.5 w-3.5" />
+                  </Link>
+                )}
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="font-semibold text-sm truncate">{league.is_default ? "Individual" : league.name}</div>
-                <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Users className="h-3 w-3" /> {memberCountByLeague[league.id] ?? 0} participantes
-                </div>
-              </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-            </Link>
-          ))}
+            );
+          })}
         </section>
       )}
 
@@ -206,7 +238,7 @@ function Inicio() {
 
       {/* Tutorial de instalación (iOS / navegadores sin prompt nativo) */}
       <Dialog open={installTutorialOpen} onOpenChange={setInstallTutorialOpen}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-sm rounded-3xl">
           <DialogHeader>
             <DialogTitle>Instalar PlenoAl15</DialogTitle>
             <DialogDescription>

@@ -343,7 +343,7 @@ export function useSettings() {
 export type League = {
   id: string;
   name: string;
-  invite_code?: string | null; // only visible to creator/admin (server-side restricted)
+  invite_code?: string | null;
   creator_id: string | null;
   is_default: boolean;
   created_at: string;
@@ -376,11 +376,9 @@ export function useMyLeagues(userId?: string) {
     queryKey: ["my_leagues", userId],
     enabled: !!userId,
     queryFn: async () => {
-      // invite_code no se incluye aquí: no es legible salvo para el creador,
-      // que lo obtiene aparte con useMyLeagueInviteCodes()
       const { data, error } = await (supabase as any)
         .from("league_memberships")
-        .select("*, league:leagues(id, name, creator_id, is_default, created_at)")
+        .select("*, league:leagues(id, name, creator_id, is_default, created_at, invite_code)")
         .eq("user_id", userId!);
       if (error) throw error;
       return data as LeagueMembership[];
