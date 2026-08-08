@@ -312,6 +312,10 @@ function AdminLeaguesTab({ profiles, leagues, allMembers }: { profiles: any[]; l
       .from("league_memberships")
       .insert({ league_id: leagueId, user_id: addUserId, is_league_admin: false });
     if (error) { toast.error(error.message.includes("duplicate") ? "Ya está en esta liga" : error.message); return; }
+    // Entrar en una liga real ya no es jugar individualmente.
+    if (!leagues.find((l) => l.id === leagueId)?.is_default) {
+      await (supabase as any).from("profiles").update({ plays_individually: false }).eq("id", addUserId);
+    }
     qc.invalidateQueries({ queryKey: ["admin_all_league_members"] });
     qc.invalidateQueries({ queryKey: ["all_league_members"] });
     qc.invalidateQueries({ queryKey: ["my_leagues"] });
@@ -1209,19 +1213,23 @@ function AdminUserRow({ profile, leagues, memberships, onChange }: {
     if (!movingTo) return;
     setSaving(true);
     try {
-      // Sale de todas las ligas no-default en las que esté y entra en la elegida.
-      const toLeave = memberships.filter((m) => {
-        const league = leagues.find((l) => l.id === m.league_id);
-        return league && !league.is_default && m.league_id !== movingTo;
-      });
-      for (const m of toLeave) {
+      // Sale de todas las ligas en las que esté.
+      for (const m of memberships) {
         await (supabase as any).from("league_memberships").delete().eq("league_id", m.league_id).eq("user_id", profile.id);
       }
-      const { error } = await (supabase as any)
-        .from("league_memberships")
-        .upsert({ league_id: movingTo, user_id: profile.id, is_league_admin: false }, { onConflict: "league_id,user_id" });
-      if (error) throw error;
-      toast.success("Participante movido de liga");
+      if (movingTo === "__individual__") {
+        // Individual es estar solo, no una liga compartida con nadie.
+        const { error } = await (supabase as any).from("profiles").update({ plays_individually: true }).eq("id", profile.id);
+        if (error) throw error;
+        toast.success("Participante puesto en individual");
+      } else {
+        const { error } = await (supabase as any)
+          .from("league_memberships")
+          .insert({ league_id: movingTo, user_id: profile.id, is_league_admin: false });
+        if (error) throw error;
+        await (supabase as any).from("profiles").update({ plays_individually: false }).eq("id", profile.id);
+        toast.success("Participante movido de liga");
+      }
       setMovingTo("");
       onChange();
     } catch (e: any) {
@@ -1289,8 +1297,8 @@ function AdminUserRow({ profile, leagues, memberships, onChange }: {
             <div className="text-xs text-muted-foreground truncate">{profile.email}</div>
             <div className="text-[11px] text-muted-foreground mt-0.5">
               {currentLeagues.length > 0
-                ? currentLeagues.map((l: any) => l.is_default ? "Individual" : l.name).join(", ")
-                : "Sin liga"}
+                ? currentLeagues.map((l: any) => l.name).join(", ")
+                : profile.plays_individually ? "Individual" : "Sin liga"}
               {createdLeagues.length > 0 && (
                 <span className="text-gold"> · creó {createdLeagues.length === 1 ? `"${createdLeagues[0].name}"` : `${createdLeagues.length} ligas`}</span>
               )}
@@ -1305,9 +1313,10 @@ function AdminUserRow({ profile, leagues, memberships, onChange }: {
             onChange={(e) => setMovingTo(e.target.value)}
             className="flex-1 min-w-0 rounded-lg border border-border bg-background px-2 py-1 text-xs"
           >
-            <option value="">Mover a liga…</option>
-            {leagues.map((l: any) => (
-              <option key={l.id} value={l.id}>{l.is_default ? "Individual" : l.name}</option>
+            <option value="">Mover a…</option>
+            <option value="__individual__">Individual (sin liga)</option>
+            {leagues.filter((l: any) => !l.is_default).map((l: any) => (
+              <option key={l.id} value={l.id}>{l.name}</option>
             ))}
           </select>
           <Button size="sm" variant="outline" disabled={saving || !movingTo} onClick={moveToLeague}>Mover</Button>

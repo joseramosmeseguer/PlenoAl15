@@ -125,12 +125,15 @@ export function CreateLeagueModal({ open, onClose, onSuccess }: { open: boolean;
       user_id: user!.id,
       is_league_admin: true,
     });
+    // Crear una liga real es lo contrario de jugar individualmente.
+    await (supabase as any).from("profiles").update({ plays_individually: false }).eq("id", user!.id);
     const { data: codes } = await (supabase as any).rpc("get_my_league_invite_codes");
     const code = (codes ?? []).find((c: any) => c.league_id === data.id)?.invite_code ?? null;
     qc.invalidateQueries({ queryKey: ["leagues"] });
     qc.invalidateQueries({ queryKey: ["my_leagues", user!.id] });
     qc.invalidateQueries({ queryKey: ["all_league_members"] });
     qc.invalidateQueries({ queryKey: ["my_league_invite_codes", user!.id] });
+    qc.invalidateQueries({ queryKey: ["my_profile", user!.id] });
     setSaving(false);
     setCreatedCode(code);
   }
@@ -465,6 +468,10 @@ export function LeagueOnboarding({ onJoined }: { onJoined?: () => void }) {
 
   async function joinIndividually() {
     setJoiningSolo(true);
+    // Jugar individualmente es estar solo: si por lo que sea ya fuera
+    // miembro de alguna liga (p.ej. la liga por defecto de versiones
+    // antiguas), lo sacamos para que no comparta clasificación con nadie.
+    await (supabase as any).from("league_memberships").delete().eq("user_id", user!.id);
     const { error } = await (supabase as any)
       .from("profiles")
       .update({ plays_individually: true })
@@ -472,6 +479,8 @@ export function LeagueOnboarding({ onJoined }: { onJoined?: () => void }) {
     setJoiningSolo(false);
     if (error) { toast.error(error.message); return; }
     qc.invalidateQueries({ queryKey: ["my_profile", user!.id] });
+    qc.invalidateQueries({ queryKey: ["my_leagues", user!.id] });
+    qc.invalidateQueries({ queryKey: ["all_league_members"] });
     onJoined?.();
   }
 

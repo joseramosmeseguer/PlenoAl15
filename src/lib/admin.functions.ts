@@ -32,7 +32,7 @@ export const getAdminProfiles = createServerFn({ method: "GET" })
     await assertAdmin(context);
     const { data, error } = await supabaseAdmin
       .from("profiles")
-      .select("id, display_name, avatar_emoji, email, created_at, is_hidden")
+      .select("id, display_name, avatar_emoji, email, created_at, is_hidden, plays_individually")
       .order("display_name");
     if (error) throw new Error(error.message);
     return data ?? [];
