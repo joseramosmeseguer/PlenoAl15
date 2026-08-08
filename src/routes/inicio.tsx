@@ -48,10 +48,14 @@ function Inicio() {
   const [installTutorialOpen, setInstallTutorialOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isIOS, setIsIOS] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
     const ua = navigator.userAgent;
     setIsIOS(/iphone|ipad|ipod/i.test(ua) && !(window as any).MSStream);
+    setIsInstalled(
+      window.matchMedia("(display-mode: standalone)").matches || (window.navigator as any).standalone === true
+    );
     const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e as BeforeInstallPromptEvent);
@@ -184,6 +188,7 @@ function Inicio() {
       )}
 
       {/* Instalar app */}
+      {!isInstalled && (
       <button
         type="button"
         onClick={installApp}
@@ -201,6 +206,7 @@ function Inicio() {
           </div>
         </div>
       </button>
+      )}
 
       {/* Accesos rápidos */}
       <div className="grid grid-cols-2 gap-2">

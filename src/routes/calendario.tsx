@@ -4,10 +4,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useClubMatches, useLaLigaStandings, useClubPlayers } from "@/lib/queries";
 import { getLaLigaTeamDisplayName, getLaLigaTeamStadium } from "@/lib/laligaTeams";
 import estadioFondo from "@/assets/Estadiofutbolfondo.png";
+import laLigaBanner from "@/assets/LaLiga1.webp";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { SectionHero } from "@/components/SectionHero";
 import {
-  CalendarDays, ChevronRight, Clock3, Goal, MapPin, Shield, Shirt, Sparkles,
+  CalendarDays, ChevronRight, Clock3, Goal, MapPin, Shield, Shirt,
   Trophy, TrendingUp, Users, X,
 } from "lucide-react";
 
@@ -71,13 +71,9 @@ function LaLigaPage() {
 
   return (
     <div className="space-y-6">
-      <SectionHero title="LA LIGA" eyebrow="Temporada 2026/27" subtitle="Clasificación, partidos y clubes en un mismo espacio." icon={Sparkles}>
-          <div className="mt-3 hidden flex-wrap gap-2 text-xs text-white/65 sm:flex">
-            <Metric value={teams.length || 20} label="equipos" />
-            <Metric value={leagueMatches.length || 380} label="partidos" />
-            <Metric value={matchdays.length || 38} label="jornadas" />
-          </div>
-      </SectionHero>
+      <div className="overflow-hidden rounded-2xl sm:rounded-[1.75rem] shadow-soft">
+        <img src={laLigaBanner} alt="LaLiga" className="w-full h-auto object-cover" />
+      </div>
 
       <nav className="grid grid-cols-3 rounded-2xl border border-border bg-white p-1.5 shadow-soft" aria-label="Secciones de La Liga">
         {TABS.map(({ id, label, icon: Icon }) => (
@@ -102,9 +98,6 @@ function LaLigaPage() {
   );
 }
 
-function Metric({ value, label }: { value: number; label: string }) {
-  return <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5"><b className="mr-1 text-gold">{value}</b>{label}</span>;
-}
 
 function CalendarTab({ matches, matchdays, selected, onSelect, onOpen, loading }: any) {
   const shown = selected === "all" ? matches : matches.filter((m: any) => Number(m.matchday) === selected);
@@ -161,10 +154,10 @@ function StandingsTab({ rows, onOpen }: { rows: TableRow[]; onOpen: (team: Team)
   return <div className="space-y-4"><div><h2 className="display text-2xl">Clasificación</h2><p className="text-xs text-muted-foreground">Tabla general de la competición.</p></div>
     <div className="overflow-hidden rounded-2xl border border-border bg-white shadow-soft">
       <div className="sm:hidden">
-        <div className="grid grid-cols-[32px_1fr_34px] items-center bg-black px-2 py-2 text-[8px] font-black uppercase tracking-wider text-white/70"><span>Pos</span><span>Equipo</span><span className="text-center text-gold">Pts</span></div>
+        <div className="grid grid-cols-[32px_1fr_34px] items-center bg-black px-2 py-2 text-[8px] font-black uppercase tracking-wider text-white/70"><span></span><span></span><span className="text-center text-gold">Pts</span></div>
         {rows.map(row => <button key={row.team.id} onClick={() => onOpen(row.team)} className="w-full border-b px-2 py-2.5 text-left last:border-0 active:bg-gold/10">
           <div className="grid grid-cols-[32px_1fr_34px] items-center"><span className={`flex h-7 w-7 items-center justify-center rounded-md border-l-4 text-xs font-black ${zone(row.position)}`}>{row.position}</span><span className="flex min-w-0 items-center gap-2"><img src={crestUrl(row.team) ?? ""} alt="" className="h-7 w-7 shrink-0 object-contain"/><b className="truncate text-[11px]">{getLaLigaTeamDisplayName(row.team.name)}</b></span><b className="text-center text-sm">{row.points}</b></div>
-          <div className="ml-8 mt-2 grid grid-cols-8 gap-0.5 rounded-lg bg-muted/55 px-1 py-1.5">{[["PJ",row.playedGames],["G",row.won],["E",row.draw],["P",row.lost],["GF",row.goalsFor],["GC",row.goalsAgainst],["DG",`${row.goalDifference>0?"+":""}${row.goalDifference}`],["PTS",row.points]].map(([label,value])=><span key={label} className="text-center"><small className="block text-[6px] font-black uppercase text-muted-foreground">{label}</small><b className="block text-[9px] tabular-nums">{value}</b></span>)}</div>
+          <div className="ml-8 mt-2 grid grid-cols-7 gap-0.5 rounded-lg bg-muted/55 px-1 py-1.5">{[["PJ",row.playedGames],["G",row.won],["E",row.draw],["P",row.lost],["GF",row.goalsFor],["GC",row.goalsAgainst],["DG",`${row.goalDifference>0?"+":""}${row.goalDifference}`]].map(([label,value])=><span key={label} className="text-center"><small className="block text-[6px] font-black uppercase text-muted-foreground">{label}</small><b className="block text-[9px] tabular-nums">{value}</b></span>)}</div>
         </button>)}
       </div>
       <div className="hidden overflow-x-auto sm:block"><table className="w-full min-w-[720px] text-xs"><thead className="bg-black text-white"><tr>{["Pos", "Equipo", "PJ", "G", "E", "P", "GF", "GC", "DG", "Pts"].map((h, i) => <th key={h} className={`px-3 py-3 text-center font-black ${i === 1 ? "text-left" : ""}`}>{h}</th>)}</tr></thead><tbody>{rows.map(row => <tr key={row.team.id} onClick={() => onOpen(row.team)} className="cursor-pointer border-b last:border-0 hover:bg-gold/8"><td className="px-3 py-3"><span className={`mx-auto flex h-7 w-7 items-center justify-center rounded-md border-l-4 font-black ${zone(row.position)}`}>{row.position}</span></td><td className="px-3 py-3"><div className="flex items-center gap-2"><img src={crestUrl(row.team) ?? ""} alt="" className="h-7 w-7 object-contain" /><b>{getLaLigaTeamDisplayName(row.team.name)}</b></div></td>{[row.playedGames,row.won,row.draw,row.lost,row.goalsFor,row.goalsAgainst].map((v,i)=><td key={i} className="px-3 py-3 text-center tabular-nums text-muted-foreground">{v}</td>)}<td className="px-3 py-3 text-center font-bold tabular-nums">{row.goalDifference > 0 ? "+" : ""}{row.goalDifference}</td><td className="px-3 py-3 text-center text-sm font-black">{row.points}</td></tr>)}</tbody></table></div>

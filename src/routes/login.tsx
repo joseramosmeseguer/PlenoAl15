@@ -86,7 +86,7 @@ function LoginPage() {
                 <img src="/images/logo/logo-hexagono.webp" alt="PlenoAl15" className="h-[166px] w-[166px] drop-shadow-[0_8px_24px_rgba(0,0,0,0.6)]" />
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.3em] text-white/60">Bienvenido a</p>
-                  <h1 className="display text-4xl text-gold leading-tight mt-1">PLENOAL15</h1>
+                  <h1 className="display text-4xl text-white leading-tight mt-1">PLENOAL<span className="text-gold">15</span></h1>
                 </div>
               </div>
 
